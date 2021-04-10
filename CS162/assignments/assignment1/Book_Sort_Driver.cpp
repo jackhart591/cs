@@ -10,6 +10,8 @@
  ** Description: Takes in a file full of spellbooks, sorts them, and outputs them to either screen or file
  ** Input: file of spellbooks
  ** Output: sorted spells/spellbooks
+ **
+ ** For sorting, I used the bubble sorting method found at this link: https://www.geeksforgeeks.org/bubble-sort/
  ** *******************************************************************************************************************/
 
 using namespace std;
