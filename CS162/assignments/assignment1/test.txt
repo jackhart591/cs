@@ -1,0 +1,37 @@
+8
+Wacky_Witch_Handbook Gretchen 1344 19 3
+Blasto_Strike 40.6 fire
+Space_Out 60.23 memory_loss
+Bubble_Beam 100.0 bubble
+Forbidden_Tome Voldemort 1938 1 2
+Avada_Kedavra 20.45 death
+Snake_Bite 45.2 poison
+Necronomicon LoveCraft 1890 3 5
+Wacky_Dreams 89.8 memory_loss
+Cthulhu_Venom 77.2 poison
+Deathrock 20.4 death
+Nightmare 25.89 death
+Deadly_Details 5.02 death
+Enchiridion various_heros 2090 1 5
+Dog_Stretch 70.883 bubble
+Not_Ice_Blast 92.744 fire
+Blush 100.0 fire
+Adopted_By_Dogs 0.05 memory_loss
+Cloud_Dream 34.9 memory_loss
+Charming_Charms Linda_Charming 4460 3 4
+Lovely_Day 90.23 memory_loss
+Smile 99.9 bubble
+Sunshine 73.20 fire
+Lucky_One 54.331 bubble
+Dorian Ludvig_Vivaldi 50000 1 2
+Music_To_Me 87.32 fire
+Lydian 41.005 poison
+The_Uses_of_Excalibur Merlin 3322 2 3
+Deadly_Battle 30.031 death
+Strong_Swing 68.7 fire
+Winning_Day 44.9 memory_loss
+Spells_for_Dummies Tracey_Wood 305 1 4
+Preliminary_Black_Out 55.5 memory_loss
+Exploratory_Maneuver 88.5 bubble
+Beginning_Blast 97.3 fire
+Introductory_Levitation 77.62 bubble
