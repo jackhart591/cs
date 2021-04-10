@@ -1,5 +1,5 @@
 CC = g++ -std=c++11 -g
-exe_file = Book_Sort
+exe_file = Book_Sort.out
 
 $(exe_file): Book_Sort.o Book_Sort_Driver.o
 	$(CC) Book_Sort.o Book_Sort_Driver.o -o $(exe_file)

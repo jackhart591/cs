@@ -2,14 +2,23 @@
 #include <fstream>
 #include "Book_Sort.h"
 
+/**********************************************************************************************************************
+ ** Program Filename: Book_Sort.cpp
+ ** Author: Jackson Hart
+ ** Date: 4/10/2021
+ ** Description: Contains all dependencies needed for Book_Sort_Driver.cpp
+ ** Input: none
+ ** Output: sorted spells/spellbooks
+ ** *******************************************************************************************************************/
+
 using namespace std;
 
 /** ********************************************************************************************************************
- ** Function: main
- ** Description: runs program
- ** Parameters: number of args, array of args
- ** Pre-Conditions: none
- ** Post-Conditions: none
+ ** Function: CreateSpellbook
+ ** Description: Creates an array of spellbooks of specified length and then initializes all the spell structs to null
+ ** Parameters: number of spellbooks, reference to file
+ ** Pre-Conditions: file has to be initialized
+ ** Post-Conditions: an empty spellbook array will be created
  ** ********************************************************************************************************************/
 
 Spellbook* CreateSpellbook(int numSpellbooks, ifstream& f) {
@@ -23,11 +32,11 @@ Spellbook* CreateSpellbook(int numSpellbooks, ifstream& f) {
 }
 
 /** ********************************************************************************************************************
- ** Function: main
- ** Description: runs program
- ** Parameters: number of args, array of args
- ** Pre-Conditions: none
- ** Post-Conditions: none
+ ** Function: GetAvgSuccess
+ ** Description: runs through all the spells in all the spellbooks and averages them per book
+ ** Parameters: spellbook array, number of spellbooks
+ ** Pre-Conditions: spellbooks must be initalized with values from input file
+ ** Post-Conditions: spellbooks will have avg success rate values
  ** ********************************************************************************************************************/
 
 void GetAvgSuccess(Spellbook* spellbook, int numSpellbooks) {
@@ -43,11 +52,11 @@ void GetAvgSuccess(Spellbook* spellbook, int numSpellbooks) {
 }
 
 /** ********************************************************************************************************************
- ** Function: main
- ** Description: runs program
- ** Parameters: number of args, array of args
- ** Pre-Conditions: none
- ** Post-Conditions: none
+ ** Function: GetSpellbookData
+ ** Description: feeds spellbook array data from input file
+ ** Parameters: spellbook array, file
+ ** Pre-Conditions: spellbook array must be declared and initialized
+ ** Post-Conditions: spellbook array will be populated with given data
  ** ********************************************************************************************************************/
 
 void GetSpellbookData(Spellbook* spellbook, ifstream& f) {
@@ -59,52 +68,80 @@ void GetSpellbookData(Spellbook* spellbook, ifstream& f) {
 }
 
 /** ********************************************************************************************************************
- ** Function: main
- ** Description: runs program
- ** Parameters: number of args, array of args
- ** Pre-Conditions: none
- ** Post-Conditions: none
+ ** Function: DisplaySuccess
+ ** Description: displays spellbook title and avg success stat to either screen or given file 
+ ** Parameters: whether to screen or file, spellbook array, number of spellbooks, file name for outputting
+ ** Pre-Conditions: spellbook array must be initialized and populated
+ ** Post-Conditions: spellbook avg success will have been displayed in some way
  ** ********************************************************************************************************************/
 
-void Display(bool toScreen, Spellbook* spellbookArr, int numSpellbooks) {
+void DisplaySuccess(bool toScreen, Spellbook* spellbookArr, int numSpellbooks, string outFileName) {
     if (toScreen) {
         for (int i = 0; i < numSpellbooks; i++) {
-            cout << "Title: " << spellbookArr[i].title << endl;
-            cout << "Author: " << spellbookArr[i].author << endl;
-            cout << "Average Success Rate: " << spellbookArr[i].avgSuccess << endl;
-            cout << "Number of Pages: " << spellbookArr[i].numPages << endl;
-            
-            for (int j = 0; j < spellbookArr[i].numSpells; j++) {
-                cout << "\t Spell Name: " << spellbookArr[i].sArr[j].name << endl;
-                cout << "\t Spell Effect: " << spellbookArr[i].sArr[j].effect << endl;
-                cout << "\t Spell Accuracy: " << spellbookArr[i].sArr[j].successRate << endl << endl;
-            }
+            cout << spellbookArr[i].title << " " << spellbookArr[i].avgSuccess << endl;
         }
+    } else {
+        ofstream outfile(outFileName.c_str(), ios::app);
+        for (int i = 0; i < numSpellbooks; i++) {
+            outfile << spellbookArr[i].title << " " << spellbookArr[i].avgSuccess << endl;
+        }
+        outfile << endl << endl;
+        outfile.close(); 
     }
 }
 
 /** ********************************************************************************************************************
- ** Function: main
- ** Description: runs program
- ** Parameters: number of args, array of args
- ** Pre-Conditions: none
- ** Post-Conditions: none
+ ** Function: DisplayPages
+ ** Description: displays spellbook title and number of pages to either screen or given file 
+ ** Parameters: whether to screen or file, spellbook array, number of spellbooks, file name for outputting
+ ** Pre-Conditions: spellbook array must be initialized and populated
+ ** Post-Conditions: spellbook pages will have been displayed in some way
  ** ********************************************************************************************************************/
 
-void Display(bool toScreen, Spell* spells, int numSpells) {
+void DisplayPages(bool toScreen, Spellbook* spellbookArr, int numSpellbooks, string outFileName) {
+    if (toScreen) {
+        for (int i = 0; i < numSpellbooks; i++) {
+            cout << spellbookArr[i].title << " " << spellbookArr[i].numPages << endl;
+        }
+    } else {
+        ofstream outfile(outFileName.c_str(), ios::app);
+        for (int i = 0; i < numSpellbooks; i++) {
+            outfile << spellbookArr[i].title << " " << spellbookArr[i].numPages << endl;
+        }
+        outfile << endl << endl;
+        outfile.close(); 
+    }
+}
+
+/** ********************************************************************************************************************
+ ** Function: DisplaySpells
+ ** Description: displays spells and their effects to either screen or given output file
+ ** Parameters: whether to screen or file, spell array, number of spells, file name for outputting
+ ** Pre-Conditions: spellbook array must be initialized and populated
+ ** Post-Conditions: spells will have been displayed in some way
+ ** ********************************************************************************************************************/
+
+void DisplaySpells(bool toScreen, Spell* spells, int numSpells, string outFileName) {
     if (toScreen) {
         for (int i = 0; i < numSpells; i++) {
             cout << spells[i].name << " " << spells[i].effect << " " << spells[i].successRate << endl;
         }
+    } else {
+        ofstream outfile(outFileName.c_str(), ios::app);
+        for (int i = 0; i < numSpells; i++) {
+            outfile << spells[i].name << " " << spells[i].effect << " " << spells[i].successRate << endl;
+        }
+        outfile << endl << endl;
+        outfile.close();
     }
 }
 
 /** ********************************************************************************************************************
- ** Function: main
- ** Description: runs program
- ** Parameters: number of args, array of args
- ** Pre-Conditions: none
- ** Post-Conditions: none
+ ** Function: SearchForEffect
+ ** Description: compares spell effect to given effect and puts it into spell array if that is true
+ ** Parameters: spell array, spell to compare, what iteration we're on, the effect
+ ** Pre-Conditions: spell array must be initialized
+ ** Post-Conditions: spell array will be slightly more populated
  ** ********************************************************************************************************************/
 
 void SearchForEffect(Spell* spellArr, Spell spell, int& i, string effect) {
@@ -115,11 +152,11 @@ void SearchForEffect(Spell* spellArr, Spell spell, int& i, string effect) {
 }
 
 /** ********************************************************************************************************************
- ** Function: main
- ** Description: runs program
- ** Parameters: number of args, array of args
- ** Pre-Conditions: none
- ** Post-Conditions: none
+ ** Function: SortByPages
+ ** Description: sorts the spellbook array but number of pages
+ ** Parameters: spellbook array, number of spellbooks
+ ** Pre-Conditions: spellbook array must be populated
+ ** Post-Conditions: spellbook array will be sorted by number of pages
  ** ********************************************************************************************************************/
 
 void SortByPages(Spellbook* spellbookArr, int numSpellbooks) {
@@ -135,11 +172,11 @@ void SortByPages(Spellbook* spellbookArr, int numSpellbooks) {
 }
 
 /** ********************************************************************************************************************
- ** Function: main
- ** Description: runs program
- ** Parameters: number of args, array of args
- ** Pre-Conditions: none
- ** Post-Conditions: none
+ ** Function: SortBySuccess
+ ** Description: sorts the spellbook array but average success
+ ** Parameters: spellbook array, number of spellbooks
+ ** Pre-Conditions: spellbook array must be populated
+ ** Post-Conditions: spellbook array will be sorted by average success
  ** ********************************************************************************************************************/
 
 void SortBySuccess(Spellbook* spellbookArr, int numSpellbooks) {
@@ -155,11 +192,11 @@ void SortBySuccess(Spellbook* spellbookArr, int numSpellbooks) {
 }
 
 /** ********************************************************************************************************************
- ** Function: main
- ** Description: runs program
- ** Parameters: number of args, array of args
- ** Pre-Conditions: none
- ** Post-Conditions: none
+ ** Function: SortByEffect
+ ** Description: sorts the spell array but effect
+ ** Parameters: spellbook array, spell array, number of spellbooks
+ ** Pre-Conditions: spellbook array must be populated and spell array must be initialized
+ ** Post-Conditions: spell array will be populated with spells grouped by effect
  ** ********************************************************************************************************************/
 
 void SortByEffect(Spellbook* spellbookArr, Spell* spellArr, int numSpellbooks) {
@@ -191,20 +228,54 @@ void SortByEffect(Spellbook* spellbookArr, Spell* spellArr, int numSpellbooks) {
 }
 
 /** ********************************************************************************************************************
- ** Function: main
- ** Description: runs program
- ** Parameters: number of args, array of args
+ ** Function: GetDisplayMethod
+ ** Description: prompts user for which type of display method they'd like to use
+ ** Parameters: reference to the outfile's name
  ** Pre-Conditions: none
- ** Post-Conditions: none
+ ** Post-Conditions: program knows whether user wants to print to screen or text file and the name of that text file
+ ** ********************************************************************************************************************/
+
+bool GetDisplayMethod(string& outfileName) {
+    cout << "Would you like to <1> Print to screen or <2> Print to text file? - ";
+
+    int print;
+    cin >> print;
+
+    while (cin.fail() || (print != 1 && print != 2)) {
+        cout << endl << "That wasn't a valid option, please try again - ";
+        cin >> print;
+    }
+
+    if (print == 1) {
+        outfileName = "******";
+        return true;
+    } else if (print == 2) {
+        cout << "What is the name of the file you would like to print to? - ";
+        cin.ignore();
+        getline(cin, outfileName);
+        return false;
+    }
+}
+
+/** ********************************************************************************************************************
+ ** Function: SortByMethod
+ ** Description: begins process of sorting by given method 
+ ** Parameters: method to sort by (can be either numPages, avgSuccess, or effect), spellbook array, and number of spell-
+                -books
+ ** Pre-Conditions: spellbook array must be populated and user must have been prompted for sort method
+ ** Post-Conditions: spellbook array will be sorted by either number of pages or average success or spells will have been
+                     grouped by effect
  ** ********************************************************************************************************************/
 
 void SortByMethod(string method, Spellbook* spellbookArr, int numSpellbooks) {
+    string outfileName;
+    bool print = GetDisplayMethod(outfileName);
     if (method.compare("numPages") == 0) {
         SortByPages(spellbookArr, numSpellbooks);
-        Display(true, spellbookArr, numSpellbooks);
+        DisplayPages(print, spellbookArr, numSpellbooks, outfileName);
     } else if (method.compare("avgSuccess") == 0) {
         SortBySuccess(spellbookArr, numSpellbooks);
-        Display(true, spellbookArr, numSpellbooks);
+        DisplaySuccess(print, spellbookArr, numSpellbooks, outfileName);
     } else if (method.compare("effect") == 0) {
 
         int numSpells = 0;
@@ -213,21 +284,21 @@ void SortByMethod(string method, Spellbook* spellbookArr, int numSpellbooks) {
             numSpells += spellbookArr[i].numSpells;
         }
 
-        Spell* spellArr = new Spell[numSpells];
+        Spell* spellArr = CreateSpells(numSpells);
 
         SortByEffect(spellbookArr, spellArr, numSpellbooks);
-        Display(true, spellArr, numSpells);
+        DisplaySpells(print, spellArr, numSpells, outfileName);
 
         delete [] spellArr;
     }
 }
 
 /** ********************************************************************************************************************
- ** Function: main
- ** Description: runs program
- ** Parameters: number of args, array of args
+ ** Function: CreateSpells
+ ** Description: initializes spell array of given length
+ ** Parameters: number of spells
  ** Pre-Conditions: none
- ** Post-Conditions: none
+ ** Post-Conditions: spell array will have been initialized
  ** ********************************************************************************************************************/
 
 Spell* CreateSpells(int numSpells) {
@@ -236,25 +307,25 @@ Spell* CreateSpells(int numSpells) {
 }
 
 /** ********************************************************************************************************************
- ** Function: main
- ** Description: runs program
- ** Parameters: number of args, array of args
- ** Pre-Conditions: none
- ** Post-Conditions: none
+ ** Function: GetSpellData
+ ** Description: populates spell array with input from file
+ ** Parameters: spell array, iteration, reference to input file
+ ** Pre-Conditions: spell array must have been initialized using CreateSpells()
+ ** Post-Conditions: spell array will be populated with spells
  ** ********************************************************************************************************************/
 
-void GetSpellData(Spell* spell, int something, ifstream& f) {
-    f >> spell->name;
-    f >> spell->successRate;
-    f >> spell->effect;
+void GetSpellData(Spell* spell, int i, ifstream& f) {
+    f >> spell[i].name;
+    f >> spell[i].successRate;
+    f >> spell[i].effect;
 }
 
 /** ********************************************************************************************************************
- ** Function: main
- ** Description: runs program
- ** Parameters: number of args, array of args
- ** Pre-Conditions: none
- ** Post-Conditions: none
+ ** Function: DeleteSpellbookData
+ ** Description: deletes all the spell arrays followed by the spellbook array
+ ** Parameters: spellbook array, number of spellbooks
+ ** Pre-Conditions: spellbook array and respective spell arrays must've been initialized
+ ** Post-Conditions: spellbook array and respective spell arrays will have been deleted
  ** ********************************************************************************************************************/
 
 void DeleteSpellbookData(Spellbook* spellbookArr, int numSpellbooks) {
