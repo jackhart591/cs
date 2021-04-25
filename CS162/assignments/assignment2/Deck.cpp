@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Deck.h"
+#include "Deck.hpp"
 
 Deck::Deck() {
     this->deck = new Card[52];

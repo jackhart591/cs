@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Card.h"
+#include "Card.hpp"
 
 Card::Card() {
 	rank = 13;

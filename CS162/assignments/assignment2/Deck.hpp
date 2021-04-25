@@ -1,5 +1,5 @@
 #pragma once
-#include "Card.h"
+#include "Card.hpp"
 
 class Deck {
     private:
