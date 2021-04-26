@@ -9,5 +9,8 @@ class Player {
     std::string GetName();
     void SetName(std::string);
     Hand& GetHand();
+    Card PlayerTurn(Card, Deck*);
+    Card CompTurn(Card, Deck*);
+    bool ValidOption(Card);
 
 };

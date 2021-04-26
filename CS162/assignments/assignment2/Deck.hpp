@@ -19,4 +19,5 @@ class Deck {
 		Card DrawCard();
 		void ReturnCard(Card);
 		void Display() const;
+        int GetNumCards() const;
 };

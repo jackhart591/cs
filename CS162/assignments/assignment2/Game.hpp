@@ -11,4 +11,8 @@ class Game {
     void PrintHands();
     Deck GetCards();
     void ShuffleDeck();
+    Card PlayerTurn(Card);
+    Card CompTurn(Card);
+    Card DrawFirstCard();
+    int CheckWin(int);
 };

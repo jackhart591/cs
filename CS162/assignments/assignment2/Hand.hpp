@@ -14,5 +14,7 @@ class Hand {
     int GetNumCards() const;
     void PrintHand() const;
     void InitCards(int, Deck*);
+    void PlayCard(Card);
+    Card* GetCardArray();
   
 };

@@ -58,17 +58,24 @@ void Deck::Shuffle() {
 
 Card Deck::DrawCard() {
     this->numCards--;
-    Card* temp = new Card[this->numCards];
-    Card draw = this->deck[0];
+    if (this->numCards > 0) {
+        Card* temp = new Card[this->numCards];
+        Card draw = this->deck[0];
 
-    for (int i = (this->numCards - 1); i >= 0; i--) { // starts at top cards of both decks and iterates down until it hits bottom
-        temp[i] = this->deck[i+1];
-    } 
+        for (int i = (this->numCards - 1); i >= 0; i--) { // starts at top cards of both decks and iterates down until it hits bottom
+            temp[i] = this->deck[i+1];
+        } 
 
-    delete [] this->deck;
-    this->deck = temp;
+        delete [] this->deck;
+        this->deck = temp;
 
-    return draw; // return the card we just removed
+        return draw; // return the card we just removed
+    } else {
+        Card draw;
+        draw.SetSuit(5);
+        draw.SetRank(14);
+        return draw;
+    }
 }
 
 void Deck::ReturnCard(Card card) {
@@ -91,6 +98,10 @@ void Deck::Display() const {
     for (int i = 0; i < this->numCards; i++) {
         std::cout << this->deck[i].GetRankString() << " of " << this->deck[i].GetSuitString() << std::endl;
     }
+}
+
+int Deck::GetNumCards() const {
+    return this->numCards;
 }
 
 Deck::~Deck() {
