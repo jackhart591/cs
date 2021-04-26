@@ -2,14 +2,48 @@
 #include "Hand.hpp"
 #include "Deck.hpp"
 
+/*********************************************************************
+** Program Filename: Hand.cpp
+** Author: Jackson Hart
+** Date: 4/25/2021
+** Description: Implementation of Hand Class
+** Input: none
+** Output: none
+*********************************************************************/
+
+/*********************************************************************
+** Function: Hand Constructor
+** Description: initializes hand values
+** Parameters: none
+** Pre-Conditions: none
+** Post-Conditions: hand instance will have been initialized
+*********************************************************************/ 
+
 Hand::Hand() {
     this->numCards = 7;
     this->cards = new Card[this->numCards];
 }
 
+/*********************************************************************
+** Function: Hand Deconstructor
+** Description: deletes cards array
+** Parameters: none
+** Pre-Conditions: instance of hand must be initialized
+** Post-Conditions: cards will be deleted
+*********************************************************************/ 
+
 Hand::~Hand() {
     delete [] this->cards;
 }
+
+/*********************************************************************
+** Function: InitCards
+** Description: initializes cards by drawing a number of cards
+** Parameters: number of cards to draw
+** Pre-Conditions: none
+** Post-Conditions: hand instance's card array will now be numCards
+**                  long and contain new cards
+*********************************************************************/ 
 
 void Hand::InitCards(int numCards, Deck* deck) {
     //resize array
@@ -27,6 +61,15 @@ void Hand::InitCards(int numCards, Deck* deck) {
         this->cards[i] = deck->DrawCard();
     }
 }
+
+/*********************************************************************
+** Function: DrawCards
+** Description: draws a certain amount of cards and adds them to end
+**              of card array
+** Parameters: number of cards to draw and deck pointer
+** Pre-Conditions: cards must have been initialized
+** Post-Conditions: hand instance will now contain new cardsw
+*********************************************************************/ 
 
 void Hand::DrawCards(int numCards, Deck* deck) {
     int startingPoint = this->numCards;
@@ -51,6 +94,14 @@ void Hand::DrawCards(int numCards, Deck* deck) {
     }
 }
 
+/*********************************************************************
+** Function: PlayCard
+** Description: resizes array and discards card played
+** Parameters: card to play
+** Pre-Conditions: instance of hand must have been initialized
+** Post-Conditions: specified card will be discarded
+*********************************************************************/ 
+
 void Hand::PlayCard(Card play) {
     //resizes array to minus one
     this->numCards--;
@@ -68,9 +119,25 @@ void Hand::PlayCard(Card play) {
     this->cards = temp;
 }
 
+/*********************************************************************
+** Function: GetNumCards
+** Description: gets number of card in hand
+** Parameters: none
+** Pre-Conditions: none
+** Post-Conditions: none
+*********************************************************************/ 
+
 int Hand::GetNumCards() const {
     return this->numCards;
 }
+
+/*********************************************************************
+** Function: PrintHand
+** Description: prints instance of hand
+** Parameters: none
+** Pre-Conditions: none
+** Post-Conditions: none
+*********************************************************************/ 
 
 void Hand::PrintHand() const {
     std::cout << "======= Hand =======" << std::endl;
@@ -79,6 +146,14 @@ void Hand::PrintHand() const {
     }
     std::cout << "====================" << std::endl;
 }
+
+/*********************************************************************
+** Function: GetCardArray
+** Description: returns instance of card array
+** Parameters: none
+** Pre-Conditions: none
+** Post-Conditions: none
+*********************************************************************/ 
 
 Card* Hand::GetCardArray() {
     return this->cards;

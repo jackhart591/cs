@@ -3,6 +3,23 @@
 
 using namespace std;
 
+/*********************************************************************
+** Program Filename: Crazy_Eights.cpp
+** Author: Jackson Hart
+** Date: 4/25/2021
+** Description: Driver file for Crazy Eights game
+** Input: what you would like to play
+** Output: who won
+*********************************************************************/
+
+/*********************************************************************
+** Function: Main
+** Description: runs the program
+** Parameters: none
+** Pre-Conditions: none
+** Post-Conditions: none
+*********************************************************************/
+
 int main() {
     
     bool playAgain;

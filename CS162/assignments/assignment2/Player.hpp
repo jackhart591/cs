@@ -12,5 +12,7 @@ class Player {
     Card PlayerTurn(Card, Deck*);
     Card CompTurn(Card, Deck*);
     bool ValidOption(Card);
+    void WildCard(int);
+    int DeterminePlay(Card, int);
 
 };
