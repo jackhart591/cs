@@ -1,22 +1,24 @@
+#pragma once
+
 class Animal {
     private:
-        int age; // in months
-        int cost;
-        int numBabies;
-        int foodMult;
         int revenue;
         int lastFoodCost;
 
     protected:
-        Animal();
-        void AdvanceAge();
+        int age; // in months
+        int cost;
+        int numBabies;
+        int foodMult;
+
         int GetBaseFoodCost(int);
 
     public:
+        Animal();
+        Animal& operator=(const Animal&);
         int Sickness();
-        int GetAge();
-        virtual void GetRevenue();
+        int GetAge() const;
+        virtual int GetRevenue();
         char GetAgeStatus();
-
-
+        void AdvanceAge();
 };

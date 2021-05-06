@@ -7,9 +7,15 @@ Animal::Animal() {
     srand(time(NULL));
 }
 
-void Animal::AdvanceAge() {
-    this->age++;
+Animal& Animal::operator=(const Animal& other) {
+    this->age = other.age;
+    this->cost = other.cost;
+    this->numBabies = other.numBabies;
+    this->foodMult = other.foodMult;
+    this->lastFoodCost = other.lastFoodCost;
 }
+
+void Animal::AdvanceAge() { this->age++; }
 
 int Animal::GetBaseFoodCost(int foodMult) {
     if (lastFoodCost == 0) {
@@ -29,12 +35,12 @@ int Animal::Sickness() {
 
     if (this->age < 5) {
         cost *= 2;
-    }    
+    }
     
     return cost/2; 
 }
 
-virtual int Animal::GetRevenue() {
+int Animal::GetRevenue() {
 
     int revenue = this->cost;
 
@@ -55,4 +61,4 @@ char Animal::GetAgeStatus() {
     }
 }
 
-int Animal::GetAge() { return this->age; }
+int Animal::GetAge() const { return this->age; }
