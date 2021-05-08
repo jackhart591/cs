@@ -12,6 +12,10 @@ class Zoo {
         int numTigers, numBears, numLemurs;
         int foodQuality; // 1 for premium, 2 for normal, 4 for cheap
 
+        bool CanHaveBabies();
+        int Sickness();
+        void Birth();
+
     public:
         Zoo();
         ~Zoo();
