@@ -4,4 +4,5 @@
 class BlackBear : public Animal {
     public:
         BlackBear();
+        int GetFoodCost();
 };

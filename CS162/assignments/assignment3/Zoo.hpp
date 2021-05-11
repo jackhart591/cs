@@ -12,14 +12,27 @@ class Zoo {
         int numTigers, numBears, numLemurs;
         int foodQuality; // 1 for premium, 2 for normal, 4 for cheap
 
-        bool CanHaveBabies();
-        int Sickness();
-        void Birth();
+        bool CanHaveBabies(int);
+        int Sickness(int&, int&);
+        bool Birth();
+        void AdvanceAnimalAges();
+        void ChooseEvent();
+        void Death(int, int);
+        int GetRevenue();
+        int GetFoodCost();
+
+        void ResizeLemurForBirth(int);
+        void ResizeTigerForBirth(int);
+        void ResizeBearForBirth(int);
+        void ResizeLemurForDeath(int);
+        void ResizeTigerForDeath(int);
+        void ResizeBearForDeath(int);
 
     public:
         Zoo();
         ~Zoo();
         void PassTime();
-        void AdvanceAnimalAges();
-        void ChooseEvent();
+        void SetFoodQuality(int);
+        void BuyAnimal();
+        bool GameOver();
 };

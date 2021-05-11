@@ -21,4 +21,6 @@ class Animal {
         virtual int GetRevenue();
         char GetAgeStatus();
         void AdvanceAge();
+        void SetAge(int);
+        int GetCost() const;
 };

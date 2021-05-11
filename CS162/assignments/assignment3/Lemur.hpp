@@ -5,4 +5,5 @@ class Lemur : public Animal {
     public:
         Lemur();
         virtual int GetRevenue() override;
+        int GetFoodCost();
 };
