@@ -14,4 +14,6 @@ int main (int argc, char* argv[]) {
     Cave caveSystem = Cave(dimension);
 
     caveSystem.DrawCave();
+
+    return 0;
 }

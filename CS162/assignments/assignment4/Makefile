@@ -2,7 +2,7 @@ CC = g++ -std=c++11 -Wall -g
 exe_file = Hunt_The_Whumpus.out
 
 $(exe_file): Event.o Pit.o Super_Bat.o Room.o Cave.o Hunt_The_Whumpus.o
-	$(CC) Event.o Pit.o Room.o Cave.o Hunt_The_Whumpus.o -o $(exe_file)
+	$(CC) Event.o Pit.o Super_Bat.o Room.o Cave.o Hunt_The_Whumpus.o -o $(exe_file)
 
 Event.o: Event.cpp
 	$(CC) -c Event.cpp

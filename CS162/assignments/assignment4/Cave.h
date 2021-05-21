@@ -5,7 +5,7 @@
 
 class Cave {
 private:
-    //std::vector< std::vector<Room> > roomArr;
+    std::vector< std::vector<Room> > roomArr;
     int dimension;
 
 public:

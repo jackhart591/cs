@@ -6,5 +6,6 @@ protected:
     virtual void EventTrigger() override;
 
 public:
+    Pit();
     virtual void Percept() override;
 };
