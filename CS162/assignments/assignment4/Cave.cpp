@@ -10,6 +10,8 @@ Cave::Cave(int dimension) {
 
     this->roomArr.resize(dimension, roomVec);
 
+    this->SelectRoomTypes();
+
     std::srand(time(NULL));
 }
 
@@ -20,19 +22,19 @@ void Cave::SelectRoomTypes() {
     int whumpus[2];
 
     for (int i = 0; i < 2; i++) {
-        //do {
+        do {
             batRooms[i][0] = std::rand() % this->dimension;
             batRooms[i][1] = std::rand() % this->dimension;
-        //} while (false /*this->roomArr[batRooms[i][0]][batRooms[i][1]].GetEvent().isPlayerStart()*/); // doesn't work!
+        } while (this->roomArr[batRooms[i][0]][batRooms[i][1]].GetEvent()->isPlayerStart());
 
         this->roomArr[batRooms[i][0]][batRooms[i][1]] = Room('B');
     }
 
     for (int i = 0; i < 2; i++) {
-        //do {
+        do {
             pitRooms[i][0] = std::rand() % this->dimension;
             pitRooms[i][1] = std::rand() % this->dimension;
-        //} while (false/*this->roomArr[pitRooms[i][0]][pitRooms[i][1]].GetEvent().isPlayerStart()*/); // doesn't work!!
+        } while (this->roomArr[pitRooms[i][0]][pitRooms[i][1]].GetEvent()->isPlayerStart());
 
         this->roomArr[pitRooms[i][0]][pitRooms[i][1]] = Room('P');
     }

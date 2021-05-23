@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string.h>
 #include "Cave.h"
 
 using namespace std;
@@ -10,10 +11,11 @@ int main (int argc, char* argv[]) {
     }
 
     int dimension = atoi(const_cast<char*>(argv[1]));
+    bool debug = strcmp(argv[2], "true") ? false : true;
 
     Cave caveSystem = Cave(dimension);
 
-    caveSystem.DrawCave(true);
+    caveSystem.DrawCave(debug);
 
     return 0;
 }
