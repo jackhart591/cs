@@ -4,6 +4,15 @@
 
 using namespace std;
 
+void ParseString(string str, Cave& cave) {
+
+    cave.MovePlayer(str[0]);
+
+    if (str[2] != NULL) {
+        cave.FireArrow(str[2]);
+    }
+}
+
 int main (int argc, char* argv[]) {
     if (argc != 3) {
         cout << "ERROR: Incorrect number of args" << endl;
@@ -14,8 +23,16 @@ int main (int argc, char* argv[]) {
     bool debug = strcmp(argv[2], "true") ? false : true;
 
     Cave caveSystem = Cave(dimension);
+    bool done;
 
-    caveSystem.DrawCave(debug);
+    do {
+
+        caveSystem.DrawCave(debug);
+        string input;
+        getline(cin, input);
+        ParseString(input, caveSystem);
+
+    } while (!done);
 
     return 0;
 }
