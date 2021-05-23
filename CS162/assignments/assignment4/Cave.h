@@ -6,11 +6,12 @@
 class Cave {
 private:
     std::vector< std::vector<Room> > roomArr;
+    //Room** roomArr;
     int dimension;
+
+    void SelectRoomTypes();
 
 public:
     Cave(int);
-    ~Cave();
-    void SelectRoomTypes();
-    void DrawCave();
+    void DrawCave(bool);
 };

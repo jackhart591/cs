@@ -1,13 +1,11 @@
 #include "Super_Bat.h"
 
-SuperBat::SuperBat() {
-    this->type = Event::EventType::SUPER_BAT;
-}
-
-void SuperBat::Percept() {
+void Super_Bat::Percept() {
 
 }
 
-void SuperBat::EventTrigger() {
+void Super_Bat::EventTrigger() {
 
 }
+
+char Super_Bat::GetType() const { return this->type; }

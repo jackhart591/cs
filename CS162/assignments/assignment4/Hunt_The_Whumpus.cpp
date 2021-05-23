@@ -13,7 +13,7 @@ int main (int argc, char* argv[]) {
 
     Cave caveSystem = Cave(dimension);
 
-    caveSystem.DrawCave();
+    caveSystem.DrawCave(true);
 
     return 0;
 }
