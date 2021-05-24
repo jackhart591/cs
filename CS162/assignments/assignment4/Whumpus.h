@@ -7,6 +7,6 @@ protected:
 
 public:
     Whumpus() : Event('W') {};
-    virtual void Percept() override;
+    virtual std::string Percept() override;
     virtual char GetType() const override;
 };

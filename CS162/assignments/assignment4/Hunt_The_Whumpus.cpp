@@ -6,10 +6,13 @@ using namespace std;
 
 void ParseString(string str, Cave& cave) {
 
-    cave.MovePlayer(str[0]);
+    if (str.length() > 0) {
+        cave.MovePlayer(str[0]);
 
-    if (str[2] != NULL) {
-        cave.FireArrow(str[2]);
+        if (str.length() >= 3) {
+            std::cout << "Firing" << std::endl;
+            cave.FireArrow(str[2]);
+        }
     }
 }
 
@@ -23,7 +26,7 @@ int main (int argc, char* argv[]) {
     bool debug = strcmp(argv[2], "true") ? false : true;
 
     Cave caveSystem = Cave(dimension);
-    bool done;
+    bool done = false;
 
     do {
 
@@ -31,6 +34,7 @@ int main (int argc, char* argv[]) {
         string input;
         getline(cin, input);
         ParseString(input, caveSystem);
+        caveSystem.CheckPercepts();
 
     } while (!done);
 

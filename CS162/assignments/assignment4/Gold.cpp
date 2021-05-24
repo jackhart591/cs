@@ -4,8 +4,6 @@ void Gold::EventTrigger() {
 
 }
 
-void Gold::Percept() {
-
-}
+std::string Gold::Percept() { return "You see a glimmer nearby."; }
 
 char Gold::GetType() const { return this->type; }

@@ -1,8 +1,6 @@
 #include "Super_Bat.h"
 
-void Super_Bat::Percept() {
-
-}
+std::string Super_Bat::Percept() { return "You hear wings flapping."; }
 
 void Super_Bat::EventTrigger() {
 

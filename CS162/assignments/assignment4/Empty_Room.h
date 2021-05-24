@@ -8,7 +8,7 @@ class Empty_Room : public Event {
     public:
         Empty_Room() : Event(' ') {};
         virtual ~Empty_Room();
-        virtual void Percept() override;
+        virtual std::string Percept() override;
         virtual char GetType() const override;
 
 };

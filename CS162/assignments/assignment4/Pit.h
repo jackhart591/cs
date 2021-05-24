@@ -8,6 +8,6 @@ protected:
 public:
     Pit() : Event('P') {};
     virtual ~Pit() {};
-    virtual void Percept() override;
+    virtual std::string Percept() override;
     virtual char GetType() const override;
 };

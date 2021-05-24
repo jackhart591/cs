@@ -1,8 +1,6 @@
 #include "Pit.h"
 
-void Pit::Percept() {
-
-}
+std::string Pit::Percept() { return "You feel a breeze."; }
 
 void Pit::EventTrigger() {
 

@@ -7,6 +7,6 @@ protected:
 
 public:
     Gold() : Event('G') {};
-    virtual void Percept() override;
+    virtual std::string Percept() override;
     virtual char GetType() const override;
 };

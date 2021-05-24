@@ -19,4 +19,5 @@ public:
     void DrawCave(bool);
     void MovePlayer(char);
     void FireArrow(char);
+    void CheckPercepts();
 };

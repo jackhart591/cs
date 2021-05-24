@@ -11,6 +11,6 @@ protected:
 public:
     Super_Bat() : Event('B') {};
     virtual ~Super_Bat() {};
-    virtual void Percept() override;
+    virtual std::string Percept() override;
     virtual char GetType() const override;
 };

@@ -2,9 +2,7 @@
 
 Empty_Room::~Empty_Room() {}
 
-void Empty_Room::Percept() {
-
-}
+std::string Empty_Room::Percept() { return "Uh oh... something went wrong!"; }
 
 void Empty_Room::EventTrigger() {
     
