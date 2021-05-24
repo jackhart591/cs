@@ -10,9 +10,13 @@ private:
     int dimension;
     int playerLocX;
     int playerLocY;
+    int whumpusLocX;
+    int whumpusLocY;
     Player player;
+    bool gameDone;
 
     void SelectRoomTypes();
+    bool WhumpusAwaken();
 
 public:
     Cave(int);
@@ -20,4 +24,5 @@ public:
     void MovePlayer(char);
     void FireArrow(char);
     void CheckPercepts();
+    bool isGameDone() const { return this->gameDone; };
 };

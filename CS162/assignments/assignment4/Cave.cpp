@@ -1,6 +1,23 @@
 #include "Cave.h"
 #include <math.h>
 
+/*********************************************************************
+** Program Filename: Cave.cpp
+** Author: Jackson Hart
+** Date: 5/23/2021
+** Description: Implementation of Cave Class
+** Input: none
+** Output: none
+*********************************************************************/
+
+/*********************************************************************
+** Function: Cave constructor
+** Description: creates cave with n dimensions
+** Parameters: dimension
+** Pre-Conditions: none
+** Post-Conditions: cave will be initialized with dimension
+*********************************************************************/ 
+
 Cave::Cave(int dimension) {
     this->dimension = dimension;
 
@@ -15,8 +32,18 @@ Cave::Cave(int dimension) {
     this->roomArr[this->playerLocX][this->playerLocY].SetHasPlayer(true);
     this->SelectRoomTypes();
 
+    this->gameDone = false;
+
     std::srand(time(NULL));
 }
+
+/*********************************************************************
+** Function: SelectRoomType
+** Description: randomly generates rooms to set as special event rooms
+** Parameters: none
+** Pre-Conditions: cave has been initialized
+** Post-Conditions: cave will have special events
+*********************************************************************/ 
 
 void Cave::SelectRoomTypes() {
     int batRooms[2][2] = {{-1, -1}, {-1, -1}};
@@ -46,6 +73,8 @@ void Cave::SelectRoomTypes() {
     } while (this->roomArr[whumpus[0]][whumpus[1]].HasPlayer() || this->roomArr[whumpus[0]][whumpus[1]].GetType() != ' ');
 
     this->roomArr[whumpus[0]][whumpus[1]] = Room('W');
+    whumpusLocX = whumpus[0];
+    whumpusLocY = whumpus[1];
 
     do {
         gold[0] = std::rand() % this->dimension;
@@ -54,6 +83,14 @@ void Cave::SelectRoomTypes() {
 
     this->roomArr[gold[0]][gold[1]] = Room('G');
 }
+
+/*********************************************************************
+** Function: DrawCave
+** Description: draws the cave
+** Parameters: whether in debug mode
+** Pre-Conditions: cave has been initialized
+** Post-Conditions: none
+*********************************************************************/ 
 
 void Cave::DrawCave(bool debug) {
 
@@ -72,7 +109,7 @@ void Cave::DrawCave(bool debug) {
             } else {
                 if (j % 4 == 0) {
                     std::cout << "|";
-                } else if ((x < 4 && y < 4 && this->roomArr.at(x).at(y).HasPlayer()) && ((i%2 == 0 && i%4 != 0) && (j%2 == 0 && j%4 != 0))) {
+                } else if ((x < this->dimension && y < this->dimension && this->roomArr.at(x).at(y).HasPlayer()) && ((i%2 == 0 && i%4 != 0) && (j%2 == 0 && j%4 != 0))) {
                     std::cout << "*";
                 } else if (debug) {
                     std::cout << this->roomArr.at(x).at(y).GetEvent()->GetType();
@@ -84,6 +121,14 @@ void Cave::DrawCave(bool debug) {
         std::cout << std::endl;
     }
 }
+
+/*********************************************************************
+** Function: MovePlayer
+** Description: moves player based on given direction
+** Parameters: direction
+** Pre-Conditions: cave has been initialized
+** Post-Conditions: player will be moved in direction
+*********************************************************************/ 
 
 void Cave::MovePlayer(char direc) {
     switch (direc) {
@@ -108,22 +153,52 @@ void Cave::MovePlayer(char direc) {
         this->playerLocX++;
         break;
     }
+
+    if (this->playerLocY == this->dimension-1 && this->playerLocX == this->dimension-1 && this-player.HasTreasure()) {
+        std::cout << "Congrats!! You successfully escaped from the lair of the whumpus. Good job!" << std::endl;
+        this->gameDone = true;
+    }
+
+    this->roomArr[this->playerLocY][this->playerLocX].GetEvent()->EventTrigger(player);
+
+    switch(this->roomArr[this->playerLocY][this->playerLocX].GetType()) {
+    case 'B':
+        int ranX;
+        ranX = std::rand() % this->dimension;
+        int ranY;
+        ranY = std::rand() % this->dimension;
+        this->roomArr[ranY][ranX].SetPlayerRoom(this->roomArr[this->playerLocY][this->playerLocX]);
+        this->playerLocY = ranY;
+        this->playerLocX = ranX;
+        break;
+
+    case 'P':
+        this->gameDone = true;
+        break;
+
+    case 'W':
+        this->gameDone = true;
+        break;
+    }
 }
+
+/*********************************************************************
+** Function: FireArrow
+** Description: fires arrow in given direction
+** Parameters: direction
+** Pre-Conditions: cave has been initialized
+** Post-Conditions: none
+*********************************************************************/ 
 
 void Cave::FireArrow(char direc) {
 
     bool dead = false;
 
     if (player.FireArrow()) {
-
-        std::cout << this->playerLocY << " " << this->playerLocX << std::endl;
-
         switch(direc) {
         case 'w':
         case 'W':
-            std::cout << direc << std::endl;
             for (int i = this->playerLocX; i > 0; i--) {
-                std::cout << i << " " << this->playerLocY << std::endl;
                 if (this->roomArr[i][this->playerLocY].GetType() == 'W') {
                     dead = true;
                 }
@@ -131,9 +206,7 @@ void Cave::FireArrow(char direc) {
             break;
         case 'a':
         case 'A':
-            std::cout << direc << std::endl;
             for (int i = this->playerLocY; i > 0; i--) {
-                std::cout << i << " " << this->playerLocY << std::endl;
                 if (this->roomArr[this->playerLocX][i].GetType() == 'W') {
                     dead = true;
                 }
@@ -141,9 +214,7 @@ void Cave::FireArrow(char direc) {
             break;
         case 's':
         case 'S':
-            std::cout << direc << std::endl;
             for (int i = this->playerLocX; i < this->dimension; i++) {
-                std::cout << this->playerLocY << " " << i << std::endl;
                 if (this->roomArr[i][this->playerLocY].GetType() == 'W') {
                     dead = true;
                 }
@@ -151,9 +222,7 @@ void Cave::FireArrow(char direc) {
             break;
         case 'd':
         case 'D':
-            std::cout << direc << std::endl;
             for (int i = this->playerLocY; i < this->dimension; i++) {
-                std::cout << i << " " << this->playerLocY << std::endl;
                 if (this->roomArr[this->playerLocX][i].GetType() == 'W') {
                     dead = true;
                 }
@@ -163,21 +232,56 @@ void Cave::FireArrow(char direc) {
 
         if (dead) {
             std::cout << "Hit!" << std::endl;
-            //whumpus death
+            std::cout << "You killed the whumpus!!" << std::endl;
+            this->gameDone = true;
         } else {
             std::cout << "Clink!" << std::endl;
-            //whumpus awaken
+            if (this->WhumpusAwaken()) {
+                this->roomArr[this->whumpusLocX][this->whumpusLocY] = Room(' ');
+
+                this->whumpusLocX = rand() % this->dimension;
+                this->whumpusLocY = rand() % this->dimension;
+
+                this->roomArr[this->whumpusLocX][this->whumpusLocY] = Room('W');
+            }
         }
     } else {
         std::cout << "Out of arrows!" << std::endl;
     }
 }
 
+/*********************************************************************
+** Function: WhumpusAwaken
+** Description: returns whether the whumpus has awoken
+** Parameters: none
+** Pre-Conditions: none
+** Post-Conditions: none
+*********************************************************************/ 
+
+bool Cave::WhumpusAwaken() {
+    int x;
+    x = std::rand() % 100;
+
+    if (x >= 75) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/*********************************************************************
+** Function: CheckPercepts
+** Description: checks surrounding area to see if there's any percepts
+                to percept
+** Parameters: none
+** Pre-Conditions: none
+** Post-Conditions: none
+*********************************************************************/ 
+
 void Cave::CheckPercepts() {
 
     for (int i = this->playerLocX-1; i <= this->playerLocX+1; i++) {
          if (i < this->dimension && i >= 0 && i != this->playerLocX) {
-            std::cout << i << " " << this->playerLocY << std::endl;
             if(this->roomArr[this->playerLocY][i].GetType() != ' ') {
                 std::cout << this->roomArr[this->playerLocY][i].GetEvent()->Percept() << std::endl;
             }
@@ -186,7 +290,6 @@ void Cave::CheckPercepts() {
 
     for (int i = this->playerLocY-1; i <= this->playerLocY+1; i++) {
          if (i < this->dimension && i >= 0 && i != this->playerLocY) {
-            std::cout << this->playerLocX << " " << i << std::endl;
             if(this->roomArr[i][this->playerLocX].GetType() != ' ') {
                 std::cout << this->roomArr[i][this->playerLocX].GetEvent()->Percept() << std::endl;
             }
