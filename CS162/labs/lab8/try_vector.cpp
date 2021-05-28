@@ -1,6 +1,7 @@
 #include "./vector.hpp"
 #include <vector>
 #include <iostream>
+#include <stdexcept>
 
 //We do not want to include either statement. We wouldn't be able to compare our vector template to the Standard
 //using namespace std;
@@ -8,28 +9,42 @@
 using std::cout;
 using std::endl;
 
-int main (){
-   vector<int> v;   //Our vector class
-   vector<int> v1;
-   std::vector<int> stdv; //Standard vector
+int main ()
+{
+    try
+    {
+        vector<int> v1(23);   //Our vector class
+        vector<int> v2 = v1;
+        vector<int> v3(13);
+        std::vector<int> stdv; //Standard vector
 
-   v1.push_back(1);
-   v1.push_back(2);
+        //Compare operation of our vector to std
+        v1.push_back(23);
+        v1.push_back(24);
+        stdv.push_back(23);
+        v3 = v1;
 
-   cout << v1[0] << " " << v[1] << endl;
+        cout << "Our vector size: " << v1.size() << endl;
+        cout << "Our vector capacity: " << v1.capacity() << endl;
+        cout << "Our copied vector size: " << v2.size() << endl;
+        cout << "Our overloaded vector size: " << v3.size() << endl;
+        cout << "STL vector size: " << stdv.size() << endl;
 
-   v = v1;
-   vector<int> v2 = v1;
+        for(int i = 0; i < v1.size(); i++)
+        {
+            cout << "array element of vector 1: " << i << " " << v1[i] << endl;
+            cout << "array element of vector 3: " << i << " " << v3[i] << endl;
+        }
+        
+        v1.resize(200);
+        cout << "Our vector size: " << v1.capacity() << endl;
+        
+        //cout << v1.at(201) << endl;
+        
+    }catch(int i)
+    {
+        cout << "ACCESSED OUTSIDE AN ARRAY" << endl;
+    }
 
-   //Compare operation of our vector to std
-   v.push_back(23);
-   stdv.push_back(23);
-
-   cout << "Should be 1: " << v[0] << endl;
-   cout << "Should be 2: " << v2[1] << endl << endl;
-
-   cout << "Our vector size: " << v.size() << endl;
-   cout << "STL vector size: " << stdv.size() << endl;
-
-   return 0;
+    return 0;
 }
