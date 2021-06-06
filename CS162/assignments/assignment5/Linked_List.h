@@ -8,17 +8,18 @@ private:
     Node<T>* head;
     Node<T>* foot;
 
+    void SortDescending(int&, Node<T>*);
+
 public:
     Linked_List();
     ~Linked_List();
-    Linked_List& operator=(const Linked_List&);
 
     unsigned int GetLength() { return length; };
     void Print();
-    //void Clear();
+    void Clear();
     unsigned int PushFront(T);
-    //unsigned int PushBack(T);
-    //unsigned int Insert(int, unsigned int);
-    //void SortAscending();
-    //void SortDescending();
+    unsigned int PushBack(T);
+    unsigned int Insert(unsigned int, T);
+    void SortAscending();
+    void SortDescending();
 };
