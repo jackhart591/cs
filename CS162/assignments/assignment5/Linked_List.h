@@ -8,7 +8,8 @@ private:
     Node<T>* head;
     Node<T>* foot;
 
-    void SortDescending(int&, Node<T>*);
+    void SortDescending(unsigned int&, Node<T>*);
+    Node<T>* SortAscending(Node<T>*, unsigned int);
 
 public:
     Linked_List();
@@ -22,4 +23,5 @@ public:
     unsigned int Insert(unsigned int, T);
     void SortAscending();
     void SortDescending();
+    int FindNumPrimes();
 };
