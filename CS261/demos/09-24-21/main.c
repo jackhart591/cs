@@ -51,8 +51,6 @@ int main () {
 
     free(bulba); // works for everything
 
-    //pflukeh@oregonstate.edu
-
     return 0;
 }
 
