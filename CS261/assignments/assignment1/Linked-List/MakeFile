@@ -1,0 +1,11 @@
+CC = gcc --std=c99 -g
+exe_file = linked_list.out
+
+$(exe_file): linked_list.o
+	$(CC) linked_list -o $(exe_file)
+
+linked_list.o: list.c
+	$(CC) -c list.c
+
+clean:
+	rm -rf *.o $(exe_file)
