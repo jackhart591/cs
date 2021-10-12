@@ -1,7 +1,9 @@
 #ifndef __LIST_H
 #define __LIST_H
 
-struct list;
+struct list {
+  struct link* head;
+};
 
 struct list* list_create();
 void list_free(struct list* list);

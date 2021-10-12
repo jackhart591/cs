@@ -1,76 +1,46 @@
-
+#include <stdlib.h>
+#include <assert.h>
+#include "list.h"
  /*
  * Name: Jackson Hart
  * Email: hartjack@oregonstate.edu
  */
 
-#include <stdlib.h>
-#include <assert.h>
-#include "list.h"
-
-/*
- * This structure is used to represent a single link in a singly-linked list.
- * It is not defined in ll.h, so it is not visible to the user.  You should not
- * modify this structure.
- */
-struct link
-{
+struct link {
   void* val;
   struct link* next;
 };
 
-/*
- * This structure is used to represent an entire singly-linked list.  Note that
- * we're keeping track of just the head of the list here, for simplicity.
- */
-struct list
-{
+
+struct list {
   struct link* head;
 };
 
-/*
- * This function should allocate and initialize a new, empty linked list and
- * return a pointer to it.
- */
-struct list* list_create()
-{
 
+struct list* list_create() {
+  struct list* temp = malloc(sizeof(struct list));
 }
 
-/*
- * This function should free the memory associated with a linked list.  In
- * particular, while this function should up all memory used in the list
- * itself (i.e. the space allocated for all of the individual links), it should
- * not free any memory allocated to the pointer values stored in the list.  In
- * other words, this function does not need to free the `val` fields of the
- * list's links.
- *
- * Params:
- *   list - the linked list to be destroyed.  May not be NULL.
- */
+void list_free(struct list* list) {
+  struct link* it = list->head;
+  while (it->next != NULL) {
+    struct link* next = it->next;
+    free(it);
+    it = next;
+  }
 
-void list_free(struct list* list)
-{
-
+  free(list);
 }
 
-/*
- * This function should insert a new value into a given linked list.
- * Importantly, this function will need to allocate a new `struct link` in
- * which to store the new value and add that link at the head of the list.  For
- * simplicity, this function should only insert elements at the *beginning* of
- * the list.  In other words, it should always insert the new element as the
- * head of the list.
- *
- * Params:
- *   list - the linked list into which to insert an element.  May not be NULL.
- *   val - the value to be inserted.  Note that this parameter has type void*,
- *     which means that a pointer of any type can be passed.
- */
+void list_insert(struct list* list, void* val) {
+  struct link* new_link = malloc(sizeof(struct link));
+  new_link->val = val;
 
-void list_insert(struct list* list, void* val)
-{
-
+  if (list->head != NULL) {
+    struct link* temp = list->head;
+    list->head = new_link;
+    new_link->next = temp;
+  }
 }
 
 /*
