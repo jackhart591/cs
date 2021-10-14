@@ -3,22 +3,33 @@
 #include "dynarray.h"
 #include "list.h"
 
+int cmp(void* a, void* b) {
+    if(a == b) {
+        return 0;
+    } else { return 1; }
+}
+
 
 int main() {
 
-    struct dynarray* mamamia = dynarray_create();
+    struct list* listboi = list_create();
 
-    dynarray_insert(mamamia, (int*)69);
-    dynarray_insert(mamamia, (int*)70);
-    dynarray_insert(mamamia, (int*)71);
-    printf("Capacity: %d\n", mamamia->capacity);
-    printf("Size: %d\n", dynarray_size(mamamia));
+    list_insert(listboi, (int*)69);
+    list_insert(listboi, (int*)70);
+    list_insert(listboi, (int*)71);
 
-    dynarray_remove(mamamia, 1);
-    printf("Element 0: %d\n", dynarray_get(mamamia, 0));
-    printf("Element 1: %d\n", dynarray_get(mamamia, 1));
+    list_remove(listboi, (int*)69, cmp);
+    list_print(listboi);
 
-    dynarray_free(mamamia);
+    list_insert(listboi, (int*)72);
+    list_insert(listboi, (int*)55);
+    list_insert(listboi, (int*)69);
+
+    list_print(listboi);
+
+    printf("Found 55 at position %d\n", list_position(listboi, (int*)55, cmp));
+
+    list_free(listboi);
 
     return 0;
 }
