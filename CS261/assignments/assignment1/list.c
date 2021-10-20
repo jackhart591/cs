@@ -86,17 +86,16 @@ int list_position(struct list* list, void* val, int (*cmp)(void* a, void* b)) {
   return foundNum;
 }
 
-/*
- * This function should reverse the order of the links in a given linked list.
- * The reversal should be done *in place*, i.e. within the existing list, and
- * new memory should not be allocated to accomplish the reversal.  You should
- * be able to accomplish the reversal with a single pass through the list.
- *
- * Params:
- *   list - the linked list to be reversed.  May not be NULL.  When this
- *     function returns this should contain the reversed list.
- */
-void list_reverse(struct list* list)
-{
+void list_reverse(struct list* list) {
+  struct link* it = list->head;
+  struct link* before = NULL;
 
+  for (int i = 0; it != NULL; i++) {
+    struct link* next = it->next;
+    it->next = before;
+    before = it;
+    it = next;
+  }
+
+  list->head = before;
 }

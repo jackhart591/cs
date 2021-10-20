@@ -1,5 +1,5 @@
 CC = gcc --std=c99 -g
-exe_file = dynarray.out
+exe_file = list-array.out
 
 $(exe_file): dynarray.o list.o driver.o
 	$(CC) dynarray.o list.o driver.o -o $(exe_file)
