@@ -24,29 +24,32 @@ void queue_free(struct queue* queue) {
 }
 
 int queue_isempty(struct queue* queue) {
+  //assert(queue);
   if(dynarray_size(queue->array) == 0) {
     return 1;
   } else { return 0; }
 }
 
-void queue_enqueue(struct queue* queue, void* val) { // circular enqueueing dumbass
-  dynarray_insert(queue->array, val);
+void queue_enqueue(struct queue* queue, void* val) {
+  if(queue->array->size == queue->array->capacity) {
+    dynarray_resize(queue->array, 2 * queue->array->capacity);
+  }
+
+  queue->array->data[dynarray_logical_index(queue->array, queue->array->size)] = val;
+  queue->array->size++;
 }
 
 void* queue_front(struct queue* queue) {
-  return dynarray_get(queue->array, 0);
+  return dynarray_get(queue->array, queue->array->start);
 }
 
-/*
- * This function should dequeue a value from a given queue and return the
- * dequeued value.  This function must have O(1) average runtime complexity.
- *
- * Params:
- *   queue - the queue from which a value is to be dequeued.  May not be NULL.
- *
- * Return:
- *   This function should return the value that was dequeued.
- */
 void* queue_dequeue(struct queue* queue) {
+  void* value = dynarray_get(queue->array, queue->array->start);
+  queue->array->size--;
 
+  if(queue->array->size > 0 && queue->array->size != 1) {
+    queue->array->start = dynarray_logical_index(queue->array, 1);
+  }
+
+  return value;
 }
