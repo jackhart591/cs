@@ -1,0 +1,38 @@
+$ ./test_bst
+== Creating BST...
+
+== Inserting 13 values into BST...
+
+== Checking correct value from bst_size(): 13 (expected 13)
+
+== Looking up values we know should be in the BST...
+  -- bst_get( 64):  64 (expected  64)
+  -- bst_get( 32):  32 (expected  32)
+  -- bst_get( 96):  96 (expected  96)
+  -- bst_get( 16):  16 (expected  16)
+  -- bst_get( 48):  48 (expected  48)
+  -- bst_get( 80):  80 (expected  80)
+  -- bst_get(112): 112 (expected 112)
+  -- bst_get(  8):   8 (expected   8)
+  -- bst_get( 24):  24 (expected  24)
+  -- bst_get( 56):  56 (expected  56)
+  -- bst_get( 88):  88 (expected  88)
+  -- bst_get(104): 104 (expected 104)
+  -- bst_get(120): 120 (expected 120)
+
+== Looking up values we know should NOT be in the BST...
+
+== Removing keys from BST...
+
+== Checking correct value from bst_size(): 9 (expected 9)
+
+== Looking up values we know should still be in the BST...
+  -- bst_get(  8):   8 (expected   8)
+  -- bst_get( 24):  24 (expected  24)
+  -- bst_get( 32):  32 (expected  32)
+  -- bst_get( 48):  48 (expected  48)
+  -- bst_get( 88):  88 (expected  88)
+  -- bst_get( 96):  96 (expected  96)
+  -- bst_get(104): 104 (expected 104)
+  -- bst_get(112): 112 (expected 112)
+  -- bst_get(120): 120 (expected 120)

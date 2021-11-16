@@ -24,7 +24,6 @@ void queue_free(struct queue* queue) {
 }
 
 int queue_isempty(struct queue* queue) {
-  //assert(queue);
   if(dynarray_size(queue->array) == 0) {
     return 1;
   } else { return 0; }
