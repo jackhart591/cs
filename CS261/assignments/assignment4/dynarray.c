@@ -45,7 +45,7 @@ void dynarray_insert(struct dynarray* da, void* val) {
 }
 
 void dynarray_remove(struct dynarray* da, int idx) {
-  assert(da != NULL && da->size <= idx && idx >= 0);
+  assert(da != NULL && da->size >= idx && idx >= 0);
 
   for (int i = idx+1; i < da->size; i++) {
     da->data[i-1] = da->data[i];
@@ -54,15 +54,21 @@ void dynarray_remove(struct dynarray* da, int idx) {
   da->size--;
 }
 
+void dynarray_swap(struct dynarray* da, int firstIdx, int secondIdx) {
+  void* temp = da->data[firstIdx];
+  da->data[firstIdx] = da->data[secondIdx];
+  da->data[secondIdx] = temp;
+}
+
 void* dynarray_get(struct dynarray* da, int idx) { 
   assert(da != NULL);
-  assert(da->size <= idx && idx >= 0);
+  assert(da->size >= idx && idx >= 0);
   return da->data[idx]; 
 }
 
 void dynarray_set(struct dynarray* da, int idx, void* val) { 
   assert(da != NULL);
-  assert(da->size <= idx && idx >= 0);
+  assert(da->size >= idx && idx >= 0);
   
   da->data[idx] = val; 
 }
