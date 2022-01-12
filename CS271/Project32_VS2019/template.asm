@@ -1,11 +1,14 @@
 TITLE Program Template     (template.asm)
 
-; Author:
-; Last Modified:
-; OSU email address: 
-; Course number/section:
-; Assignment Number:                 Due Date:
-; Description:
+COMMENT &
+	Author: Jackson Hart
+	Last Modified:
+	OSU email address: hartjack@oregonstate.edu
+	Course number/section: 31528
+	Assignment Number:
+	Due Date:
+	Description: 
+&
 
 INCLUDE Irvine32.inc
 
