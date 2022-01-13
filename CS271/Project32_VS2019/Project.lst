@@ -1,15 +1,18 @@
-Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/12/22 12:24:52
-#Program Template     (template.asm			     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/13/22 12:51:08
+!Assignment1     (Assignment1.asm			     Page 1 - 1
 
 
-				TITLE Program Template     (template.asm)
+				TITLE Assignment1     (Assignment1.asm)
 
-				; Author:
-				; Last Modified:
-				; OSU email address: 
-				; Course number/section:
-				; Assignment Number:                 Due Date:
-				; Description:
+				COMMENT &
+					Author: Jackson Hart
+					Last Modified:
+					OSU email address: hartjack@oregonstate.edu
+					Course number/section: 31528
+					Assignment Number: 1
+					Due Date: 1/16/22
+					Description: 
+				&
 
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
@@ -30,27 +33,98 @@ Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/12/22 12:24:52
 			      C .LIST
 			      C 
 
-				; (insert constant definitions here)
+ = 00000030			ASCII_ADJUST = 48
 
  00000000			.data
 
-				; (insert variable definitions here)
+ 00000000 43 61 6C 63 75		title_str	BYTE		"Calculator Program, By Jackson Hart", 13, 0
+	   6C 61 74 6F 72
+	   20 50 72 6F 67
+	   72 61 6D 2C 20
+	   42 79 20 4A 61
+	   63 6B 73 6F 6E
+	   20 48 61 72 74
+	   0D 00
+ 00000025 50 6C 65 61 73		num1_str	BYTE		"Please enter your first number: ", 0
+	   65 20 65 6E 74
+	   65 72 20 79 6F
+	   75 72 20 66 69
+	   72 73 74 20 6E
+	   75 6D 62 65 72
+	   3A 20 00
+ 00000046 50 6C 65 61 73		num2_str	BYTE		"Please enter your second number: ", 0
+	   65 20 65 6E 74
+	   65 72 20 79 6F
+	   75 72 20 73 65
+	   63 6F 6E 64 20
+	   6E 75 6D 62 65
+	   72 3A 20 00
+
+ 00000068 00000000			num1		DWORD	?
+ 0000006C 00000000			num2		DWORD	?
+
+ 00000070 00000000			sum		DWORD	?
+ 00000074 00000000			diff		DWORD	?
+ 00000078 00000000			quotient	DWORD	?
+ 0000007C 00000000			remainder	DWORD	?
+
+ 00000080 00000000			temp		DWORD	?
 
  00000000			.code
  00000000			main PROC
 
-				; (insert executable instructions here)
+				; Write title of program to user
+ 00000000  BA 00000000 R		mov	edx,	OFFSET title_str
+ 00000005  E8 00000000 E		call	WriteString
+ 0000000A  E8 00000000 E		call	Crlf
+
+				; Ask for the first number
+ 0000000F  BA 00000025 R		mov	edx, OFFSET num1_str
+ 00000014  E8 00000000 E		call	WriteString
+ 00000019  E8 00000000 E		call ReadInt
+ 0000001E  A3 00000068 R		mov	num1, eax
+
+				; Ask for the second number
+ 00000023  BA 00000046 R		mov	edx, OFFSET num2_str
+ 00000028  E8 00000000 E		call	WriteString
+ 0000002D  E8 00000000 E		call ReadInt
+ 00000032  A3 0000006C R		mov	num2, eax
+
+				; Calculate
+ 00000037  03 05 00000068 R		add	eax, num1
+ 0000003D  A3 00000070 R		mov	sum, eax	; num1 + num2
+					
+ 00000042  A1 00000068 R		mov	eax, num1
+ 00000047  2B 05 0000006C R		sub	eax, num2	; num1 - num2
+ 0000004D  A3 00000074 R		mov	diff, eax
+
+ 00000052  BA 00000000			mov	edx, 0
+ 00000057  A1 00000068 R		mov	eax, num1
+ 0000005C  F7 35 0000006C R		div	num2		; num1 / num2
+ 00000062  A3 00000078 R		mov	quotient, eax
+ 00000067  89 15 0000007C R		mov	remainder, edx
+
+ 0000006D  83 C0 30			add	eax, ASCII_ADJUST
+ 00000070  A3 00000080 R		mov	temp, eax
+ 00000075  BA 00000080 R		mov	edx, OFFSET temp
+ 0000007A  E8 00000000 E		call	WriteString
+ 0000007F  E8 00000000 E		call	Crlf
+ 00000084  A1 0000007C R		mov	eax, remainder
+ 00000089  83 C0 30			add	eax, ASCII_ADJUST
+ 0000008C  A3 00000080 R		mov	temp, eax
+ 00000091  BA 00000080 R		mov	edx, OFFSET temp
+ 00000096  E8 00000000 E		call	WriteString
 
 					exit	; exit to operating system
- 00000000  6A 00	   *	    push   +000000000h
- 00000002  E8 00000000 E   *	    call   ExitProcess
- 00000007			main ENDP
+ 0000009B  6A 00	   *	    push   +000000000h
+ 0000009D  E8 00000000 E   *	    call   ExitProcess
+ 000000A2			main ENDP
 
 				; (insert additional procedures here)
 
 				END main
-Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/12/22 12:24:52
-#Program Template     (template.asm			     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/13/22 12:51:08
+!Assignment1     (Assignment1.asm			     Symbols 2 - 1
 
 
 
@@ -143,8 +217,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000000 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000007 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000084 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000000A2 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -251,7 +325,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000007 Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000A2 Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -271,6 +345,7 @@ Symbols:
 @fardata . . . . . . . . . . . .	Text   	 FLAT
 @stack . . . . . . . . . . . . .	Text   	 FLAT
 ALT_MASK . . . . . . . . . . . .	Number	 00000003h   
+ASCII_ADJUST . . . . . . . . . .	Number	 00000030h   
 CAPSLOCK_ON  . . . . . . . . . .	Number	 00000080h   
 CREATE_ALWAYS  . . . . . . . . .	Number	 00000002h   
 CREATE_NEW . . . . . . . . . . .	Number	 00000001h   
@@ -474,6 +549,7 @@ black  . . . . . . . . . . . . .	Number	 00000000h
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
+diff . . . . . . . . . . . . . .	DWord	 00000074 _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
@@ -484,7 +560,16 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
+num1_str . . . . . . . . . . . .	Byte	 00000025 _DATA	
+num1 . . . . . . . . . . . . . .	DWord	 00000068 _DATA	
+num2_str . . . . . . . . . . . .	Byte	 00000046 _DATA	
+num2 . . . . . . . . . . . . . .	DWord	 0000006C _DATA	
+quotient . . . . . . . . . . . .	DWord	 00000078 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
+remainder  . . . . . . . . . . .	DWord	 0000007C _DATA	
+sum  . . . . . . . . . . . . . .	DWord	 00000070 _DATA	
+temp . . . . . . . . . . . . . .	DWord	 00000080 _DATA	
+title_str  . . . . . . . . . . .	Byte	 00000000 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
