@@ -1,16 +1,16 @@
-Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/13/22 12:51:08
-!Assignment1     (Assignment1.asm			     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/21/22 11:38:58
+"Assignment 2     (Assignment2.asm			     Page 1 - 1
 
 
-				TITLE Assignment1     (Assignment1.asm)
+				TITLE Assignment 2     (Assignment2.asm)
 
 				COMMENT &
 					Author: Jackson Hart
 					Last Modified:
 					OSU email address: hartjack@oregonstate.edu
 					Course number/section: 31528
-					Assignment Number: 1
-					Due Date: 1/16/22
+					Assignment Number: 2
+					Due Date: 1/23/22
 					Description: 
 				&
 
@@ -33,98 +33,124 @@ Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/13/22 12:51:08
 			      C .LIST
 			      C 
 
- = 00000030			ASCII_ADJUST = 48
+				; maximum number of chars in an input string
+ = 0000007F			MAX_INPUT_CHAR = 127
 
  00000000			.data
 
- 00000000 43 61 6C 63 75		title_str	BYTE		"Calculator Program, By Jackson Hart", 13, 0
-	   6C 61 74 6F 72
-	   20 50 72 6F 67
-	   72 61 6D 2C 20
-	   42 79 20 4A 61
-	   63 6B 73 6F 6E
-	   20 48 61 72 74
-	   0D 00
- 00000025 50 6C 65 61 73		num1_str	BYTE		"Please enter your first number: ", 0
-	   65 20 65 6E 74
-	   65 72 20 79 6F
-	   75 72 20 66 69
-	   72 73 74 20 6E
-	   75 6D 62 65 72
-	   3A 20 00
- 00000046 50 6C 65 61 73		num2_str	BYTE		"Please enter your second number: ", 0
-	   65 20 65 6E 74
-	   65 72 20 79 6F
-	   75 72 20 73 65
-	   63 6F 6E 64 20
+ 00000000 46 69 62 6F 6E	intro		BYTE		"Fibonacci Numbers", 10, "Programmed by Jackson Hart", 0
+	   61 63 63 69 20
+	   4E 75 6D 62 65
+	   72 73 0A 50 72
+	   6F 67 72 61 6D
+	   6D 65 64 20 62
+	   79 20 4A 61 63
+	   6B 73 6F 6E 20
+	   48 61 72 74 00
+ 0000002D 57 68 61 74 27	name_prompt	BYTE		"What's your name? ", 0
+	   73 20 79 6F 75
+	   72 20 6E 61 6D
+	   65 3F 20 00
+ 00000040 48 65 6C 6C 6F	welcome_str	BYTE		"Hello, ", 0
+	   2C 20 00
+ 00000048 45 6E 74 65 72	num_prompt	BYTE		"Enter the number of fibonacci numbers to be displayed.", 10, "Provide the number as an integer in the range [1 .. 46].", 10, \
+	   20 74 68 65 20
 	   6E 75 6D 62 65
-	   72 3A 20 00
+	   72 20 6F 66 20
+	   66 69 62 6F 6E
+	   61 63 63 69 20
+	   6E 75 6D 62 65
+	   72 73 20 74 6F
+	   20 62 65 20 64
+	   69 73 70 6C 61
+	   79 65 64 2E 0A
+	   50 72 6F 76 69
+	   64 65 20 74 68
+	   65 20 6E 75 6D
+	   62 65 72 20 61
+	   73 20 61 6E 20
+	   69 6E 74 65 67
+	   65 72 20 69 6E
+	   20 74 68 65 20
+	   72 61 6E 67 65
+	   20 5B 31 20 2E
+	   2E 20 34 36 5D
+	   2E 0A 48 6F 77
+	   20 6D 61 6E 79
+	   20 66 69 62 6F
+	   6E 61 63 63 69
+	   20 6E 75 6D 62
+	   65 72 73 20 64
+	   6F 20 79 6F 75
+	   20 77 61 6E 74
+	   3F 20 00
+									"How many fibonacci numbers do you want? ", 0
+ 000000E1 54 68 61 74 20	bad_in_str	BYTE		"That wasn't a valid number, please try again: ", 0
+	   77 61 73 6E 27
+	   74 20 61 20 76
+	   61 6C 69 64 20
+	   6E 75 6D 62 65
+	   72 2C 20 70 6C
+	   65 61 73 65 20
+	   74 72 79 20 61
+	   67 61 69 6E 3A
+	   20 00
 
- 00000068 00000000			num1		DWORD	?
- 0000006C 00000000			num2		DWORD	?
-
- 00000070 00000000			sum		DWORD	?
- 00000074 00000000			diff		DWORD	?
- 00000078 00000000			quotient	DWORD	?
- 0000007C 00000000			remainder	DWORD	?
-
- 00000080 00000000			temp		DWORD	?
+ 00000110  00000080 [		user_name		BYTE		MAX_INPUT_CHAR+1	DUP(?) ; +1 for the null char
+	    00
+	   ]
+ 00000190 00000000		fib_nums		DWORD	?
 
  00000000			.code
  00000000			main PROC
 
-				; Write title of program to user
- 00000000  BA 00000000 R		mov	edx,	OFFSET title_str
- 00000005  E8 00000000 E		call	WriteString
- 0000000A  E8 00000000 E		call	Crlf
+					; Write the intro to the program
+ 00000000  BA 00000000 R		mov		edx, OFFSET intro
+ 00000005  E8 00000000 E		call		WriteString
+ 0000000A  E8 00000000 E		call		Crlf
 
-				; Ask for the first number
- 0000000F  BA 00000025 R		mov	edx, OFFSET num1_str
- 00000014  E8 00000000 E		call	WriteString
- 00000019  E8 00000000 E		call ReadInt
- 0000001E  A3 00000068 R		mov	num1, eax
+					; Ask for and store the user's name
+ 0000000F  BA 0000002D R		mov		edx, OFFSET name_prompt
+ 00000014  E8 00000000 E		call		WriteString
 
-				; Ask for the second number
- 00000023  BA 00000046 R		mov	edx, OFFSET num2_str
- 00000028  E8 00000000 E		call	WriteString
- 0000002D  E8 00000000 E		call ReadInt
- 00000032  A3 0000006C R		mov	num2, eax
+ 00000019  BA 00000110 R		mov		edx, OFFSET user_name
+ 0000001E  B9 0000007F			mov		ecx, MAX_INPUT_CHAR
+ 00000023  E8 00000000 E		call		ReadString
 
-				; Calculate
- 00000037  03 05 00000068 R		add	eax, num1
- 0000003D  A3 00000070 R		mov	sum, eax	; num1 + num2
+					; Welcome user and ask for num of fibonacci numbers
+ 00000028  BA 00000040 R		mov		edx, OFFSET welcome_str
+ 0000002D  E8 00000000 E		call		WriteString
+ 00000032  BA 00000110 R		mov		edx, OFFSET user_name
+ 00000037  E8 00000000 E		call		WriteString
+ 0000003C  E8 00000000 E		call		Crlf
+ 00000041  BA 00000048 R		mov		edx, OFFSET num_prompt
+ 00000046  E8 00000000 E		call		WriteString
+ 0000004B			Top:	
+ 0000004B  E8 00000000 E		call		ReadInt
+ 00000050  83 F8 00			cmp		eax, 0
+ 00000053  7E 07			jle		BadInput
+ 00000055  83 F8 2E			cmp		eax, 46
+ 00000058  7F 02			jg		BadInput
+ 0000005A  EB 0C			jmp		GoodInput
+ 0000005C			BadInput:
+ 0000005C  BA 000000E1 R		mov		edx, OFFSET bad_in_str
+ 00000061  E8 00000000 E		call		WriteString
+ 00000066  EB E3			jmp		Top
+ 00000068			GoodInput:
+ 00000068  BA 00000040 R		mov		edx, OFFSET welcome_str
+ 0000006D  E8 00000000 E		call		WriteString
 					
- 00000042  A1 00000068 R		mov	eax, num1
- 00000047  2B 05 0000006C R		sub	eax, num2	; num1 - num2
- 0000004D  A3 00000074 R		mov	diff, eax
-
- 00000052  BA 00000000			mov	edx, 0
- 00000057  A1 00000068 R		mov	eax, num1
- 0000005C  F7 35 0000006C R		div	num2		; num1 / num2
- 00000062  A3 00000078 R		mov	quotient, eax
- 00000067  89 15 0000007C R		mov	remainder, edx
-
- 0000006D  83 C0 30			add	eax, ASCII_ADJUST
- 00000070  A3 00000080 R		mov	temp, eax
- 00000075  BA 00000080 R		mov	edx, OFFSET temp
- 0000007A  E8 00000000 E		call	WriteString
- 0000007F  E8 00000000 E		call	Crlf
- 00000084  A1 0000007C R		mov	eax, remainder
- 00000089  83 C0 30			add	eax, ASCII_ADJUST
- 0000008C  A3 00000080 R		mov	temp, eax
- 00000091  BA 00000080 R		mov	edx, OFFSET temp
- 00000096  E8 00000000 E		call	WriteString
 
 					exit	; exit to operating system
- 0000009B  6A 00	   *	    push   +000000000h
- 0000009D  E8 00000000 E   *	    call   ExitProcess
- 000000A2			main ENDP
+ 00000072  6A 00	   *	    push   +000000000h
+ 00000074  E8 00000000 E   *	    call   ExitProcess
+ 00000079			main ENDP
 
 				; (insert additional procedures here)
 
 				END main
-Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/13/22 12:51:08
-!Assignment1     (Assignment1.asm			     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/21/22 11:38:58
+"Assignment 2     (Assignment2.asm			     Symbols 2 - 1
 
 
 
@@ -217,8 +243,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000084 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 000000A2 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000194 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000079 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -325,7 +351,10 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000A2 Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000079 Public STDCALL
+  Top  . . . . . . . . . . . . .	L Near	 0000004B _TEXT	
+  BadInput . . . . . . . . . . .	L Near	 0000005C _TEXT	
+  GoodInput  . . . . . . . . . .	L Near	 00000068 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -345,7 +374,6 @@ Symbols:
 @fardata . . . . . . . . . . . .	Text   	 FLAT
 @stack . . . . . . . . . . . . .	Text   	 FLAT
 ALT_MASK . . . . . . . . . . . .	Number	 00000003h   
-ASCII_ADJUST . . . . . . . . . .	Number	 00000030h   
 CAPSLOCK_ON  . . . . . . . . . .	Number	 00000080h   
 CREATE_ALWAYS  . . . . . . . . .	Number	 00000002h   
 CREATE_NEW . . . . . . . . . . .	Number	 00000001h   
@@ -418,6 +446,7 @@ KEY_EVENT  . . . . . . . . . . .	Number	 00000001h
 KEY_MASKS  . . . . . . . . . . .	Number	 0000001Fh   
 LEFT_ALT_PRESSED . . . . . . . .	Number	 00000002h   
 LEFT_CTRL_PRESSED  . . . . . . .	Number	 00000008h   
+MAX_INPUT_CHAR . . . . . . . . .	Number	 0000007Fh   
 MB_ABORTRETRYIGNORE  . . . . . .	Number	 00000002h   
 MB_APPLMODAL . . . . . . . . . .	Number	 00000000h   
 MB_CANCELTRYCONTINUE . . . . . .	Number	 00000006h   
@@ -545,14 +574,16 @@ VK_UP  . . . . . . . . . . . . .	Number	 00000026h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
+bad_in_str . . . . . . . . . . .	Byte	 000000E1 _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
-diff . . . . . . . . . . . . . .	DWord	 00000074 _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
+fib_nums . . . . . . . . . . . .	DWord	 00000190 _DATA	
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
+intro  . . . . . . . . . . . . .	Byte	 00000000 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -560,16 +591,11 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-num1_str . . . . . . . . . . . .	Byte	 00000025 _DATA	
-num1 . . . . . . . . . . . . . .	DWord	 00000068 _DATA	
-num2_str . . . . . . . . . . . .	Byte	 00000046 _DATA	
-num2 . . . . . . . . . . . . . .	DWord	 0000006C _DATA	
-quotient . . . . . . . . . . . .	DWord	 00000078 _DATA	
+name_prompt  . . . . . . . . . .	Byte	 0000002D _DATA	
+num_prompt . . . . . . . . . . .	Byte	 00000048 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-remainder  . . . . . . . . . . .	DWord	 0000007C _DATA	
-sum  . . . . . . . . . . . . . .	DWord	 00000070 _DATA	
-temp . . . . . . . . . . . . . .	DWord	 00000080 _DATA	
-title_str  . . . . . . . . . . .	Byte	 00000000 _DATA	
+user_name  . . . . . . . . . . .	Byte	 00000110 _DATA	
+welcome_str  . . . . . . . . . .	Byte	 00000040 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
