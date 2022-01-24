@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/22/22 21:46:40
+Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/23/22 21:42:32
 "Assignment 2     (Assignment2.asm			     Page 1 - 1
 
 
@@ -140,11 +140,11 @@ Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/22/22 21:46:40
  0000004B			Top:
  0000004B  E8 00000000 E		call		ReadInt
  00000050  83 F8 01			cmp		eax, MIN_NUMS	
- 00000053  7C 07			jl		BadInput	; Val < 1
+ 00000053  7C 07			jl		NaughtyLabel		; Val < 1
  00000055  83 F8 2E			cmp		eax, MAX_NUMS
- 00000058  7F 02			jg		BadInput	; Val > 46
+ 00000058  7F 02			jg		NaughtyLabel		; Val > 46
  0000005A  EB 0C			jmp		GoodInput
- 0000005C			BadInput:
+ 0000005C			NaughtyLabel:					; Bad input gets sent to the naughty label
  0000005C  BA 000000E1 R		mov		edx, OFFSET bad_in_str
  00000061  E8 00000000 E		call		WriteString
  00000066  EB E3			jmp		Top
@@ -177,17 +177,17 @@ Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/22/22 21:46:40
  000000AB  BA 0000011A R		mov		edx, OFFSET space_str
  000000B0  E8 00000000 E		call		WriteString
 
- 000000B5  50				push		eax
+ 000000B5  50				push		eax				; Store eax so we don't lose N-1
  000000B6  A1 000001A2 R		mov		eax, fib_nums
- 000000BB  2B C1			sub		eax, ecx
- 000000BD  40				inc		eax
+ 000000BB  2B C1			sub		eax, ecx			; Gets the total amount of loops run
+ 000000BD  40				inc		eax				; Increments to account for 0 being the first loop
  000000BE  BA 00000000			mov		edx, 0
- 000000C3  F7 35 000001AE R		div		num_per_line
- 000000C9  58				pop		eax
- 000000CA  83 FA 00			cmp		edx, 0
+ 000000C3  F7 35 000001AE R		div		num_per_line		; Divide by number of terms per line
+ 000000C9  58				pop		eax				; Pop N-1 back into EAX
+ 000000CA  83 FA 00			cmp		edx, 0			; If the remainder is 0...
  000000CD  75 0A			jne		Loopie_Loopie
  000000CF  BA 00000120 R		mov		edx, OFFSET line_str
- 000000D4  E8 00000000 E		call		WriteString
+ 000000D4  E8 00000000 E		call		WriteString		; ...Make a new line
  000000D9			Loopie_Loopie:
  000000D9  E2 98			loop		Fib_Loop
 
@@ -204,10 +204,8 @@ Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/22/22 21:46:40
  000000F6  E8 00000000 E   *	    call   ExitProcess
  000000FB			main ENDP
 
-				; (insert additional procedures here)
-
 				END main
-Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/22/22 21:46:40
+Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/23/22 21:42:32
 "Assignment 2     (Assignment2.asm			     Symbols 2 - 1
 
 
@@ -411,7 +409,7 @@ WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000FB Public STDCALL
   Top  . . . . . . . . . . . . .	L Near	 0000004B _TEXT	
-  BadInput . . . . . . . . . . .	L Near	 0000005C _TEXT	
+  NaughtyLabel . . . . . . . . .	L Near	 0000005C _TEXT	
   GoodInput  . . . . . . . . . .	L Near	 00000068 _TEXT	
   Fib_Loop . . . . . . . . . . .	L Near	 00000073 _TEXT	
   Num_One  . . . . . . . . . . .	L Near	 00000089 _TEXT	

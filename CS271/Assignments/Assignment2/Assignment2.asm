@@ -2,7 +2,7 @@ TITLE Assignment 2     (Assignment2.asm)
 
 COMMENT &
 	Author: Jackson Hart
-	Last Modified:
+	Last Modified: 1/22/22
 	OSU email address: hartjack@oregonstate.edu
 	Course number/section: 31528
 	Assignment Number: 2
