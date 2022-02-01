@@ -1,17 +1,20 @@
-Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/23/22 21:42:32
-"Assignment 2     (Assignment2.asm			     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/31/22 22:29:27
+"Assignment 3     (assignment3.asm			     Page 1 - 1
 
 
-				TITLE Assignment 2     (Assignment2.asm)
+				TITLE Assignment 3     (assignment3.asm)
 
 				COMMENT &
 					Author: Jackson Hart
-					Last Modified:
+					Last Modified: 1/31/22
 					OSU email address: hartjack@oregonstate.edu
 					Course number/section: 31528
-					Assignment Number: 2
-					Due Date: 1/23/22
-					Description: 
+					Assignment Number: 3
+					Due Date: 1/30/22
+					Description: Asks the user to enter negative integers above -100, and then once they enter a positive integer, 
+					displays the number of valid integers, the sum of those integers, and the average. 
+
+					**PLEASE USE ONE OF MY GRACE DAYS FOR THIS ASSIGNMENT**
 				&
 
 				INCLUDE Irvine32.inc
@@ -33,180 +36,234 @@ Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/23/22 21:42:32
 			      C .LIST
 			      C 
 
-				; maximum number of chars in an input string
- = 0000007F			MAX_INPUT_CHAR = 127
-
-				; Min/Max number of fibb nums
- = 00000001			MIN_NUMS = 1
- = 0000002E			MAX_NUMS = 46
+ = 0000007F			MAX_INPUT = 127
+ =-00000064			LOWER_LIMIT = -100
 
  00000000			.data
+ 00000000  9B DB E3		finit
 
- 00000000 46 69 62 6F 6E	intro		BYTE		"Fibonacci Numbers", 10, "Programmed by Jackson Hart", 0
-	   61 63 63 69 20
-	   4E 75 6D 62 65
-	   72 73 0A 50 72
-	   6F 67 72 61 6D
-	   6D 65 64 20 62
-	   79 20 4A 61 63
-	   6B 73 6F 6E 20
-	   48 61 72 74 00
- 0000002D 57 68 61 74 27	name_prompt	BYTE		"What's your name? ", 0
+ 00000003 57 65 6C 63 6F	intro_str			BYTE		"Welcome to Integer Accumulator by Jackson Hart", 0
+	   6D 65 20 74 6F
+	   20 49 6E 74 65
+	   67 65 72 20 41
+	   63 63 75 6D 75
+	   6C 61 74 6F 72
+	   20 62 79 20 4A
+	   61 63 6B 73 6F
+	   6E 20 48 61 72
+	   74 00
+ 00000032 57 68 61 74 27	name_str			BYTE		"What's your name? ", 0
 	   73 20 79 6F 75
 	   72 20 6E 61 6D
 	   65 3F 20 00
- 00000040 48 65 6C 6C 6F	welcome_str	BYTE		"Hello, ", 0
-	   2C 20 00
- 00000048 45 6E 74 65 72	num_prompt	BYTE		"Enter the number of fibonacci numbers to be displayed.", 10, "Provide the number as an integer in the range [1 .. 46].", 10, \
-	   20 74 68 65 20
-	   6E 75 6D 62 65
-	   72 20 6F 66 20
-	   66 69 62 6F 6E
-	   61 63 63 69 20
-	   6E 75 6D 62 65
-	   72 73 20 74 6F
-	   20 62 65 20 64
-	   69 73 70 6C 61
-	   79 65 64 2E 0A
-	   50 72 6F 76 69
-	   64 65 20 74 68
-	   65 20 6E 75 6D
-	   62 65 72 20 61
-	   73 20 61 6E 20
-	   69 6E 74 65 67
-	   65 72 20 69 6E
-	   20 74 68 65 20
-	   72 61 6E 67 65
-	   20 5B 31 20 2E
-	   2E 20 34 36 5D
-	   2E 0A 48 6F 77
-	   20 6D 61 6E 79
-	   20 66 69 62 6F
-	   6E 61 63 63 69
+ 00000045 57 65 6C 63 6F	welcome_str		BYTE		"Welcome, ", 0
+	   6D 65 2C 20 00
+ 0000004F 50 6C 65 61 73	num_instruct_str	BYTE		"Please enter numbers in [-100, -1]", 0
+	   65 20 65 6E 74
+	   65 72 20 6E 75
+	   6D 62 65 72 73
+	   20 69 6E 20 5B
+	   2D 31 30 30 2C
+	   20 2D 31 5D 00
+ 00000072 45 6E 74 65 72	exit_prompt_str	BYTE		"Enter a non-negative number when you are finished to see results", 0
+	   20 61 20 6E 6F
+	   6E 2D 6E 65 67
+	   61 74 69 76 65
 	   20 6E 75 6D 62
-	   65 72 73 20 64
-	   6F 20 79 6F 75
-	   20 77 61 6E 74
-	   3F 20 00
-									"How many fibonacci numbers do you want? ", 0
- 000000E1 54 68 61 74 20	bad_in_str	BYTE		"That wasn't a valid number, please try again: ", 0
-	   77 61 73 6E 27
-	   74 20 61 20 76
-	   61 6C 69 64 20
-	   6E 75 6D 62 65
-	   72 2C 20 70 6C
-	   65 61 73 65 20
-	   74 72 79 20 61
-	   67 61 69 6E 3A
+	   65 72 20 77 68
+	   65 6E 20 79 6F
+	   75 20 61 72 65
+	   20 66 69 6E 69
+	   73 68 65 64 20
+	   74 6F 20 73 65
+	   65 20 72 65 73
+	   75 6C 74 73 00
+ 000000B3 45 6E 74 65 72	num_prompt_str		BYTE		"Enter a number: ", 0
+	   20 61 20 6E 75
+	   6D 62 65 72 3A
 	   20 00
- 00000110 47 6F 6F 64 62	gbye_str		BYTE		"Goodbye, ", 0
+ 000000C4 47 6F 6F 64 62	goodbyte_str		BYTE		"Goodbye, ", 0
 	   79 65 2C 20 00
- 0000011A 20 20 20 20 20	space_str		BYTE		"     ", 0
+ 000000CE 21 00			exclam_str		BYTE		"!", 0
+ 000000D0 59 6F 75 20 64	special_str		BYTE		"You didn't enter anything dummy!", 0
+	   69 64 6E 27 74
+	   20 65 6E 74 65
+	   72 20 61 6E 79
+	   74 68 69 6E 67
+	   20 64 75 6D 6D
+	   79 21 00
+ 000000F1 2A 2A 45 43 3A	extra_cred_str		BYTE		"**EC: Prints average as a decimal**", 0
+	   20 50 72 69 6E
+	   74 73 20 61 76
+	   65 72 61 67 65
+	   20 61 73 20 61
+	   20 64 65 63 69
+	   6D 61 6C 2A 2A
 	   00
- 00000120 0A 00			line_str		BYTE		10, 0
 
- 00000122  00000080 [		user_name		BYTE		MAX_INPUT_CHAR+1	DUP(?) ; +1 for the null char
+ 00000115 59 6F 75 20 65	num_1_str			BYTE		"You entered ", 0
+	   6E 74 65 72 65
+	   64 20 00
+ 00000122 20 75 73 61 62	num_2_str			BYTE		" usable numbers", 0
+	   6C 65 20 6E 75
+	   6D 62 65 72 73
+	   00
+ 00000132 54 68 65 20 73	sum_str			BYTE		"The sum of those numbers is ", 0
+	   75 6D 20 6F 66
+	   20 74 68 6F 73
+	   65 20 6E 75 6D
+	   62 65 72 73 20
+	   69 73 20 00
+ 0000014F 54 68 65 20 61	avg_str			BYTE		"The average of those numbers is ", 0
+	   76 65 72 61 67
+	   65 20 6F 66 20
+	   74 68 6F 73 65
+	   20 6E 75 6D 62
+	   65 72 73 20 69
+	   73 20 00
+ 00000170 2E 00			dot_str			BYTE		".", 0
+
+
+ 00000172  00000080 [		user_name			BYTE		MAX_INPUT+1 DUP(?)
 	    00
 	   ]
- 000001A2 00000000		fib_nums		DWORD	?
- 000001A6 00000001		fib_0		DWORD	1
- 000001AA 00000001		fib_1		DWORD	1
- 000001AE 00000004		num_per_line	DWORD	4
+ 000001F2  0000007F [		in_arr			DWORD	MAX_INPUT DUP(0)
+	    00000000
+	   ]
+ 000003EE 00000000		num_int			DWORD	0
+ 000003F2			num_ave			REAL8	0.0
+	   0000000000000000
+ 000003FA 00000000		int_ave			DWORD	?
+ 000003FE 00000000		int_int			DWORD	?
+ 00000402 00000000		int_real			DWORD	?
+ 00000406 00000000		num_sum			DWORD	0
+ 0000040A 000003E8		multiplier		DWORD	1000
+ 0000040E FFFFFFFF		neg_one			DWORD	-1
+
 
  00000000			.code
  00000000			main PROC
 
-				; Write the intro to the program
- 00000000  BA 00000000 R		mov		edx, OFFSET intro
+				; Display program title
+ 00000000  BA 00000003 R		mov		edx, OFFSET intro_str
  00000005  E8 00000000 E		call		WriteString
  0000000A  E8 00000000 E		call		Crlf
-
-				; Ask for and store the user's name
- 0000000F  BA 0000002D R		mov		edx, OFFSET name_prompt
+ 0000000F  BA 000000F1 R		mov		edx, OFFSET extra_cred_str
  00000014  E8 00000000 E		call		WriteString
+ 00000019  E8 00000000 E		call		Crlf
 
- 00000019  BA 00000122 R		mov		edx, OFFSET user_name
- 0000001E  B9 0000007F			mov		ecx, MAX_INPUT_CHAR
- 00000023  E8 00000000 E		call		ReadString
+				; Prompt user for name
+ 0000001E  BA 00000032 R		mov		edx, OFFSET name_str
+ 00000023  E8 00000000 E		call		WriteString
+ 00000028  BA 00000172 R		mov		edx, OFFSET user_name
+ 0000002D  B9 0000007F			mov		ecx, MAX_INPUT
+ 00000032  E8 00000000 E		call		ReadString
 
-				; Welcome user and ask for num of fibonacci numbers
- 00000028  BA 00000040 R		mov		edx, OFFSET welcome_str
- 0000002D  E8 00000000 E		call		WriteString
- 00000032  BA 00000122 R		mov		edx, OFFSET user_name
- 00000037  E8 00000000 E		call		WriteString
- 0000003C  E8 00000000 E		call		Crlf
- 00000041  BA 00000048 R		mov		edx, OFFSET num_prompt
+				; Welcome user
+ 00000037  BA 00000045 R		mov		edx, OFFSET welcome_str
+ 0000003C  E8 00000000 E		call		WriteString
+ 00000041  BA 00000172 R		mov		edx, OFFSET user_name
  00000046  E8 00000000 E		call		WriteString
- 0000004B			Top:
- 0000004B  E8 00000000 E		call		ReadInt
- 00000050  83 F8 01			cmp		eax, MIN_NUMS	
- 00000053  7C 07			jl		NaughtyLabel		; Val < 1
- 00000055  83 F8 2E			cmp		eax, MAX_NUMS
- 00000058  7F 02			jg		NaughtyLabel		; Val > 46
- 0000005A  EB 0C			jmp		GoodInput
- 0000005C			NaughtyLabel:					; Bad input gets sent to the naughty label
- 0000005C  BA 000000E1 R		mov		edx, OFFSET bad_in_str
- 00000061  E8 00000000 E		call		WriteString
- 00000066  EB E3			jmp		Top
+ 0000004B  E8 00000000 E		call		Crlf
+ 00000050  E8 00000000 E		call		Crlf
 
-				; Print fibonacci numbers
- 00000068			GoodInput:
- 00000068  A3 000001A2 R		mov		fib_nums, eax
- 0000006D  8B 0D 000001A2 R		mov		ecx, fib_nums
- 00000073			Fib_Loop:						; Beginning of loop
- 00000073  3B 0D 000001A2 R		cmp		ecx, fib_nums
- 00000079  75 0E			jne		Num_One
- 0000007B  A1 000001A6 R		mov		eax, fib_0
- 00000080  E8 00000000 E		call		WriteDec			; Base case 0
- 00000085  8B D8			mov		ebx, eax
- 00000087  EB 22			jmp		Loopie
- 00000089			Num_One:						; Base case 1
- 00000089  8B 15 000001A2 R		mov		edx, fib_nums
- 0000008F  83 EA 01			sub		edx, 1
- 00000092  3B CA			cmp		ecx, edx
- 00000094  75 0C			jne		Num_GOne
- 00000096  A1 000001AA R		mov		eax, fib_1
- 0000009B  E8 00000000 E		call		WriteDec
- 000000A0  EB 09			jmp		Loopie
- 000000A2			Num_GOne:
- 000000A2  50				push		eax				; Push EAX to stack so we don't lose N-1
- 000000A3  03 C3			add		eax, ebx			; Add to get N
- 000000A5  5B				pop		ebx				; Pop N-1 in EBX
- 000000A6  E8 00000000 E		call		WriteDec
- 000000AB			Loopie:
- 000000AB  BA 0000011A R		mov		edx, OFFSET space_str
- 000000B0  E8 00000000 E		call		WriteString
+				; Display instructions
+ 00000055  BA 0000004F R		mov		edx, OFFSET num_instruct_str
+ 0000005A  E8 00000000 E		call		WriteString
+ 0000005F  E8 00000000 E		call		Crlf
+ 00000064  BA 00000072 R		mov		edx, OFFSET exit_prompt_str
+ 00000069  E8 00000000 E		call		WriteString
+ 0000006E  E8 00000000 E		call		Crlf
 
- 000000B5  50				push		eax				; Store eax so we don't lose N-1
- 000000B6  A1 000001A2 R		mov		eax, fib_nums
- 000000BB  2B C1			sub		eax, ecx			; Gets the total amount of loops run
- 000000BD  40				inc		eax				; Increments to account for 0 being the first loop
- 000000BE  BA 00000000			mov		edx, 0
- 000000C3  F7 35 000001AE R		div		num_per_line		; Divide by number of terms per line
- 000000C9  58				pop		eax				; Pop N-1 back into EAX
- 000000CA  83 FA 00			cmp		edx, 0			; If the remainder is 0...
- 000000CD  75 0A			jne		Loopie_Loopie
- 000000CF  BA 00000120 R		mov		edx, OFFSET line_str
- 000000D4  E8 00000000 E		call		WriteString		; ...Make a new line
- 000000D9			Loopie_Loopie:
- 000000D9  E2 98			loop		Fib_Loop
+				; Get integers from user
+ 00000073  BA 000000B3 R		mov			edx, OFFSET num_prompt_str
+ 00000078			Top:
+ 00000078  E8 00000000 E		call		WriteString
+ 0000007D  E8 00000000 E		call		ReadInt
+ 00000082  83 F8 9C			cmp		eax, LOWER_LIMIT
+ 00000085  7C F1			jl		Top						; If not valid
+ 00000087  83 F8 00			cmp		eax, 0
+ 0000008A  7D 09			jge		Average					; If positive
+ 0000008C  50				push		eax						; Pushes valid ints onto stack
+ 0000008D  FF 05 000003EE R		inc		num_int					; Keeps track of number of valid ints
+ 00000093  EB E3			jmp		Top
 
-				; Say goodbyte to the user
- 000000DB  E8 00000000 E		call		Crlf
- 000000E0  BA 00000110 R		mov		edx, OFFSET gbye_str
- 000000E5  E8 00000000 E		call		WriteString
- 000000EA  BA 00000122 R		mov		edx, OFFSET user_name
- 000000EF  E8 00000000 E		call		WriteString
+				; Get average
+ 00000095			Average:
+ 00000095  8B 0D 000003EE R		mov		ecx, num_int
+ 0000009B  BB 00000000			mov		ebx, 0
+ 000000A0  A1 000003EE R		mov		eax, num_int
+ 000000A5  83 F9 00			cmp		ecx, 0
+ 000000A8  75 14			jne		Loopie					; If there's more than zero valid ints
+ 000000AA  BA 000000D0 R		mov		edx, OFFSET special_str		; If not, stop the program
+ 000000AF  E8 00000000 E		call		WriteString
+ 000000B4  E8 00000000 E		call		Crlf
+ 000000B9  E9 000000B4			jmp		Goodbyte
+ 000000BE			Loopie:
+ 000000BE  58				pop		eax						; Pops stack to sum ints
+ 000000BF  03 D8			add		ebx, eax
+ 000000C1  E2 FB			loop		Loopie
+
+				; Parse decimal into printable integers
+ 000000C3  89 1D 00000406 R		mov		num_sum, ebx
+ 000000C9  DB 05 00000406 R		fild		num_sum
+ 000000CF  9B				fwait
+ 000000D0  DA 35 000003EE R		fidiv	num_int					; Perform FPU division
+ 000000D6  DA 0D 0000040A R		fimul	multiplier				; Multiply by 1000 to get percision I want
+ 000000DC  DB 1D 000003FA R		fistp	int_ave					; Truncate and store into this var
+
+ 000000E2  A1 000003FA R		mov		eax, int_ave
+ 000000E7  99				cdq
+ 000000E8  F7 3D 0000040A R		idiv		multiplier				; Divide by 1000 to get the left side of decimal
+ 000000EE  A3 000003FE R		mov		int_int, eax
+ 000000F3  F7 2D 0000040A R		imul		multiplier
+ 000000F9  8B 1D 000003FA R		mov		ebx, int_ave
+ 000000FF  2B D8			sub		ebx, eax					; Subtract by the part I took out
+ 00000101  F7 DB			neg		ebx						; Negate it so printing right side of decimal is easier
+ 00000103  89 1D 00000402 R		mov		int_real, ebx
+
+				; Display values to user
 					
+ 00000109  BA 00000115 R		mov		edx, OFFSET num_1_str		; Display number of nums entered
+ 0000010E  A1 000003EE R		mov		eax, num_int
+ 00000113  E8 00000000 E		call		WriteString
+ 00000118  E8 00000000 E		call		WriteInt
+ 0000011D  BA 00000122 R		mov		edx, OFFSET num_2_str
+ 00000122  E8 00000000 E		call		WriteString
+ 00000127  E8 00000000 E		call		Crlf
+
+ 0000012C  BA 00000132 R		mov		edx, OFFSET sum_str			; Write the sum
+ 00000131  A1 00000406 R		mov		eax, num_sum
+ 00000136  E8 00000000 E		call		WriteString
+ 0000013B  E8 00000000 E		call		WriteInt
+ 00000140  E8 00000000 E		call		Crlf
+
+ 00000145  BA 0000014F R		mov		edx, OFFSET avg_str			; Write the average
+ 0000014A  E8 00000000 E		call		WriteString
+ 0000014F  A1 000003FE R		mov		eax, int_int
+ 00000154  E8 00000000 E		call		WriteInt
+ 00000159  BA 00000170 R		mov		edx, OFFSET dot_str
+ 0000015E  E8 00000000 E		call		WriteString
+ 00000163  A1 00000402 R		mov		eax, int_real
+ 00000168  E8 00000000 E		call		WriteDec
+ 0000016D  E8 00000000 E		call		Crlf
+
+				; Say Goodbyte
+ 00000172			Goodbyte:
+ 00000172  BA 000000C4 R		mov		edx, OFFSET goodbyte_str
+ 00000177  E8 00000000 E		call		WriteString
+ 0000017C  BA 00000172 R		mov		edx, OFFSET user_name
+ 00000181  E8 00000000 E		call		WriteString
+ 00000186  BA 000000CE R		mov		edx, OFFSET exclam_str
+ 0000018B  E8 00000000 E		call		WriteString
 
 					exit	; exit to operating system
- 000000F4  6A 00	   *	    push   +000000000h
- 000000F6  E8 00000000 E   *	    call   ExitProcess
- 000000FB			main ENDP
-
+ 00000190  6A 00	   *	    push   +000000000h
+ 00000192  E8 00000000 E   *	    call   ExitProcess
+ 00000197			main ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/23/22 21:42:32
-"Assignment 2     (Assignment2.asm			     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.29.30139.0	    01/31/22 22:29:27
+"Assignment 3     (assignment3.asm			     Symbols 2 - 1
 
 
 
@@ -299,8 +356,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 000001B2 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 000000FB Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000412 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000197 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -407,15 +464,11 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000FB Public STDCALL
-  Top  . . . . . . . . . . . . .	L Near	 0000004B _TEXT	
-  NaughtyLabel . . . . . . . . .	L Near	 0000005C _TEXT	
-  GoodInput  . . . . . . . . . .	L Near	 00000068 _TEXT	
-  Fib_Loop . . . . . . . . . . .	L Near	 00000073 _TEXT	
-  Num_One  . . . . . . . . . . .	L Near	 00000089 _TEXT	
-  Num_GOne . . . . . . . . . . .	L Near	 000000A2 _TEXT	
-  Loopie . . . . . . . . . . . .	L Near	 000000AB _TEXT	
-  Loopie_Loopie  . . . . . . . .	L Near	 000000D9 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000197 Public STDCALL
+  Top  . . . . . . . . . . . . .	L Near	 00000078 _TEXT	
+  Average  . . . . . . . . . . .	L Near	 00000095 _TEXT	
+  Loopie . . . . . . . . . . . .	L Near	 000000BE _TEXT	
+  Goodbyte . . . . . . . . . . .	L Near	 00000172 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -507,8 +560,8 @@ KEY_EVENT  . . . . . . . . . . .	Number	 00000001h
 KEY_MASKS  . . . . . . . . . . .	Number	 0000001Fh   
 LEFT_ALT_PRESSED . . . . . . . .	Number	 00000002h   
 LEFT_CTRL_PRESSED  . . . . . . .	Number	 00000008h   
-MAX_INPUT_CHAR . . . . . . . . .	Number	 0000007Fh   
-MAX_NUMS . . . . . . . . . . . .	Number	 0000002Eh   
+LOWER_LIMIT  . . . . . . . . . .	Number	 -00000064h   
+MAX_INPUT  . . . . . . . . . . .	Number	 0000007Fh   
 MB_ABORTRETRYIGNORE  . . . . . .	Number	 00000002h   
 MB_APPLMODAL . . . . . . . . . .	Number	 00000000h   
 MB_CANCELTRYCONTINUE . . . . . .	Number	 00000006h   
@@ -534,7 +587,6 @@ MB_USERICON  . . . . . . . . . .	Number	 00000080h
 MB_YESNOCANCEL . . . . . . . . .	Number	 00000003h   
 MB_YESNO . . . . . . . . . . . .	Number	 00000004h   
 MENU_EVENT . . . . . . . . . . .	Number	 00000008h   
-MIN_NUMS . . . . . . . . . . . .	Number	 00000001h   
 MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h   
 MessageBox . . . . . . . . . . .	Text   	 MessageBoxA
 NULL . . . . . . . . . . . . . .	Number	 00000000h   
@@ -637,34 +689,46 @@ VK_UP  . . . . . . . . . . . . .	Number	 00000026h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
-bad_in_str . . . . . . . . . . .	Byte	 000000E1 _DATA	
+avg_str  . . . . . . . . . . . .	Byte	 0000014F _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
+dot_str  . . . . . . . . . . . .	Byte	 00000170 _DATA	
+exclam_str . . . . . . . . . . .	Byte	 000000CE _DATA	
+exit_prompt_str  . . . . . . . .	Byte	 00000072 _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
-fib_0  . . . . . . . . . . . . .	DWord	 000001A6 _DATA	
-fib_1  . . . . . . . . . . . . .	DWord	 000001AA _DATA	
-fib_nums . . . . . . . . . . . .	DWord	 000001A2 _DATA	
-gbye_str . . . . . . . . . . . .	Byte	 00000110 _DATA	
+extra_cred_str . . . . . . . . .	Byte	 000000F1 _DATA	
+goodbyte_str . . . . . . . . . .	Byte	 000000C4 _DATA	
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
-intro  . . . . . . . . . . . . .	Byte	 00000000 _DATA	
+in_arr . . . . . . . . . . . . .	DWord	 000001F2 _DATA	
+int_ave  . . . . . . . . . . . .	DWord	 000003FA _DATA	
+int_int  . . . . . . . . . . . .	DWord	 000003FE _DATA	
+int_real . . . . . . . . . . . .	DWord	 00000402 _DATA	
+intro_str  . . . . . . . . . . .	Byte	 00000003 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
 lightGreen . . . . . . . . . . .	Number	 0000000Ah   
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
-line_str . . . . . . . . . . . .	Byte	 00000120 _DATA	
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-name_prompt  . . . . . . . . . .	Byte	 0000002D _DATA	
-num_per_line . . . . . . . . . .	DWord	 000001AE _DATA	
-num_prompt . . . . . . . . . . .	Byte	 00000048 _DATA	
+multiplier . . . . . . . . . . .	DWord	 0000040A _DATA	
+name_str . . . . . . . . . . . .	Byte	 00000032 _DATA	
+neg_one  . . . . . . . . . . . .	DWord	 0000040E _DATA	
+num_1_str  . . . . . . . . . . .	Byte	 00000115 _DATA	
+num_2_str  . . . . . . . . . . .	Byte	 00000122 _DATA	
+num_ave  . . . . . . . . . . . .	QWord	 000003F2 _DATA	
+num_instruct_str . . . . . . . .	Byte	 0000004F _DATA	
+num_int  . . . . . . . . . . . .	DWord	 000003EE _DATA	
+num_prompt_str . . . . . . . . .	Byte	 000000B3 _DATA	
+num_sum  . . . . . . . . . . . .	DWord	 00000406 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-space_str  . . . . . . . . . . .	Byte	 0000011A _DATA	
-user_name  . . . . . . . . . . .	Byte	 00000122 _DATA	
-welcome_str  . . . . . . . . . .	Byte	 00000040 _DATA	
+special_str  . . . . . . . . . .	Byte	 000000D0 _DATA	
+sum_str  . . . . . . . . . . . .	Byte	 00000132 _DATA	
+user_name  . . . . . . . . . . .	Byte	 00000172 _DATA	
+welcome_str  . . . . . . . . . .	Byte	 00000045 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
