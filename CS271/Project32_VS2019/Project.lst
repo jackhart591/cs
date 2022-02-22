@@ -1,18 +1,17 @@
-Microsoft (R) Macro Assembler Version 14.29.30139.0	    02/13/22 16:33:15
-Assignment 4		(assignmen4.asm			     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.29.30139.0	    02/21/22 20:40:02
+"Assignment 5     (assignment5.asm			     Page 1 - 1
 
 
-				TITLE Assignment 4		(assignmen4.asm)
+				TITLE Assignment 5     (assignment5.asm)
 
 				COMMENT &
 					Author: Jackson Hart
 					Last Modified:
 					OSU email address: hartjack@oregonstate.edu
 					Course number/section: 31528
-					Assignment Number: 4
-					Due Date: 2/13/2022
-					Description: Asks the user how many composite numbers they want to print, and the program prints
-							   that number of composites. 
+					Assignment Number:
+					Due Date:
+					Description: 
 				&
 
 				INCLUDE Irvine32.inc
@@ -34,334 +33,189 @@ Microsoft (R) Macro Assembler Version 14.29.30139.0	    02/13/22 16:33:15
 			      C .LIST
 			      C 
 
- = 0000012C			UPPER_LIMIT	EQU 300
- = [ebp-4]			LOCAL_A		EQU [ebp-4]
- = [ebp-8]			LOCAL_B		EQU [ebp-8]
- = [ebp+8]			PARAM_A		EQU [ebp+8]
+ = 00000064			RAND_LOW	EQU		100
+ = 000003E7			RAND_HI		EQU		999
+ = 0000000F			USER_LOW	EQU		15
+ = 000000C8			USER_HI		EQU		200
+
+ = [ebp+8]			PARAM_A		EQU		[ebp+8]
 
  00000000			.data
 
- 00000000 57 65 6C 63 6F	intro_str_1		BYTE		"Welcome to the composite number spreadsheet", 10, "Programmed by Jackson Hart", 0
-	   6D 65 20 74 6F
-	   20 74 68 65 20
-	   63 6F 6D 70 6F
-	   73 69 74 65 20
-	   6E 75 6D 62 65
-	   72 20 73 70 72
-	   65 61 64 73 68
-	   65 65 74 0A 50
-	   72 6F 67 72 61
-	   6D 6D 65 64 20
-	   62 79 20 4A 61
+ 00000000 53 6F 72 74 69		title_str		BYTE		"Sorting Random Integers", 0
+	   6E 67 20 52 61
+	   6E 64 6F 6D 20
+	   49 6E 74 65 67
+	   65 72 73 00
+ 00000018 42 79 20 4A 61		author_str		BYTE		"By Jackson Hart", 0
 	   63 6B 73 6F 6E
 	   20 48 61 72 74
 	   00
- 00000047 54 68 69 73 20	intro_str_2		BYTE		"This program is capable of generating a list of composite numbers.", 10, "Simply let me know how many you would like to see.", \
+ 00000028 54 68 69 73 20		intro_str		BYTE		"This program generates random numbers in the range [100 ... 999],", 10, \
 	   70 72 6F 67 72
-	   61 6D 20 69 73
-	   20 63 61 70 61
-	   62 6C 65 20 6F
-	   66 20 67 65 6E
-	   65 72 61 74 69
-	   6E 67 20 61 20
-	   6C 69 73 74 20
-	   6F 66 20 63 6F
-	   6D 70 6F 73 69
-	   74 65 20 6E 75
-	   6D 62 65 72 73
-	   2E 0A 53 69 6D
-	   70 6C 79 20 6C
-	   65 74 20 6D 65
-	   20 6B 6E 6F 77
-	   20 68 6F 77 20
-	   6D 61 6E 79 20
-	   79 6F 75 20 77
-	   6F 75 6C 64 20
-	   6C 69 6B 65 20
-	   74 6F 20 73 65
-	   65 2E 0A 49 20
-	   77 69 6C 6C 20
-	   61 63 63 65 70
-	   74 20 6F 72 64
-	   65 72 73 20 66
-	   6F 72 20 75 70
-	   20 74 6F 20 33
-	   30 30 20 63 6F
-	   6D 70 6F 73 69
-	   74 65 73 2E 00
-										10, "I will accept orders for up to 300 composites.", 0
- 000000EC 48 6F 77 20 6D	prompt_str		BYTE		"How many composites do you want to view? [1 .. 300]:", 0
-	   61 6E 79 20 63
-	   6F 6D 70 6F 73
-	   69 74 65 73 20
-	   64 6F 20 79 6F
-	   75 20 77 61 6E
-	   74 20 74 6F 20
-	   76 69 65 77 3F
-	   20 5B 31 20 2E
-	   2E 20 33 30 30
-	   5D 3A 00
- 00000121 54 68 61 74 20	bad_in_str		BYTE		"That was not within the specified range, try again!", 10, 0
-	   77 61 73 20 6E
-	   6F 74 20 77 69
-	   74 68 69 6E 20
-	   74 68 65 20 73
-	   70 65 63 69 66
-	   69 65 64 20 72
-	   61 6E 67 65 2C
-	   20 74 72 79 20
-	   61 67 61 69 6E
-	   21 0A 00
- 00000156 54 68 61 6E 6B	goodbyte_str		BYTE		"Thanks for using my program!", 0
-	   73 20 66 6F 72
-	   20 75 73 69 6E
-	   67 20 6D 79 20
-	   70 72 6F 67 72
-	   61 6D 21 00
- 00000173 09 00			tab_char			BYTE		9, 0
- 00000175 0A 00			endl_char			BYTE		10, 0
- 00000177 0000000A		num_chars			DWORD	10
+	   61 6D 20 67 65
+	   6E 65 72 61 74
+	   65 73 20 72 61
+	   6E 64 6F 6D 20
+	   6E 75 6D 62 65
+	   72 73 20 69 6E
+	   20 74 68 65 20
+	   72 61 6E 67 65
+	   20 5B 31 30 30
+	   20 2E 2E 2E 20
+	   39 39 39 5D 2C
+	   0A 64 69 73 70
+	   6C 61 79 73 20
+	   74 68 65 20 6F
+	   72 69 67 69 6E
+	   61 6C 20 6C 69
+	   73 74 2C 20 73
+	   6F 72 74 73 20
+	   74 68 65 20 6C
+	   69 73 74 2C 20
+	   61 6E 64 20 63
+	   61 6C 63 75 6C
+	   61 74 65 73 20
+	   74 68 65 20 6D
+	   65 64 69 61 6E
+	   20 76 61 6C 75
+	   65 2E 0A 46 69
+	   6E 61 6C 6C 79
+	   2C 20 69 74 20
+	   64 69 73 70 6C
+	   61 79 73 20 74
+	   68 65 20 6C 69
+	   73 74 20 73 6F
+	   72 74 65 64 20
+	   69 6E 20 64 65
+	   73 63 65 6E 64
+	   69 6E 67 20 6F
+	   72 64 65 72 2E
+	   00
+												"displays the original list, sorts the list, and calculates the median value.", 10, \
+												"Finally, it displays the list sorted in descending order.", 0
+ 000000F1 48 6F 77 20 6D		number_prompt	BYTE		"How many numbers should be generated? [15 ... 200]: ", 0
+	   61 6E 79 20 6E
+	   75 6D 62 65 72
+	   73 20 73 68 6F
+	   75 6C 64 20 62
+	   65 20 67 65 6E
+	   65 72 61 74 65
+	   64 3F 20 5B 31
+	   35 20 2E 2E 2E
+	   20 32 30 30 5D
+	   3A 20 00
+ 00000126 49 6E 76 61 6C		invalid_str		BYTE		"Invalid input, try again!", 0
+	   69 64 20 69 6E
+	   70 75 74 2C 20
+	   74 72 79 20 61
+	   67 61 69 6E 21
+	   00
 
- 0000017B 00000000		num_composites	DWORD		?
+ 00000140 00000000			num_ints		DWORD		?
 
  00000000			.code
  00000000			main PROC
 
- 00000000  E8 00000016			call		intro
- 00000005  E8 00000032			call		getInput
- 0000000A  E8 00000071			call		showComposites
- 0000000F  E8 00000130			call		goodByte
+ 00000000  E8 00000018			call	Intro
+ 00000005  FF 35 00000140 R		push	num_ints
+ 0000000B  E8 0000003D			call	GetData
+ 00000010  58				pop		eax
+ 00000011  E8 00000000 E		call	WriteDec
 
-					exit										; exit to operating system
- 00000014  6A 00	   *	    push   +000000000h
- 00000016  E8 00000000 E   *	    call   ExitProcess
- 0000001B			main ENDP
-
-				COMMENT &
-					Description: Introduces user to program
-					Recieves: intro_str_1, intro_str_2
-					Returns: none
-					Pre-conditions: none
-					Post-conditions: none
-					Registers Changed: EDX (pushed onto stack)
-				&
- 0000001B			intro PROC USES edx
- 0000001B  52		   *	    push   edx
- 0000001C  BA 00000000 R		mov		edx, OFFSET intro_str_1
- 00000021  E8 00000000 E		call		WriteString
- 00000026  E8 00000000 E		call		Crlf
- 0000002B  BA 00000047 R		mov		edx, OFFSET intro_str_2
- 00000030  E8 00000000 E		call		WriteString
- 00000035  E8 00000000 E		call		Crlf
-
-					ret
- 0000003A  5A		   *	    pop    edx
- 0000003B  C3		   *	    ret    00000h
- 0000003C			intro ENDP
+					exit	; exit to operating system
+ 00000016  6A 00	   *	    push   +000000000h
+ 00000018  E8 00000000 E   *	    call   ExitProcess
+ 0000001D			main ENDP
 
 				COMMENT &
-					Description: Gets the number of composites to view from the user and calls validateInput
+					Description: Displays program intro
 					Recieves: none
 					Returns: none
 					Pre-conditions: none
-					Post-Conditions: num_composites will be updated with valid user input
-					Registers Changed: EAX and EDX (pushed onto stack)
-				&
- 0000003C			getInput PROC USES edx eax
- 0000003C  52		   *	    push   edx
- 0000003D  50		   *	    push   eax
- 0000003E  55				push		ebp
-
- 0000003F  BA 000000EC R		mov		edx, OFFSET prompt_str
- 00000044  E8 00000000 E		call		WriteString
- 00000049  E8 00000000 E		call		ReadDec
- 0000004E  E8 00000004			call		validateInput
-
- 00000053  5D				pop		ebp
-					ret
- 00000054  58		   *	    pop    eax
- 00000055  5A		   *	    pop    edx
- 00000056  C3		   *	    ret    00000h
- 00000057			getInput ENDP
-
-				COMMENT &
-					Description: Validates that the value stored in EAX is between 1 and 300
-					Recieves: none
-					Returns: none
-					Pre-conditions: user input is stored in EAX
-					Post-Conditions: either will set num_composites or call getInput
+					Post-Conditions: none
 					Registers Changed: none
 				&
- 00000057			validateInput PROC
- 00000057  55				push		ebp
- 00000058  8B EC			mov		ebp, esp
+ 0000001D			Intro PROC
+ 0000001D  52				push	edx
 
- 0000005A  83 F8 00			cmp		eax, 0
- 0000005D  7E 09			jle		BadInput						; if input <= 0
- 0000005F  3D 0000012C			cmp		eax, UPPER_LIMIT
- 00000064  7F 02			jg		BadInput						; if input > 300
- 00000066  EB 11			jmp		GoodInput						; else...
+ 0000001E  BA 00000000 R		mov		edx, OFFSET title_str
+ 00000023  E8 00000000 E		call	WriteString
+ 00000028  E8 00000000 E		call	Crlf
 
- 00000068			BadInput:
- 00000068  BA 00000121 R		mov		edx, OFFSET bad_in_str
- 0000006D  E8 00000000 E		call		WriteString
- 00000072  E8 FFFFFFC5			call		getInput						; Get new input
- 00000077  EB 05			jmp		Return_A
- 00000079			GoodInput:
- 00000079  A3 0000017B R		mov		num_composites, eax				; Save the validated input
+ 0000002D  BA 00000018 R		mov		edx, OFFSET author_str
+ 00000032  E8 00000000 E		call	WriteString
+ 00000037  E8 00000000 E		call	Crlf
 
- 0000007E			Return_A:
- 0000007E  5D				pop		ebp
- 0000007F  C3				ret
- 00000080			validateInput ENDP
+ 0000003C  BA 00000028 R		mov		edx, OFFSET intro_str
+ 00000041  E8 00000000 E		call	WriteString
+ 00000046  E8 00000000 E		call	Crlf
 
-				COMMENT &
-					Description: Displays composite numbers
-					Recieves: none
-					Returns: none
-					Pre-conditions: num_composites is set
-					Post-Conditions: composites will be displayed to the user
-					Registers Changed: none
-				&
- 00000080			showComposites PROC USES ecx eax edx
- 00000080  51		   *	    push   ecx
- 00000081  50		   *	    push   eax
- 00000082  52		   *	    push   edx
- 00000083  55				push		ebp
- 00000084  8B EC			mov		ebp, esp
- 00000086  83 EC 08			sub		esp, 8						; Free space for my local var
- 00000089  C7 45 FC			mov		DWORD PTR LOCAL_A, 1			; Local variable for displaying composites (Starts at 1 because loop will inc to 2 which will not be recognized as comp)
-	   00000001
+ 0000004B  5A				pop		edx
+ 0000004C  C3				ret
+ 0000004D			Intro ENDP
 
- 00000090  8B 0D 0000017B R		mov		ecx, num_composites
- 00000096  BA 00000173 R		mov		edx, OFFSET tab_char			; Load tab char into edx
+ 0000004D			GetData PROC
+ 0000004D  55				push	ebp
+ 0000004E  8B EC			mov		ebp, esp
+ 00000050  52				push	edx
+ 00000051  50				push	eax
 
+ 00000052			Top_A:
+ 00000052  BA 000000F1 R		mov		edx, OFFSET number_prompt
+ 00000057  E8 00000000 E		call	WriteString
+ 0000005C  E8 00000000 E		call	ReadDec
 
- 0000009B			Loopie_A:
- 0000009B  FF 45 FC			inc		DWORD PTR LOCAL_A
- 0000009E  FF 75 FC			push		DWORD PTR LOCAL_A				; Push argument
- 000000A1  E8 00000057			call		checkComposite
- 000000A6  8F 45 F8			pop		DWORD PTR LOCAL_B				; Pop argument into LOCAL_B
- 000000A9  83 7D F8 00			cmp		DWORD PTR LOCAL_B, 0			; Is the current integer a composite?
- 000000AD  74 16			je		NonPrime
- 000000AF  8B 45 F8			mov		eax, DWORD PTR LOCAL_B
- 000000B2  E8 00000000 E		call		WriteDec						; Write composite
- 000000B7  E8 00000000 E		call		WriteString					; Write spaces
- 000000BC  E8 0000000D			call		checkEndL						; Check if it's time for a new line
- 000000C1  E2 D8			loop		Loopie_A
- 000000C3  EB 02			jmp		Return_C
- 000000C5			NonPrime:
- 000000C5  EB D4			jmp		Loopie_A
+ 00000061  83 F8 0F			cmp		eax, USER_LOW
+ 00000064  7C 09			jl		NotValid
+ 00000066  3D 000000C8			cmp		eax, USER_HI
+ 0000006B  7F 02			jg		NotValid
+ 0000006D  EB 11			jmp		ValidInput
 
- 000000C7			Return_C:
- 000000C7  8B E5			mov		esp, ebp						; Remove locals from stack
- 000000C9  5D				pop		ebp
-					ret
- 000000CA  5A		   *	    pop    edx
- 000000CB  58		   *	    pop    eax
- 000000CC  59		   *	    pop    ecx
- 000000CD  C3		   *	    ret    00000h
- 000000CE			showComposites ENDP
+ 0000006F			NotValid:
+ 0000006F  BA 00000126 R		mov		edx, OFFSET invalid_str
+ 00000074  E8 00000000 E		call	WriteString
+ 00000079  E8 00000000 E		call	Crlf
+ 0000007E  EB D2			jmp		Top_A
 
-				COMMENT &
-					Description: Checks if it is time to insert and endl
-					Recieves: none
-					Returns: none
-					Pre-conditions: ecx is currently being used for a counter and num_composites is set
-					Post-Conditions: if num_composites - ecx is divisable by 10, a endl will be printed
-					Registers Changed: none
-				&
- 000000CE			checkEndL	PROC USES eax ebx edx
- 000000CE  50		   *	    push   eax
- 000000CF  53		   *	    push   ebx
- 000000D0  52		   *	    push   edx
- 000000D1  55				push		ebp
+ 00000080			ValidInput:
+ 00000080  89 45 08			mov		PARAM_A, eax
+					
+ 00000083  58				pop		eax
+ 00000084  5A				pop		edx
+ 00000085  5D				pop		ebp
+ 00000086  C3				ret
+ 00000087			GetData ENDP
 
- 000000D2  8B 1D 0000017B R		mov		ebx, num_composites
- 000000D8  8B C1			mov		eax, ecx
- 000000DA  2B D8			sub		ebx, eax						; num_composites - ecx = number the current composite is
- 000000DC  93				xchg		ebx, eax
- 000000DD  40				inc		eax							; So it starts at 1 and not 0
- 000000DE  BA 00000000			mov		edx, 0
- 000000E3  F7 35 00000177 R		div		num_chars
- 000000E9  83 FA 00			cmp		edx, 0						; If the current composite's position is divisible by 10...
- 000000EC  75 0A			jne		Return_D
- 000000EE  BA 00000175 R		mov		edx, OFFSET endl_char			; Print a new line
- 000000F3  E8 00000000 E		call		WriteString
+ 00000087			FillArray PROC
 
- 000000F8			Return_D:
- 000000F8  5D				pop		ebp
-					ret
- 000000F9  5A		   *	    pop    edx
- 000000FA  5B		   *	    pop    ebx
- 000000FB  58		   *	    pop    eax
- 000000FC  C3		   *	    ret    00000h
- 000000FD			checkEndL	ENDP
+ 00000087  C3				ret
+ 00000088			FillArray ENDP
 
-				COMMENT &
-					Description: Checks to see if a given number is a composite
-					Recieves: number to check (LOCAL_A)
-					Returns: 0 if not a composite, the inputted number if it is
-					Pre-conditions: some number to check is pushed to the stack
-					Post-Conditions: the number on the stack may be 0
-					Registers Changed: none (pushed and popped so they do not get changed)
-				&
- 000000FD			checkComposite PROC
- 000000FD  55				push		ebp
- 000000FE  8B EC			mov		ebp, esp
- 00000100  83 EC 04			sub		esp, 4						; Free space for my local var
- 00000103  50				push		eax
- 00000104  51				push		ecx
- 00000105  52				push		edx							; Save EAX, ECX, & EDX separately so I don't lose my parameter
+ 00000088			ExchangeElems PROC
 
- 00000106  C7 45 FC			mov		DWORD PTR LOCAL_A, 1			; Make sure loop doesn't divide the number by 1
-	   00000001
- 0000010D  8B 4D 08			mov		ecx, DWORD PTR PARAM_A
- 00000110  83 E9 02			sub		ecx, 2						; Make sure loop doesn't divide the number by itself
+ 00000088  C3				ret
+ 00000089			ExchangeElems ENDP
 
- 00000113  83 F9 00			cmp		ecx, 0
- 00000116  7F 09			jg		Loopie_B
- 00000118  C7 45 08			mov		DWORD PTR PARAM_A, 0
-	   00000000
- 0000011F  EB 1C			jmp		Return_B
+ 00000089			SortList PROC
 
- 00000121			Loopie_B:
- 00000121  FF 45 FC			inc		DWORD PTR LOCAL_A
- 00000124  8B 45 08			mov		eax, DWORD PTR PARAM_A
- 00000127  BA 00000000			mov		edx, 0
- 0000012C  F7 75 FC			div		DWORD PTR LOCAL_A
- 0000012F  83 FA 00			cmp		edx, 0
- 00000132  74 09			je		Return_B						; If we found a number this num is divisible by, return
- 00000134  E2 EB			loop		Loopie_B
+ 00000089  C3				ret
+ 0000008A			SortList ENDP
 
- 00000136  C7 45 08			mov		DWORD PTR PARAM_A, 0			; If we did not find a number, then return 0
-	   00000000
+ 0000008A			DisplayMedium PROC
 
- 0000013D			Return_B:
- 0000013D  5A				pop		edx
- 0000013E  59				pop		ecx
- 0000013F  58				pop		eax
- 00000140  8B E5			mov		esp, ebp
- 00000142  5D				pop		ebp
- 00000143  C3				ret
- 00000144			checkComposite ENDP
+ 0000008A  C3				ret
+ 0000008B			DisplayMedium ENDP
 
- 00000144			goodByte PROC USES edx
- 00000144  52		   *	    push   edx
- 00000145  55				push			ebp
+ 0000008B			DisplayList PROC
 
- 00000146  BA 00000156 R		mov		edx, OFFSET goodbyte_str
- 0000014B  E8 00000000 E		call		WriteString
+ 0000008B  C3				ret
+ 0000008C			DisplayList ENDP
 
- 00000150  5D				pop			ebp
-					ret
- 00000151  5A		   *	    pop    edx
- 00000152  C3		   *	    ret    00000h
- 00000153			goodByte ENDP
 
 				END main
-Microsoft (R) Macro Assembler Version 14.29.30139.0	    02/13/22 16:33:15
-Assignment 4		(assignmen4.asm			     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.29.30139.0	    02/21/22 20:40:02
+"Assignment 5     (assignment5.asm			     Symbols 2 - 1
 
 
 
@@ -454,8 +308,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000017F Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000153 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000144 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000008C Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -469,11 +323,15 @@ CreateFileA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 CreateOutputFile . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Crlf . . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Delay  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+DisplayList  . . . . . . . . . .	P Near	 0000008B _TEXT	Length= 00000001 Public STDCALL
+DisplayMedium  . . . . . . . . .	P Near	 0000008A _TEXT	Length= 00000001 Public STDCALL
 DumpMem  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 DumpRegs . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ExchangeElems  . . . . . . . . .	P Near	 00000088 _TEXT	Length= 00000001 Public STDCALL
 ExitProcess  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FileTimeToDosDateTime  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FileTimeToSystemTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+FillArray  . . . . . . . . . . .	P Near	 00000087 _TEXT	Length= 00000001 Public STDCALL
 FlushConsoleInputBuffer  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FormatMessageA . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetCommandLineA  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -482,6 +340,10 @@ GetConsoleCP . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 GetConsoleCursorInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetConsoleScreenBufferInfo . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetData  . . . . . . . . . . . .	P Near	 0000004D _TEXT	Length= 0000003A Public STDCALL
+  Top_A  . . . . . . . . . . . .	L Near	 00000052 _TEXT	
+  NotValid . . . . . . . . . . .	L Near	 0000006F _TEXT	
+  ValidInput . . . . . . . . . .	L Near	 00000080 _TEXT	
 GetDateTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetFileTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetKeyState  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -501,6 +363,7 @@ HeapCreate . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 HeapDestroy  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapFree . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapSize . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Intro  . . . . . . . . . . . . .	P Near	 0000001D _TEXT	Length= 00000030 Public STDCALL
 IsDigit  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 LocalFree  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 MessageBoxA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -537,6 +400,7 @@ SetLocalTime . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 SetTextColor . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ShowFPUStack . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Sleep  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SortList . . . . . . . . . . . .	P Near	 00000089 _TEXT	Length= 00000001 Public STDCALL
 StrLength  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Str_compare  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Str_copy . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -562,25 +426,9 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-checkComposite . . . . . . . . .	P Near	 000000FD _TEXT	Length= 00000047 Public STDCALL
-  Loopie_B . . . . . . . . . . .	L Near	 00000121 _TEXT	
-  Return_B . . . . . . . . . . .	L Near	 0000013D _TEXT	
-checkEndL  . . . . . . . . . . .	P Near	 000000CE _TEXT	Length= 0000002F Public STDCALL
-  Return_D . . . . . . . . . . .	L Near	 000000F8 _TEXT	
-getInput . . . . . . . . . . . .	P Near	 0000003C _TEXT	Length= 0000001B Public STDCALL
-goodByte . . . . . . . . . . . .	P Near	 00000144 _TEXT	Length= 0000000F Public STDCALL
-intro  . . . . . . . . . . . . .	P Near	 0000001B _TEXT	Length= 00000021 Public STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000001B Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000001D Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
-showComposites . . . . . . . . .	P Near	 00000080 _TEXT	Length= 0000004E Public STDCALL
-  Loopie_A . . . . . . . . . . .	L Near	 0000009B _TEXT	
-  NonPrime . . . . . . . . . . .	L Near	 000000C5 _TEXT	
-  Return_C . . . . . . . . . . .	L Near	 000000C7 _TEXT	
-validateInput  . . . . . . . . .	P Near	 00000057 _TEXT	Length= 00000029 Public STDCALL
-  BadInput . . . . . . . . . . .	L Near	 00000068 _TEXT	
-  GoodInput  . . . . . . . . . .	L Near	 00000079 _TEXT	
-  Return_A . . . . . . . . . . .	L Near	 0000007E _TEXT	
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 
 
@@ -670,8 +518,6 @@ KEY_EVENT  . . . . . . . . . . .	Number	 00000001h
 KEY_MASKS  . . . . . . . . . . .	Number	 0000001Fh   
 LEFT_ALT_PRESSED . . . . . . . .	Number	 00000002h   
 LEFT_CTRL_PRESSED  . . . . . . .	Number	 00000008h   
-LOCAL_A  . . . . . . . . . . . .	Text   	 [ebp-4]
-LOCAL_B  . . . . . . . . . . . .	Text   	 [ebp-8]
 MB_ABORTRETRYIGNORE  . . . . . .	Number	 00000002h   
 MB_APPLMODAL . . . . . . . . . .	Number	 00000000h   
 MB_CANCELTRYCONTINUE . . . . . .	Number	 00000006h   
@@ -705,6 +551,8 @@ OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
 PARAM_A  . . . . . . . . . . . .	Text   	 [ebp+8]
 PeekConsoleInput . . . . . . . .	Text   	 PeekConsoleInputA
+RAND_HI  . . . . . . . . . . . .	Number	 000003E7h   
+RAND_LOW . . . . . . . . . . . .	Number	 00000064h   
 RIGHT_ALT_PRESSED  . . . . . . .	Number	 00000001h   
 RIGHT_CTRL_PRESSED . . . . . . .	Number	 00000004h   
 ReadConsoleInput . . . . . . . .	Text   	 ReadConsoleInputA
@@ -719,7 +567,8 @@ SetConsoleTitle  . . . . . . . .	Text   	 SetConsoleTitleA
 TAB  . . . . . . . . . . . . . .	Number	 00000009h   
 TRUE . . . . . . . . . . . . . .	Number	 00000001h   
 TRUNCATE_EXISTING  . . . . . . .	Number	 00000005h   
-UPPER_LIMIT  . . . . . . . . . .	Number	 0000012Ch   
+USER_HI  . . . . . . . . . . . .	Number	 000000C8h   
+USER_LOW . . . . . . . . . . . .	Number	 0000000Fh   
 VK_11  . . . . . . . . . . . . .	Number	 000000BDh   
 VK_12  . . . . . . . . . . . . .	Number	 000000BBh   
 VK_ADD . . . . . . . . . . . . .	Number	 0000006Bh   
@@ -801,18 +650,16 @@ VK_UP  . . . . . . . . . . . . .	Number	 00000026h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
-bad_in_str . . . . . . . . . . .	Byte	 00000121 _DATA	
+author_str . . . . . . . . . . .	Byte	 00000018 _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
-endl_char  . . . . . . . . . . .	Byte	 00000175 _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
-goodbyte_str . . . . . . . . . .	Byte	 00000156 _DATA	
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
-intro_str_1  . . . . . . . . . .	Byte	 00000000 _DATA	
-intro_str_2  . . . . . . . . . .	Byte	 00000047 _DATA	
+intro_str  . . . . . . . . . . .	Byte	 00000028 _DATA	
+invalid_str  . . . . . . . . . .	Byte	 00000126 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -820,11 +667,10 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-num_chars  . . . . . . . . . . .	DWord	 00000177 _DATA	
-num_composites . . . . . . . . .	DWord	 0000017B _DATA	
-prompt_str . . . . . . . . . . .	Byte	 000000EC _DATA	
+num_ints . . . . . . . . . . . .	DWord	 00000140 _DATA	
+number_prompt  . . . . . . . . .	Byte	 000000F1 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-tab_char . . . . . . . . . . . .	Byte	 00000173 _DATA	
+title_str  . . . . . . . . . . .	Byte	 00000000 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
