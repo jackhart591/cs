@@ -1,0 +1,151 @@
+\documentclass[12pt, letterpaper]{article}
+\setlength{\parindent}{0cm}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+\title{Homework 8}
+\author{Jackson Hart}
+\date{March 4th, 2022}
+
+\begin{document}
+
+\maketitle
+\section*{Problem 1}
+To find the plane $z = a + bx + cy$ of best fit to the points $(1, 1, 3), (0, 3, 6), (2, 1, 5), \text{ and } (0, 0, 0)$, let
+
+\[ Ax = b \text{ be defined by } \begin{bmatrix} 1 & 1 & 1 \\ 1 & 0 & 3 \\ 1 & 2 & 1 \\ 1 & 0 & 0 \end{bmatrix} \begin{bmatrix} a \\ b \\ c \end{bmatrix} = \begin{bmatrix} 3 \\ 6 \\ 5 \\ 0 \end{bmatrix}. \]
+
+We can solve this system using the following equation, $\begin{bmatrix} a \\ b \\ c \end{bmatrix} = (A^*A)^{-1}A^*b$. So, 
+
+\[ \text{Because this is $\mathbb{R}$, } A^* = A^T = \begin{bmatrix} 1 & 1 & 1 & 1 \\ 1 & 0 & 2 & 0 \\ 1 & 3 & 1 & 0 \end{bmatrix} \]
+
+So,
+
+\[ A^*A = \begin{bmatrix} 4 & 3 & 5 \\ 3 & 5 & 3 \\ 5 & 3 & 11 \end{bmatrix} \]
+
+Which we can use to get $(A^*A)^{-1}$ by
+
+\[ \begin{bmatrix} 4 & 3 & 5 &\bigm| & 1 & 0 & 0 \\ 3 & 5 & 3 &\bigm| & 0 & 1 & 0 \\ 5 & 3 & 11 &\bigm| & 0 & 0 & 1 \end{bmatrix} \xrightarrow[]{\text{REF}} \frac{1}{25} \begin{bmatrix} 25 & 0 & 0 &\bigm| & 23 & -9 & -8 \\ 0 & 25 & 0 &\bigm| & -9 & \frac{19}{2} & \frac{3}{2} \\ 0 & 0 & 25 &\bigm| & -8 & \frac{3}{2} & \frac{11}{2} \end{bmatrix} \]
+
+So now, 
+
+\[ (A^*A)^{-1}A^* = \frac{1}{25} \begin{bmatrix} 6 & -1 & -3 & 23 \\ 2 & -\frac{9}{2} & \frac{23}{2} & -9 \\ -1 & \frac{17}{2} & \frac{1}{2} & -8 \end{bmatrix} \]
+
+\[ (A^*A)^{-1}A^* \begin{bmatrix} 3 \\ 6 \\ 5 \\ 0 \end{bmatrix} = \frac{1}{50} \begin{bmatrix} -6 \\ 73 \\ 101 \end{bmatrix} \] 
+
+So our best approximate solution is given by $z = -\frac{3}{25} + \frac{73}{50}x + \frac{101}{50}y$. 
+
+\section*{Problem 2}
+Let
+
+\[ \langle p, q \rangle = \int^1_{-1} p(t)q(t)dt \]
+
+be the standard inner product on $\mathbb{P}_2(\mathbb{R})$ and let $D: \mathbb{P}_2(\mathbb{R}) \rightarrow \mathbb{P}_2(\mathbb{R})$ be given by $D(p) = p^\prime$.
+
+\subsection*{A)}
+We can get an orthonormal basis for $\mathbb{P}_2(\mathbb{R})$ by performing Gram-Schmidt orthogonalization on the standard basis for $\mathbb{P}_2(\mathbb{R})$ which is given by $\{1, x, x^2\}$. And then dividing them by their norm. Let $x_1 = 1, x_2 = x, x_3 = x^2$.
+
+\[ \text{Let } v_1 = x_1. \]
+\[ \text{Let } v_2 = x_2 - \frac{\langle x_2, v_1 \rangle}{||v_1||^2} = x \]
+\[ \text{Let } v_3 = x_3 - \frac{\langle x_3, v_1 \rangle}{||v_1||^2} - \frac{ \langle x_3, v_2 \rangle }{||v_2||^2} x =  x^2 - \frac{1}{3} - 0 = x^2 - \frac{1}{3} \]
+
+Now to make them normal,
+
+\[ \frac{v_1}{||v_1||} = \frac{1}{\sqrt{2}} \]
+\[ \frac{v_2}{||v_2||} = \frac{x}{\sqrt{\frac{2}{3}}} = \frac{\sqrt{3}x}{\sqrt{2}} \]
+\[ \frac{v_3}{||v_3||} = \frac{x^2 - \frac{1}{3}}{\sqrt{\frac{8}{45}}} = \frac{3\sqrt{5}(x^2 - \frac{1}{3})}{2\sqrt{2}} \]
+
+So the orthonormal basis is given by $ \{ \mathcal{B} = \frac{1}{\sqrt{2}}, \frac{\sqrt{3}x}{\sqrt{2}}, \frac{3\sqrt{5}(x^2 - \frac{1}{3})}{2\sqrt{2}} \}$. 
+
+\subsection*{B)}
+To find $[D^*]_B$, let's start by finding $[D]_{\mathcal{B}}$.
+
+\[ D(v_1) = 0 = 0v_1 + 0v_2 + 0v_3 \]
+\[ D(v_2) = \sqrt{\frac{3}{2}} = \sqrt{3}v_1 + 0v_2 + 0v_3 \]
+\[ D(v_3) = \frac{3\sqrt{5}x}{\sqrt{2}} = 0v_1 + \sqrt{15}v_2 + 0v_3 \]
+
+So,
+
+\[ [D]_\mathcal{B} = \begin{bmatrix} 0 & \sqrt{3} & 0 \\ 0 & 0 & \sqrt{15} \\ 0 & 0 & 0 \end{bmatrix} \]
+
+Because we are in $\mathbb{P}_2(\mathbb{R})$ and not $\mathbb{P}_2(\mathbb{C})$, $D^* = D^T$, so
+
+\[ [D^*]_\mathcal{B} = [D^T]_\mathcal{B} = \begin{bmatrix} 0 & 0 & 0 \\ \sqrt{3} & 0 & 0 \\ 0 & \sqrt{15} & 0 \end{bmatrix} \]
+
+\subsection*{C)}
+Let $p = av_1 + bv_2 + cv_3$. So then,
+
+\[ D^*(p) = \frac{\sqrt{3}}{\sqrt{2}}b + c\sqrt{15}\left(\frac{3\sqrt{5}(x^2 - \frac{1}{3})}{2\sqrt{2}} \right) \]
+
+\section*{Problem 3}
+Let $V$ be the inner product space of complex-valued continuous functions on $[0, 1]$ with the inner product
+
+\[ \langle f, g \rangle = \int^1_0f(t)\overline{g(t)}dt. \]
+
+Let $h \in V$ and define $T: V \rightarrow V$ by $T(f) = h(f)$. Then $T$ is a unitary operator if and only if $|h(t)| = 1$ for $0 \le t \le 1$. 
+
+\begin{proof}
+
+$(=>)$ Let $|h(t)| = 1$ for $0 \le t \le 1$.
+
+\[ ||Tf||^2 = \langle hf, hf \rangle = \int^1_0 hf(t) \overline{hf(t)} dt \]
+\[ = \int^1_0 |hf(t)|^2 dt \]
+
+Because $h(t) = 1 $, 
+
+\[ \int^1_0 |hf(t)|^2 dt = \int^1_0 |f(t)^2| = \int^1_0 f(t) \overline{f(t)} dt = ||f(t)||^2 \]
+
+So therefore, $||Tf||^2 = ||f||^2$ and $T$ is an isometry. Because $T V \rightarrow V$, we know that $T$ is square dimensional. Now consider,
+
+\[ \langle T^*Tf, f \rangle = \langle Tf, Tf \rangle = \langle f, f \rangle \]
+
+Therefore, $T^*T$ is the identity matrix. Therefore $T$ is a unitary operator. 
+
+\vspace{\baselineskip}
+
+$(<=)$ Let $T$ be a unitary operator. Let $f, g \in V$ such that $g = T^*f - f \overline{h}$ and $f$ is arbitrary. Then,
+
+\[ ||g||^2 = \int^1_0 (T^*f - f \overline{h}) \overline{T^*f - f \overline{h})} dt = \int^1_0 |T^*f - f \overline{h}|^2 dt \]
+
+This implies that
+
+\[ T^*f - f \overline{h} = 0 => T^*f = f \overline{h} \]
+
+Which then gives you,
+
+\[ TT^*f = h \overline{h}f = |h|^2f \]
+
+And because $TT^*f = f$ due to properties of unitary operators, we then get
+
+\[ |h|^2f = f \]
+\[ |h|^2 = 1 \]
+
+Therefore, $|h| = 1$ along $0 \le t \le 1$. 
+
+\end{proof}
+
+\section*{Problem 4}
+
+\subsection*{A)}
+Let $\lambda$ be an arbitrary eigenvalue of $A^*A$ and $v$ be its eigenvector. Then,
+
+\[ \langle A^*Av, v \rangle = \langle v, (A^*A)^*v \rangle \]
+\[ => \langle \lambda v, v \rangle = \langle v, (A^*)(A^*)^*v \rangle \]
+\[ => \langle \lambda v, v \rangle = \langle v, A^*Av \rangle \]
+\[ => \langle \lambda v, v \rangle = \langle v, \lambda v \rangle \]
+\[ \therefore \lambda = \overline{\lambda} \]
+
+And therefore, all eigenvalues are real. 
+
+\subsection*{B)}
+
+\[ ||\lambda v||^2 = \langle \lambda v, \lambda v \rangle \]
+\[ => ||\lambda v||^2 = \lambda \overline{\lambda} \langle v, v \rangle \]
+\[ => \lambda = \frac{||\lambda v||}{||v||} \]
+
+And by the non-negativity property of inner products, $\lambda$ must be non-negative. 
+
+\end{document}

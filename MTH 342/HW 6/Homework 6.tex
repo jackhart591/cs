@@ -1,0 +1,256 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{systeme}
+
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
+
+\title{Homework 6}
+\author{Jackson Hart}
+\date{February 18 2022}
+
+\begin{document}
+
+\maketitle
+\section*{Problem 1}
+Let
+
+\[ A=\begin{bmatrix}4 & 2 & 4 \\ 2 & 1 & 2 \\ 4 & 2 & 4\end{bmatrix} \]
+
+\subsection*{A}
+Find bases for each of the eigenspaces.
+
+\vspace{\baselineskip}
+
+I will begin by finding the eigenvalues. So I will compute $Det(A-\lambda I)$.
+
+\[ A - \lambda I = \begin{bmatrix} 4 - \lambda & 2 & 4 \\ 2 & 1 - \lambda & 2 \\ 4 & 2 & 4 - \lambda \end{bmatrix}\]
+
+I will compute the matrix using Laplace expansion. 
+
+\[ \begin{vmatrix} 4 - \lambda & 2 & 4 \\ 2 & 1 - \lambda & 2 \\ 4 & 2 & 4 - \lambda \end{vmatrix} = (-1)^2(4-\lambda)\begin{vmatrix} 1 - \lambda & 2 \\ 2 & 4 - \lambda \end{vmatrix}+(-1)^3(2)\begin{vmatrix} 2 & 4 \\ 2 & 4 - \lambda \end{vmatrix} + (-1)^4(4)\begin{vmatrix} 2 & 4 \\ 1 - \lambda & 2 \end{vmatrix}\]
+
+\[ = (4 - \lambda) ((1 - \lambda)(4- \lambda) - 4) - 2(2(4 - \lambda) - 8) + 4(4 - 4(1 - \lambda)) \]
+
+\[ = (4 - \lambda)(\lambda^2-5\lambda) + 4\lambda + 16 \lambda \]
+
+\[ = -\lambda^3 + 9\lambda^2 - 20\lambda + 20\lambda \]
+
+\[ = 9\lambda^2 - \lambda^3 \]
+
+\[ = \lambda^2(9 - \lambda) \]
+
+Now I need to solve for $\lambda^2(9 - \lambda) = 0$. This produces a value of $\lambda_1 = 0$ and $\lambda_2 = 9$. Now I need to solve for the eigenspace. The eigenspace is equal to $ker(A-\lambda I)$.
+
+\[ A - \lambda_1 I = \begin{bmatrix} 4 & 2 & 4 \\ 2 & 1 & 2 \\ 4 & 2 & 4 \end{bmatrix} \]
+
+Finding the REF produces
+
+\[ \begin{bmatrix} 1 & \frac{1}{2} & 1 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix} \]
+
+We can find the kernel by solving this system of equations.
+
+\[ x_1 + \frac{1}{2} x_2 + x_3 = 0 \]
+
+Which gives us,
+
+\[ \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} = \begin{bmatrix} \frac{1}{2}x_2 + x_3 \\ 0 \\ 0 \end{bmatrix} = x_2\begin{bmatrix} \frac{1}{2} \\ 0 \\ 0 \end{bmatrix} + x_3\begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}\]
+
+So the basis for $ker(A-\lambda_1 I)$ and thus the basis of the eigenspace $E_{\lambda_1}$ is given by,
+
+\[ \begin{Bmatrix} \begin{bmatrix} \frac{1}{2} \\ 0 \\ 0\end{bmatrix}, \begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix} \end{Bmatrix} \]
+
+Similarly,
+
+\[ A - \lambda_2 I = \begin{bmatrix} -5 & 2 & 4 \\ 2 & -8 & 2 \\ 4 & 2 & -5 \end{bmatrix} \]
+
+Getting the REF gives us
+
+\[ \begin{bmatrix} 1 & 0 & -1 \\ 0 & 1 & -\frac{1}{2} \\ 0 & 0 & 0 \end{bmatrix} \]
+
+We can find the kernel by solving this system of equations.
+
+\[ \begin{cases}
+	x_1 + 0x_2 - x_3 = 0 \\
+	0x_1 + x_2 -\frac{1}{2}x_3 = 0
+\end{cases} \]
+
+\[ \begin{cases}
+	x_1 = x_3 \\
+	x_2 = \frac{1}{2}x_3
+\end{cases} \]
+
+Which gives us,
+
+\[ \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} = x_3\begin{bmatrix} 1 \\ \frac{1}{2} \\ 1 \end{bmatrix} \]
+
+So the basis for $ker(A-\lambda_2 I)$ and thus the basis for the eigenspace $E_{\lambda_2}$ is given by,
+
+\[ \begin{Bmatrix} \begin{bmatrix} 1 \\ \frac{1}{2} \\ 1 \end{bmatrix} \end{Bmatrix} \]
+
+\subsection*{B}
+$\lambda_1$ has an algebraic multiplicity of 2 because the multiplicity of the root in the characteristic polynomial was equal to two. The dimension of its eigenspace and thus its geometric multiplicity was 2 because its basis has 2 vectors. $\lambda_2$ has an algebraic multiplicity of 1 because the multiplicity of the root in the characteristic polynomial was one. The dimension of its eigenspace and thus its geometric multiplicity was 1 because its basis has 1 vector. 
+
+\section*{Problem 2}
+To compute this we must first find the eigenvectors and eigenvalues of this matrix. The eigenvectors are given by
+
+\[ \begin{vmatrix} 4 - \lambda & 3 \\ 1 & 2 - \lambda \end{vmatrix} \]
+
+This determinant equals $(\lambda - 5)(\lambda - 1)$ giving us that $\lambda_1 = 5$ and $\lambda_2 = 1$. 
+
+\[ A - \lambda_1 I = \begin{bmatrix} -1 & 3 \\ 1 & -3 \end{bmatrix} \]
+
+\[ \text{getting the REF gives us } \begin{bmatrix} 1 & -3 \\ 0 & 0 \end{bmatrix} \]
+
+\[ \text{So the null space of }\begin{bmatrix} -1 & 3 \\ 1 & -3 \end{bmatrix} \text{is given by} \begin{bmatrix} 3 \\ 1 \end{bmatrix} \]
+
+\[ A - \lambda_2 I = \begin{bmatrix} 3 & 3 \\ 1 & 1 \end{bmatrix} \]
+\[ \text{getting the REF gives us } \begin{bmatrix} 1 & 1 \\ 0 & 0 \end{bmatrix} \]
+
+\[ \text{So the null space of}\begin{bmatrix} 3 & 3 \\ 1 & 1 \end{bmatrix} \text{is given by} \begin{bmatrix} -1 \\ 1 \end{bmatrix} \]
+
+So then we can put these values together to form the matrices
+
+\[ Q = \begin{bmatrix} 3 & -1 \\ 1 & 1 \end{bmatrix} \text{and } D = \begin{bmatrix} 5 & 0 \\ 0 & 1 \end{bmatrix} \]
+
+So A is given by 
+
+\[ A = QDQ^{-1} \]
+
+And so,
+
+\[ A^n = QD^nQ^{-1} \]
+
+so,
+
+\[ A^{2021} = QD^{2021}Q^{-1} = \begin{bmatrix} 3 & -1 \\ 1 & 1 \end{bmatrix} \begin{bmatrix} 5^{2021} & 0 \\ 0 & 1^{2021} \end{bmatrix} \begin{bmatrix} 3 & -1 \\ 1 & 1 \end{bmatrix}^{-1} \]
+
+\section*{Problem 3}
+Let $\mathcal{B}$ be the standard basis for $M_{2x2}(\mathbb{R})$ and $b_1$...$b_4$ equal the corresponding vectors 
+
+\[ \begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix}, \begin{bmatrix} 0 & 1 \\ 0 & 0 \end{bmatrix}, \begin{bmatrix} 0 & 0 \\ 1 & 0 \end{bmatrix}, \begin{bmatrix} 0 & 0 \\ 0 & 1 \end{bmatrix} \]
+
+in $\mathcal{B}$. $T: M_{2x2}(\mathbb{R}) \rightarrow M_{2x2}(\mathbb{R})$ be given by
+
+\[ T\begin{bmatrix} a & b \\ c & d \end{bmatrix} = \begin{bmatrix} a+b & c \\ b & a+d \end{bmatrix} \]
+
+\subsection*{A}
+Let
+
+\[ v = \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix} \]
+\[ Tv = \begin{bmatrix} 3 & 3 \\ 2 & 5 \end{bmatrix} \]
+\[ Tv = 3b_1 + 3b_2 + 2b_3 + 5b_4 \]
+
+So, $[Tv]_{\mathcal{B}}$ is given by,
+
+\[ \begin{bmatrix} 3 \\ 3 \\ 2 \\ 5 \end{bmatrix} \]
+
+$[T]_{\mathcal{B}}$ is given by, 
+
+\begin{equation*} 
+\systeme{
+	a + b,
+	c,
+	b,
+	a + d
+}
+\end{equation*}
+
+\[ = \begin{bmatrix} 1 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 1 & 0 & 0 \\ 1 & 0 & 0 & 1 \end{bmatrix} \]
+
+\[ v_{\mathcal{B}} = b_1 + 2b_2 + 3b_3 + 4b_4 \]
+\[ [v]_{\mathcal{B}} = \begin{bmatrix} 1 \\ 2 \\ 3 \\ 4 \end{bmatrix} \]
+
+\[ [T]_{\mathcal{B}}[v]_{\mathcal{B}} = \begin{bmatrix} 1 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 1 & 0 & 0 \\ 1 & 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} 1 \\ 2 \\ 3 \\ 4 \end{bmatrix} = \begin{bmatrix} 3 \\ 3 \\ 2 \\ 5 \end{bmatrix} = [Tv]_{\mathcal{B}} \]
+
+\subsection*{B}
+The determinant $det([T]_{\mathcal{B}})$ is given by the characteristic polynomial
+
+\[ (\lambda - 1)^3(\lambda + 1) \]
+
+For $\lambda_1 = 1$,
+
+\[ T - \lambda_1 I = \begin{bmatrix} 0 & 1 & 0 & 0 \\ 0 & -1 & 1 & 0 \\ 0 & 1 & -1 & 0 \\ 1 & 0 & 0 & 0 \end{bmatrix} \]
+
+\[ \text{Getting the REF gives us } \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 0 \end{bmatrix} \]
+
+\[ ker(T - \lambda_1 I) = \begin{bmatrix} 0 & 1 & 0 & 0 &\bigm| & 0 \\ 0 & -1 & 1 & 0 &\bigm| & 0 \\ 0 & 1 & -1 & 0 &\bigm| & 0 \\ 1 & 0 & 0 & 0 &\bigm| & 0 \end{bmatrix} = span\begin{Bmatrix} \begin{bmatrix} 0 \\ 0 \\ 0 \\ 1 \end{bmatrix} \end{Bmatrix} \]
+
+For $\lambda_2 = -1$,
+
+\[ T - \lambda_1 I = \begin{bmatrix} 2 & 1 & 0 & 0 \\ 0 & 1 & 1 & 0 \\ 0 & 1 & 1 & 0 \\ 1 & 0 & 0 & 2 \end{bmatrix} \]
+
+\[ \text{Getting the REF gives us } \begin{bmatrix} 1 & 0 & 0 & 2 \\ 0 & 1 & 0 & -4 \\ 0 & 0 & 1 & 4 \\ 0 & 0 & 0 & 0 \end{bmatrix} \]
+
+\[ ker(T - \lambda_2 I) = \begin{bmatrix} 2 & 1 & 0 & 0 &\bigm| & 0 \\ 0 & 1 & 1 & 0 &\bigm| & 0 \\ 0 & 1 & 1 & 0 &\bigm| & 0 \\ 1 & 0 & 0 & 2 &\bigm| & 0 \end{bmatrix} = span \begin{Bmatrix} \begin{bmatrix} -2 \\ 4 \\ -4 \\ 1 \end{bmatrix} \end{Bmatrix} \]
+
+So $\lambda_1 = 1$ has the corresponding eigenvector $\begin{bmatrix} 0 \\ 0 \\ 0 \\ 1 \end{bmatrix}$ and $\lambda_2 = -1$ has the corresponding eigenvector $\begin{bmatrix} -2 \\ 4 \\ -4 \\ 1 \end{bmatrix}$. 
+
+\section*{Problem 4}
+For a polynomial $p(x) = a_nx^n + a_{n-1}x^{n-1}+...+a_1x+a_0$ with $a_1 \in \mathbb{F}$ and a square matrix, $A$ with entries in $\mathbb{F}$, define $p(A)$ by
+
+\[ p(A) = a_nA^n + a_{n-1}A^{n-1}+...+a_1A+a_0I. \]
+
+Let $A \in \mathbb{M}_{nxn}(\mathbb{C})$ be diagonalizable and $c(x)$ the characteristic polynomial of $A$. Then $c(A)=O$ where $O$ is the $nxn$ zero matrix. 
+
+\begin{proof}
+Because $A$ is diagonalizable, $\exists Q, D \in \mathbb{M}_{2x2}$ such that $A = QDQ^{-1}$ where $Q$'s columns are eigenvectors of $A$ and $D$ is a diagonal matrix containing $A$'s eigenvalues. Plugging this into our polynomial, we find that,
+
+\[ a_nQD^nQ^{-1} + a_{n-1}QD^{n-1}Q^{-1} + ... + a_1QDQ^{-1} + a_0I \]
+\[ = Q[a_nD^n + a_{n-1}D^{n-1} + ... + a_1D + a_0I]Q^{-1} \]
+
+\[ = Q\begin{bmatrix} 
+	a_n\lambda_1^n + a_{n-1}\lambda_1^{n-1} + ... + a_1\lambda_1 + a_0 \\
+	& . 	& 		& \text{\huge{0}}							 \\
+	& & . 														 \\
+	& \text{\huge{0}} & & .										 \\
+	& & & & a_n\lambda_n^n + a_{n-1}\lambda_n^{n-1} + ... + a_1\lambda_n + a_0
+\end{bmatrix}Q^{-1} \]
+
+\[ = Q\begin{bmatrix} c(\lambda_1) \\ & . & & \text{\huge{0}} \\ & & . \\ & \text{\huge{0}} && . \\ &&&& c(\lambda_n) \end{bmatrix}Q^{-1}\]
+
+And by the definition of the characteristic polynomial, $c(\lambda_i) = 0$ $\forall i \le n$. So,
+
+\[ c(A) = Q\begin{bmatrix} 0 \\ & . & & \text{\huge{0}} \\ & & . \\ & \text{\huge{0}} && . \\ &&&& 0 \end{bmatrix}Q^{-1} = O \]
+\end{proof}
+
+\section*{Problem 5}
+Let $C = \begin{bmatrix} 1 & 0 & 0 \\ -1 & 1 & 1 \\ -1 & 0 & 2 \end{bmatrix}$ and $D = \begin{bmatrix} 1 & 1 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 2 \end{bmatrix}$. Both matrices have the characteristic polynomial $p(x) = (x-1)^2(x-2)$. This gives both of them the eigenvalues $\lambda_1 = 1$ and $\lambda_2 = 2$. So then, $\exists Q \in \mathbb{M}_{3x3}$ such that
+
+\[ C = Q\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 2 \end{bmatrix}Q^{-1} \]
+
+And similarly, $\exists P \in \mathbb{M}_{3x3}$ such that,
+
+\[ D = P\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 2 \end{bmatrix}P^{-1} \]
+
+So,
+
+\[ Q^{-1}CQ = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 2 \end{bmatrix} = P^{-1}DP \]
+
+\[ => Q^{-1}CQ = P^{-1}DP \]
+\[ => PQ^{-1}CQP^{-1} = D \]
+
+Now let $U = QP^{-1}$, we have that
+
+\[ U^{-1}CU = D \]
+
+\section*{Problem 6}
+\subsection*{A}
+This operation fails the non-degeneracy property, and thus is not a inner product on $\mathbb{R}^2$.
+
+\[ <\begin{bmatrix} 1 \\ 1 \end{bmatrix}, \begin{bmatrix} 1 \\ 1 \end{bmatrix}> = 1 - 1 = 0 \]
+
+\subsection*{B}
+This operation also fails the non-degeneracy property.
+
+\[ <\begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}, \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}> = trace(\begin{bmatrix} 0 & 2 \\ 2 & 0 \end{bmatrix} = 0 \]
+
+\subsection*{C}
+This operation also fails the non-degeneracy property.
+
+\[ <1, 1> = \int_0^10 * 1 = 0 \]
+
+\end{document}
