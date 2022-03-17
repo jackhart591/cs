@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.29.30139.0	    03/06/22 14:21:29
+Microsoft (R) Macro Assembler Version 14.29.30139.0	    03/15/22 20:07:09
 $Final Project     (finalproject.asm			     Page 1 - 1
 
 
@@ -6,7 +6,7 @@ $Final Project     (finalproject.asm			     Page 1 - 1
 
 				COMMENT &
 					Author: Jackson Hart
-					Last Modified:
+					Last Modified: 3/15/2022
 					OSU email address: hartjack@oregonstate.edu
 					Course number/section: 31528
 					Assignment Number: FINAL
@@ -41,148 +41,246 @@ $Final Project     (finalproject.asm			     Page 1 - 1
  = 00000061			LETTER_OFFSET	EQU		97
  = 0000001A			NUM_LETTERS		EQU		26
 
- 00000000			.data
-
- 00000000 65 66 62 63 64	myKey      BYTE   "efbcdghijklmnopqrstuvwxyza"
-	   67 68 69 6A 6B
-	   6C 6D 6E 6F 70
-	   71 72 73 74 75
-	   76 77 78 79 7A
-	   61
- 0000001A 74 68 65 20 63	message    BYTE   "the contents of this message will be a mystery.",0
-	   6F 6E 74 65 6E
-	   74 73 20 6F 66
-	   20 74 68 69 73
-	   20 6D 65 73 73
-	   61 67 65 20 77
-	   69 6C 6C 20 62
-	   65 20 61 20 6D
-	   79 73 74 65 72
-	   79 2E 00
- 0000004A FFFFFFFF		dest       DWORD   -1
-
  00000000			.code
- 00000000			main PROC
 
- 00000000  68 00000000 R		push   OFFSET myKey
- 00000005  68 0000001A R		push   OFFSET message
- 0000000A  68 0000004A R		push   OFFSET dest
- 0000000F  E8 00000011			call   compute
-					;; message now contains the encrypted string
- 00000014  BA 0000001A R		mov    edx, OFFSET message
- 00000019  E8 00000000 E		call   WriteString
+				;	Description: Determines which "computation algorithm" the program should run
+				;				 based on the contents of the destination variable.
+				;	Recieves: two numbers or one or two strings and an integer
+				;	Returns: none
+				;	Pre-conditions: none
+				;	Post-Conditions: either integers will be added, messages translated, or keys
+				;					 generated
+				;	Registers Changed: none
+ 00000000			compute PROC
+ 00000000  C8 0000 00			ENTER	0, 0
+ 00000004  60				PUSHAD
 
-					exit	; exit to operating system
- 0000001E  6A 00	   *	    push   +000000000h
- 00000020  E8 00000000 E   *	    call   ExitProcess
- 00000025			main ENDP
+ 00000005  8B 45 08			mov		eax, DWORD PTR PARAM_A			; PARAM_A = destination
+ 00000008  BB 00000000			mov		ebx, 0
+ 0000000D  39 18			cmp		[eax], ebx						; [EAX] = 0
+ 0000000F  74 35			je		decoy_lbl
+ 00000011  4B				dec		ebx
+ 00000012  39 18			cmp		[eax], ebx						; [EAX] = -1
+ 00000014  74 23			je		encryption_lbl
+ 00000016  4B				dec		ebx
+ 00000017  39 18			cmp		[eax], ebx						; [EAX] = -2
+ 00000019  74 11			je		decryption_lbl
+ 0000001B  4B				dec		ebx
+ 0000001C  39 18			cmp		[eax], ebx						; [EAX] = -3
+ 0000001E  74 02			je		generation_lbl
+ 00000020  EB 34			jmp		Leave_lbl						; Else, jump to leave
 
- 00000025			compute PROC
- 00000025  C8 0000 00			ENTER	0, 0
- 00000029  60				PUSHAD
-
- 0000002A  8B 45 08			mov		eax, DWORD PTR PARAM_A			; PARAM_A = destination
- 0000002D  BB 00000000			mov		ebx, 0
- 00000032  39 18			cmp		[eax], ebx
- 00000034  74 6D			je		decoy
- 00000036  4B				dec		ebx
- 00000037  39 18			cmp		[eax], ebx
- 00000039  74 3D			je		encryption
- 0000003B  4B				dec		ebx
- 0000003C  39 18			cmp		[eax], ebx
- 0000003E  74 07			je		decryption
- 00000040  4B				dec		ebx
- 00000041  39 18			cmp		[eax], ebx
- 00000043  74 00			je		generation
+ 00000022			generation_lbl:
+ 00000022  FF 75 0C			push	DWORD PTR PARAM_B
+ 00000025  E8 0000002F			call	generation
+ 0000002A  EB 2A			jmp		Leave_lbl
 
 
- 00000045			generation:
-					
- 00000045  EB 73			jmp		LeaveFunc
+ 0000002C			decryption_lbl:
+ 0000002C  FF 75 10		   	push	DWORD PTR PARAM_C
+ 0000002F  FF 75 0C			push	DWORD PTR PARAM_B
+ 00000032  E8 0000006A			call	decryption
+ 00000037  EB 1D			jmp		Leave_lbl
 
- 00000047			decryption:
- 00000047  8B 75 0C		   	mov		esi, DWORD PTR PARAM_B			; ESI <- Offset of message
 
- 0000004A			Top_B:
- 0000004A  8B 7D 10			mov		edi, DWORD PTR PARAM_C			; EDI <- Offset of key
- 0000004D  B9 0000001A			mov		ecx, NUM_LETTERS				; Holds iterator
+ 00000039			encryption_lbl:
+ 00000039  FF 75 10			push	DWORD PTR PARAM_C
+ 0000003C  FF 75 0C			push	DWORD PTR PARAM_B
+ 0000003F  E8 0000009E			call	encryption
+ 00000044  EB 10			jmp		Leave_lbl
+
+ 00000046			decoy_lbl:
+ 00000046  66| FF 75 0E			push	WORD PTR PARAM_BH
+ 0000004A  66| FF 75 0C			push	WORD PTR PARAM_B
+ 0000004E  FF 75 08			push	DWORD PTR PARAM_A
+ 00000051  E8 000000C5			call	decoy
+
+ 00000056			Leave_lbl:
+ 00000056  61				POPAD
+ 00000057  C9				LEAVE
+ 00000058  C3				ret
+ 00000059			compute ENDP
+
+				;	Description: Generates a key that contains randomly positioned
+				;				 letters of the alphabet only once
+				;	Recieves: memory location to place the key into
+				;	Returns: none
+				;	Pre-conditions: none
+				;	Post-Conditions: key variable will be filled with a key
+				;	Registers Changed: none
+ 00000059			generation PROC
+ 00000059  C8 0000 00			ENTER	0, 0
+ 0000005D  50				push	eax
+ 0000005E  53				push	ebx
+ 0000005F  51				push	ecx
+ 00000060  57				push	edi
+
+ 00000061  E8 00000000 E		call	Randomize
+
+ 00000066  8B 7D 08			mov		edi, DWORD PTR PARAM_A			; EDI <- memory loc of key
+ 00000069  B9 0000001A			mov		ecx, NUM_LETTERS
+
+ 0000006E			Top_C:
+ 0000006E  FC				cld
+ 0000006F  B8 0000001A			mov		eax, NUM_LETTERS				; RandomRange[0, 26)
+ 00000074  E8 00000000 E		call	RandomRange
+ 00000079  83 C0 61			add		eax, LETTER_OFFSET
+ 0000007C  57				push	edi
+ 0000007D  51				push	ecx
+ 0000007E  BB 0000001A			mov		ebx, NUM_LETTERS
+ 00000083  2B D9			sub		ebx, ecx
+ 00000085  8B CB			mov		ecx, ebx					
+ 00000087  41				inc		ecx								; ECX <- Number of iterations
+ 00000088  FD				std
+ 00000089  F2/ AE			repne	scasb							; Loop backwards through everything so far
+ 0000008B  74 08			jz		Intermission					; If we found something, get a different value
+ 0000008D  59				pop		ecx								; Reset ECX
+ 0000008E  5F				pop		edi								; Reset EDI
+ 0000008F  FC				cld
+ 00000090  AA				stosb
+ 00000091  E2 DB			loop	Top_C
+ 00000093  EB 04			jmp		leave_lbl
+
+ 00000095			Intermission:
+ 00000095  59				pop		ecx								; Reset ECX
+ 00000096  5F				pop		edi								; Reset EDI
+ 00000097  EB D5			jmp		Top_C
+
+ 00000099			leave_lbl:
+ 00000099  5F				pop		edi
+ 0000009A  59				pop		ecx
+ 0000009B  5B				pop		ebx
+ 0000009C  58				pop		eax
+ 0000009D  C9				LEAVE
+ 0000009E  C2 0004			ret		4
+ 000000A1			generation ENDP
+
+				;	Description: Decrypts a message using the given key
+				;	Recieves: a message string and a key string
+				;	Returns: decrypted message
+				;	Pre-conditions: key must be filled with all 24 letters of the alphabet once
+				;	Post-Conditions: message will be updated with new decrypted message
+				;	Registers Changed: none
+ 000000A1			decryption PROC
+ 000000A1  C8 0000 00			ENTER	0, 0
+ 000000A5  50				push	eax
+ 000000A6  53				push	ebx
+ 000000A7  51				push	ecx
+ 000000A8  56				push	esi
+ 000000A9  57				push	edi
+
+ 000000AA  8B 75 08			mov		esi, DWORD PTR PARAM_A			; ESI <- Offset of message
+
+ 000000AD			Top_B:
+ 000000AD  8B 7D 0C			mov		edi, DWORD PTR PARAM_B			; EDI <- Offset of key
+ 000000B0  B9 0000001A			mov		ecx, NUM_LETTERS				; Holds iterator
 
 					; Check to see if this character is a letter
- 00000052  8A 06			mov		al, BYTE PTR [esi]
- 00000054  3C 61			cmp		al, 97
- 00000056  7C 16			jl		Invalid_B
- 00000058  3C 7A			cmp		al, 122
- 0000005A  7F 12			jg		Invalid_B
+ 000000B5  8A 06			mov		al, BYTE PTR [esi]
+ 000000B7  3C 61			cmp		al, 97
+ 000000B9  7C 16			jl		Invalid_B
+ 000000BB  3C 7A			cmp		al, 122
+ 000000BD  7F 12			jg		Invalid_B
 
 					; Find position in key
- 0000005C  FC				cld
- 0000005D  8A 06			mov		al, BYTE PTR [esi]
- 0000005F  F2/ AE			repne	scasb
- 00000061  B8 0000001A			mov		eax, NUM_LETTERS
- 00000066  2B C1			sub		eax, ecx						; EAX <- Index of letter in alphabet
- 00000068  83 C0 61			add		eax, LETTER_OFFSET
- 0000006B  48				dec		eax
- 0000006C  88 06			mov		BYTE PTR [esi], al
+ 000000BF  FC				cld
+ 000000C0  8A 06			mov		al, BYTE PTR [esi]
+ 000000C2  F2/ AE			repne	scasb
+ 000000C4  B8 0000001A			mov		eax, NUM_LETTERS
+ 000000C9  2B C1			sub		eax, ecx						; EAX <- Index of letter in alphabet
+ 000000CB  83 C0 61			add		eax, LETTER_OFFSET
+ 000000CE  48				dec		eax
+ 000000CF  88 06			mov		BYTE PTR [esi], al
 
- 0000006E			Invalid_B:
- 0000006E  46				inc		esi
- 0000006F  8A 1E			mov		bl, BYTE PTR [esi]
- 00000071  80 FB 00			cmp		bl, 0
- 00000074  75 D4			jne		Top_B
+ 000000D1			Invalid_B:
+ 000000D1  46				inc		esi
+ 000000D2  8A 1E			mov		bl, BYTE PTR [esi]
+ 000000D4  80 FB 00			cmp		bl, 0
+ 000000D7  75 D4			jne		Top_B
 
- 00000076  EB 42			jmp		LeaveFunc
+ 000000D9  5F				pop		edi
+ 000000DA  5E				pop		esi
+ 000000DB  59				pop		ecx
+ 000000DC  5B				pop		ebx
+ 000000DD  58				pop		eax
+ 000000DE  C9				LEAVE
+ 000000DF  C2 0008			ret		8
+ 000000E2			decryption ENDP
 
-				; PARAM_A <- Offset of Destination
-				; PARAM_B <- Offset of Message
-				; PARAM_C <- Offset of Key
- 00000078			encryption:
- 00000078  8B 7D 0C			mov		edi, DWORD PTR PARAM_B			; EDI <- Offset of message
- 0000007B  8B 75 10			mov		esi, DWORD PTR PARAM_C			; ESI <- Offset of key
+				;	Description: Encrypts a message using the given key
+				;	Recieves: a message string and a key string
+				;	Returns: encrypted message
+				;	Pre-conditions: key must be filled with all 24 letters of the alphabet once
+				;	Post-Conditions: message will be updated with new encrypted message
+				;	Registers Changed: none
+ 000000E2			encryption PROC
+ 000000E2  C8 0000 00			ENTER	0, 0
+ 000000E6  50				push	eax
+ 000000E7  53				push	ebx
+ 000000E8  56				push	esi
+ 000000E9  57				push	edi
 
- 0000007E			Top:
+ 000000EA  8B 7D 08			mov		edi, DWORD PTR PARAM_A			; EDI <- Offset of message
+ 000000ED  8B 75 0C			mov		esi, DWORD PTR PARAM_B			; ESI <- Offset of key
+
+ 000000F0			Top:
 					; Check to see if this character is a letter
- 0000007E  B8 00000000			mov		eax, 0
- 00000083  BB 00000000			mov		ebx, 0
- 00000088  8A 07			mov		al, BYTE PTR [edi]
- 0000008A  3C 61			cmp		al, 97
- 0000008C  7C 0B			jl		Invalid_A
- 0000008E  3C 7A			cmp		al, 122
- 00000090  7F 07			jg		Invalid_A
+ 000000F0  B8 00000000			mov		eax, 0
+ 000000F5  BB 00000000			mov		ebx, 0
+ 000000FA  8A 07			mov		al, BYTE PTR [edi]
+ 000000FC  3C 61			cmp		al, 97
+ 000000FE  7C 0B			jl		Invalid_A
+ 00000100  3C 7A			cmp		al, 122
+ 00000102  7F 07			jg		Invalid_A
 
- 00000092  2C 61			sub		al, LETTER_OFFSET				; Get index of letter in key
- 00000094  8A 1C 06			mov		bl, BYTE PTR [esi + eax]		; Store new letter into ebx 
- 00000097  88 1F			mov		BYTE PTR [edi], bl				; move key + index into pos of edi
+ 00000104  2C 61			sub		al, LETTER_OFFSET				; Get index of letter in key
+ 00000106  8A 1C 06			mov		bl, BYTE PTR [esi + eax]		; Store new letter into ebx 
+ 00000109  88 1F			mov		BYTE PTR [edi], bl				; move key + index into pos of edi
 
- 00000099			Invalid_A:
- 00000099  47				inc		edi								; iterate to next pos in array
- 0000009A  8A 1F			mov		bl, BYTE PTR [edi]
- 0000009C  80 FB 00			cmp		bl, 0							; Is this the end of the string?
- 0000009F  75 DD			jne		Top
+ 0000010B			Invalid_A:
+ 0000010B  47				inc		edi								; iterate to next pos in array
+ 0000010C  8A 1F			mov		bl, BYTE PTR [edi]
+ 0000010E  80 FB 00			cmp		bl, 0							; Is this the end of the string?
+ 00000111  75 DD			jne		Top
 
- 000000A1  EB 17			jmp		LeaveFunc
+ 00000113  5F				pop		edi
+ 00000114  5E				pop		esi
+ 00000115  5B				pop		ebx
+ 00000116  58				pop		eax
+ 00000117  C9				LEAVE
+ 00000118  C2 0008			ret		8
+ 0000011B			encryption ENDP
 
-				; PARAM_A <- Offset of dest
-				; PARAM_BH <- Operand 1
-				; PARAM_B <- Operand 2
- 000000A3			decoy:
- 000000A3  66| 8B 45 0E			mov		ax, WORD PTR PARAM_BH			; AX <- Operand 1
- 000000A7  66| 8B 5D 0C			mov		bx, WORD PTR PARAM_B			; BX <- Operand 2
- 000000AB  0F BF C0			movsx	eax, ax
- 000000AE  0F BF DB			movsx	ebx, bx
- 000000B1  8B 75 08			mov		esi, DWORD PTR PARAM_A			; EDX <- Offset of destination
+				;	Description: Adds two word integers
+				;	Recieves: an memory loc to put the sum in, and 2 integer operands
+				;	Returns: the sum of the two integers
+				;	Pre-conditions: none
+				;	Post-Conditions: destination will contain sum
+				;	Registers Changed: none
+ 0000011B			decoy PROC
+ 0000011B  C8 0000 00			ENTER	0, 0
+ 0000011F  50				push	eax
+ 00000120  53				push	ebx
+ 00000121  56				push	esi
 
- 000000B4  03 C3			add		eax, ebx
- 000000B6  89 06			mov		[esi], eax
- 000000B8  EB 00			jmp		LeaveFunc
+ 00000122  66| 8B 45 0E			mov		ax, WORD PTR PARAM_BH			; AX <- Operand 1
+ 00000126  66| 8B 5D 0C			mov		bx, WORD PTR PARAM_B			; BX <- Operand 2
+ 0000012A  0F BF C0			movsx	eax, ax
+ 0000012D  0F BF DB			movsx	ebx, bx
+ 00000130  8B 75 08			mov		esi, DWORD PTR PARAM_A			; EDI <- Offset of destination
 
- 000000BA			LeaveFunc:
- 000000BA  61				POPAD
- 000000BB  C9				LEAVE
- 000000BC  C3				ret
- 000000BD			compute ENDP
+ 00000133  03 C3			add		eax, ebx
+ 00000135  89 06			mov		[esi], eax
+
+ 00000137  5E				pop		esi
+ 00000138  5B				pop		ebx
+ 00000139  58				pop		eax
+ 0000013A  C9				LEAVE
+ 0000013B  C2 0008			ret		8
+ 0000013E			decoy	ENDP
 
 				END main
-Microsoft (R) Macro Assembler Version 14.29.30139.0	    03/06/22 14:21:29
+Microsoft (R) Macro Assembler Version 14.29.30139.0	    03/15/22 20:07:09
 $Final Project     (finalproject.asm			     Symbols 2 - 1
 
 
@@ -276,8 +374,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000004E Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 000000BD Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000000 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000013E Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -384,17 +482,23 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-compute  . . . . . . . . . . . .	P Near	 00000025 _TEXT	Length= 00000098 Public STDCALL
-  generation . . . . . . . . . .	L Near	 00000045 _TEXT	
-  decryption . . . . . . . . . .	L Near	 00000047 _TEXT	
-  Top_B  . . . . . . . . . . . .	L Near	 0000004A _TEXT	
-  Invalid_B  . . . . . . . . . .	L Near	 0000006E _TEXT	
-  encryption . . . . . . . . . .	L Near	 00000078 _TEXT	
-  Top  . . . . . . . . . . . . .	L Near	 0000007E _TEXT	
-  Invalid_A  . . . . . . . . . .	L Near	 00000099 _TEXT	
-  decoy  . . . . . . . . . . . .	L Near	 000000A3 _TEXT	
-  LeaveFunc  . . . . . . . . . .	L Near	 000000BA _TEXT	
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000025 Public STDCALL
+compute  . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000059 Public STDCALL
+  generation_lbl . . . . . . . .	L Near	 00000022 _TEXT	
+  decryption_lbl . . . . . . . .	L Near	 0000002C _TEXT	
+  encryption_lbl . . . . . . . .	L Near	 00000039 _TEXT	
+  decoy_lbl  . . . . . . . . . .	L Near	 00000046 _TEXT	
+  Leave_lbl  . . . . . . . . . .	L Near	 00000056 _TEXT	
+decoy  . . . . . . . . . . . . .	P Near	 0000011B _TEXT	Length= 00000023 Public STDCALL
+decryption . . . . . . . . . . .	P Near	 000000A1 _TEXT	Length= 00000041 Public STDCALL
+  Top_B  . . . . . . . . . . . .	L Near	 000000AD _TEXT	
+  Invalid_B  . . . . . . . . . .	L Near	 000000D1 _TEXT	
+encryption . . . . . . . . . . .	P Near	 000000E2 _TEXT	Length= 00000039 Public STDCALL
+  Top  . . . . . . . . . . . . .	L Near	 000000F0 _TEXT	
+  Invalid_A  . . . . . . . . . .	L Near	 0000010B _TEXT	
+generation . . . . . . . . . . .	P Near	 00000059 _TEXT	Length= 00000048 Public STDCALL
+  Top_C  . . . . . . . . . . . .	L Near	 0000006E _TEXT	
+  Intermission . . . . . . . . .	L Near	 00000095 _TEXT	
+  leave_lbl  . . . . . . . . . .	L Near	 00000099 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -623,7 +727,6 @@ black  . . . . . . . . . . . . .	Number	 00000000h
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
-dest . . . . . . . . . . . . . .	DWord	 0000004A _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
@@ -634,12 +737,10 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-message  . . . . . . . . . . . .	Byte	 0000001A _DATA	
-myKey  . . . . . . . . . . . . .	Byte	 00000000 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 
 	   0 Warnings
-	   0 Errors
+	   2 Errors

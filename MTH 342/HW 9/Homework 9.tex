@@ -1,0 +1,205 @@
+\documentclass[12pt, letterpaper]{article}
+\setlength{\parindent}{0cm}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+\title{Homework 9}
+\author{Jackson Hart}
+\date{March 11th, 2022}
+
+\begin{document}
+
+\maketitle
+
+\section*{Problem 1}
+
+\[ A = \begin{bmatrix} 0 & 2 & 2 \\ 2 & 0 & 2 \\ 2 & 2 & 0 \end{bmatrix} \]
+\[ det(A - \lambda I) = \begin{vmatrix} -\lambda & 2 & 2 \\ 2 & -\lambda & 2 \\ 2 & 2 & -\lambda \end{vmatrix} = -\lambda^3 + 12 \lambda + 16 = -(\lambda + 2)^2(\lambda - 4) \]
+
+So we have that $A$ has eigenvalues $\lambda_1 = -2$ and $\lambda_2 = 4$. With $\lambda_1$ having a algebraic multiplicity of 2. Now, to calculate the eigenvectors. 
+
+\[ A - \lambda_1 = \begin{bmatrix} 2 & 2 & 2 \\ 2 & 2 & 2 \\ 2 & 2 & 2 \end{bmatrix} \xrightarrow[]{REF} \begin{bmatrix} 1 & 1 & 1 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix} \]
+
+Which gives us the eigenvectors $v_1 = \begin{bmatrix} -1 \\ 1 \\ 0 \end{bmatrix}$ and $v_2 = \begin{bmatrix} -1 \\ 0 \\ 1 \end{bmatrix}$. 
+
+\[ A - \lambda_2 = \begin{bmatrix} -4 & 2 & 2 \\ 2 & -4 & 2 \\ 2 & 2 & -4 \end{bmatrix} \xrightarrow[]{REF} \begin{bmatrix} 1 & 0 & -1 \\ 0 & 1 & -1 \\ 0 & 0 & 0 \end{bmatrix} \] 
+
+Which gives us the eigenvector $v_3 = \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix}$. 
+
+Now we must normalize the eigenvectors. Since all the values we have seen thus far are real, I will assume we are in the space of real numbers and will use the dot product.
+
+\[ ||v_1||^2 = \begin{bmatrix} -1 \\ 1 \\ 0 \end{bmatrix} \cdot \begin{bmatrix} -1 \\ 1 \\ 0 \end{bmatrix} = 2 \]
+
+So our first orthonormal eigenvector $u_1 = \frac{1}{\sqrt{2}} \begin{bmatrix} -1 \\ 1 \\ 0 \end{bmatrix}$
+
+\[ ||v_2||^2 = \begin{bmatrix} -1 \\ 0 \\ 1 \end{bmatrix} \cdot \begin{bmatrix} -1 \\ 0 \\ 1 \end{bmatrix} = 2 \]
+
+\[ ||v_3||^2 = \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix} \cdot \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix} = 3 \]
+
+So then we have that $u_2 = \frac{1}{\sqrt{2}} \begin{bmatrix} -1 \\ 0 \\ 1 \end{bmatrix} \text{ and } u_3 = \frac{1}{\sqrt{3}} \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix}$. 
+
+So then we have that
+
+\[ U = \begin{bmatrix} -\frac{1}{\sqrt{2}} & -\frac{1}{\sqrt{2}} & \frac{1}{\sqrt{3}} \\ \frac{1}{\sqrt{2}} & 0 & \frac{1}{\sqrt{3}} \\ 0 & \frac{1}{\sqrt{2}} & \frac{1}{\sqrt{3}} \end{bmatrix}  \]
+
+And because this is real numbers
+
+\[ U^* = U^T = \begin{bmatrix} -\frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}} & 0 \\ -\frac{1}{\sqrt{2}} & 0 & \frac{1}{\sqrt{2}} \\ \frac{1}{\sqrt{3}} & \frac{1}{\sqrt{3}} & \frac{1}{\sqrt{3}} \end{bmatrix} \]
+
+So,
+
+\[ A = \begin{bmatrix} -\frac{1}{\sqrt{2}} & -\frac{1}{\sqrt{2}} & \frac{1}{\sqrt{3}} \\ \frac{1}{\sqrt{2}} & 0 & \frac{1}{\sqrt{3}} \\ 0 & \frac{1}{\sqrt{2}} & \frac{1}{\sqrt{3}} \end{bmatrix} \begin{bmatrix} -2 & 0 & 0 \\ 0 & -2 & 0 \\ 0 & 0 & 4 \end{bmatrix} \begin{bmatrix} -\frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}} & 0 \\ -\frac{1}{\sqrt{2}} & 0 & \frac{1}{\sqrt{2}} \\ \frac{1}{\sqrt{3}} & \frac{1}{\sqrt{3}} & \frac{1}{\sqrt{3}} \end{bmatrix} \]
+
+\section*{Problem 2}
+Let $A$ and $B$ be unitarily equivalent $n \times n$ matrices.
+
+\subsection*{A)}
+$\text{trace}(A^*A) = \text{trace}(B^*B)$. 
+
+\begin{proof}
+If $A$ and $B$ are unitarily equivalent, then $\exists U$ such that $U$ is unitary, $A = UBU^*$, and similarly $B = U^*AU$. So then we have that
+
+\[ \text{trace}(A^*A) = \text{trace}(A^*UBU^*) = \text{trace}(U^*A^*UB) = \text{trace}(B^*B) \]
+\end{proof}
+
+\subsection*{B)}
+
+\[ \sum^n_{j,k=1} |A_{j,k}|^2 = \sum^n_{j,k=1} |B_{j,k}|^2 \]
+
+\begin{proof}
+Consider the matrix representation of $A^*A$ and its two first elements on its main diagonal, $A_{1,1}, A_{2,2}$. By matrix multiplication, we can write them as
+
+\[ A_{1,1} = \sum^n_{k=1} A_{k,1} \overline{A_{k,1}} \]
+\[ A_{2,2} = \sum^n_{k=1} A_{k,2} \overline{A_{k,2}} \]
+
+The coordinates are not flipped due to $A^*$ being the complex conjugate of the \textbf{transpose}. So then, the sum of $A^*A$'s elements on the main diagonal can be written as
+
+\[ \text{trace}(A^*A) = \sum^n_{j,k=1} A_{k,j} \overline{A_{k,j}} = \sum^n_{j,k=1} |A_{k,j}|^2 \]
+
+The same can be said for $B$. $A$ and $B$ have already been defined to be unitarily equivalent, and thus
+
+\[ \text{trace}(A^*A) = \sum^n_{j,k=1} |A_{k,j}|^2 \]
+\[ \text{trace}(B^*B) = \sum^n_{j,k=1} |B_{k,j}|^2 \]
+\[ \sum^n_{j,k=1} |A_{k,j}|^2 = \text{trace}(A^*A) = \text{trace}(B^*B) = \sum^n_{j,k=1} |B_{k,j}|^2 \]
+\[ \sum^n_{j,k=1} |A_{k,j}|^2 = \sum^n_{j,k=1} |B_{k,j}|^2 \]
+
+\end{proof}
+
+\subsection*{C)}
+
+\[ \text{let } A = \begin{bmatrix} 1 & 2 \\ 2 & i \end{bmatrix} \]
+\[ \text{let } B = \begin{bmatrix} i & 4 \\ 1 & 1 \end{bmatrix} \]
+
+\[ \sum^n_{j,k=1} |A_{k,j}|^2 = 1^2 + 2^2 + 2^2 + |i|^2 = 10 \]
+\[ \sum^n_{j,k=1} |B_{k,j}|^2 = |i|^2 + 4^2 + 1^2 + 1^2 = 19 \]
+\[ \sum^n_{j,k=1} |A_{k,j}|^2 \neq \sum^n_{j,k=1} |B_{k,j}|^2 \]
+
+$\therefore A \text{ and } B$ are not unitarily equivalent. 
+
+\section*{Problem 3}
+
+\subsection*{A)}
+trace$\begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} = 2$ and trace$\begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix} = 0$. So these are not unitarily equivalent. 
+
+\subsection*{B)}
+
+\[ \text{let } A = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix} \]
+\[ \text{let } B = \begin{bmatrix} 0 & 1/2 \\ 1/2 & 0 \end{bmatrix} \]
+
+\[ \sum^n_{j,k=1} |A_{k,j}|^2 = 0^2 + 1^2 + 1^2 + 0^2 = 2 \]
+\[ \sum^n_{j,k=1} |B_{k,j}|^2 = 0^2 + \frac{1}{2}^2 + \frac{1}{2}^2 + 0^2 = \frac{1}{2} \]
+\[ \sum^n_{j,k=1} |A_{k,j}|^2 \neq \sum^n_{j,k=1} |B_{k,j}|^2 \]
+
+$\therefore A \text{ and } B$ are not unitarily equivalent.
+
+\subsection*{C)}
+\[ \begin{vmatrix} 0 & 1 & 0 \\ -1 & 0 & 0 \\ 0 & 0 & 1 \end{vmatrix} = 1 \]
+\[ \begin{vmatrix} 2 & 0 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & 0 \end{vmatrix} = 0 \]
+
+Unitarily equivalent matrices share determinants, so these cannot be unitarily equivalent. 
+
+\subsection*{D)}
+\[ \text{let } A = \begin{bmatrix} 0 & 1 & 0 \\ -1 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix} \]
+\[ \text{let } B = \begin{bmatrix} 1 & 0 & 0 \\ 0 & -i & 0 \\ 0 & 0 & i \end{bmatrix} \]
+
+\[ \text{det}(A - \lambda I) = \begin{vmatrix} -\lambda & 1 & 0 \\ -1 & -\lambda & 0 \\ 0 & 0 & 1 - \lambda \end{vmatrix} = -(\lambda - 1)(\lambda^2 + 1) \]
+
+So we have the eigenvalues of $A$, $\lambda_1 = 1, \lambda_2 = -i, \text{ and } \lambda_3 = i$. Solving $A - \lambda_i I = 0$ for all $\lambda$s gives us the eigenvectors, 
+
+\[ v_1 = \begin{bmatrix} 0 \\ 0 \\ 1 \end{bmatrix} \]
+\[ v_2 = \begin{bmatrix} i \\ 1 \\ 0 \end{bmatrix} \]
+\[ v_3 = \begin{bmatrix} -i \\ 1 \\ 0 \end{bmatrix} \]
+
+\[ \langle v_1, v_2 \rangle = 0 \]
+\[ \langle v_1, v_3 \rangle = 0 \]
+\[ \langle v_2, v_3 \rangle = 0 \]
+
+So the set of these eigenvectors is orthogonal, and thus are also linearly independent.
+
+\[ ||v_1|| = \sqrt{1^2} = 1 \]
+\[ ||v_2|| = \sqrt{(i \times -i)^2 + 1^2 + 0} = \sqrt{2} \]
+\[ ||v_3|| = \sqrt{(-i \times i)^2 + 1^2 + 0} = \sqrt{2} \]
+
+We must normalize these vectors to get our orthonormal basis, so we have that
+
+\[ \mathcal{B} = \begin{Bmatrix} \begin{bmatrix} 0 \\ 0 \\ 1 \end{bmatrix}, \frac{1}{\sqrt{2}} \begin{bmatrix} i \\ 1 \\ 0 \end{bmatrix}, \frac{1}{\sqrt{2}} \begin{bmatrix} -i \\ 1 \\ 0 \end{bmatrix} \end{Bmatrix} \]
+
+with the corresponding vectors $u_1, u_2, u_3$. This proves that $A$ is unitarily equivalent to a diagonal matrix, and so we have that
+
+\[ A = \frac{1}{\sqrt{2}} \begin{bmatrix} 0 & i & -i \\ 0 & 1 & 1 \\ \sqrt{2} & 0 & 0 \end{bmatrix} \begin{bmatrix} 1 & 0 & 0 \\ 0 & -i & 0 \\ 0 & 0 & i \end{bmatrix} \frac{1}{\sqrt{2}} \begin{bmatrix} 0 & 0 & \sqrt{2} \\ -i & 1 & 0 \\ i & 1 & 0 \end{bmatrix} \]
+
+And therefore, $A$ is unitarily equivalent to $B$. 
+
+\subsection*{E)}
+\[ \text{let } A = \begin{bmatrix} 1 & 1 & 0 \\ 0 & 2 & 2 \\ 0 & 0 & 3 \end{bmatrix} \]
+\[ \text{let } B = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 3 \end{bmatrix} \]
+
+\[ \sum^n_{j,k=1} |A_{k,j}|^2 = 1^2 + 1^2 + 2^2 + 2^2 + 3^2 = 19 \]
+\[ \sum^n_{j,k=1} |B_{k,j}|^2 = 1^2 + 2^2 + 3^2 = 14 \]
+
+\[ \sum^n_{j,k=1} |A_{k,j}|^2 \neq \sum^n_{j,k=1} |B_{k,j}|^2 \]
+
+$\therefore A \text{ and } B$ are not unitarily equivalent.
+
+\section*{Problem 4}
+Suppose $A$ is a normal operator on an inner product space $V$ and that 3 and 4 are eigenvalues of $A$. Then there exists a vector $v \in V$ such that $||v|| = \sqrt{2}$ and $||Av|| = 5$. 
+
+\begin{proof}
+Let $v_1, v_2 \in V$ be eigenvectors corresponding to 3 and 4. Because $A$ is a normal operator, $A$ has an orthonormal basis of eigenvectors which means
+
+\[ ||v_1|| = 1 \]
+\[ ||v_2|| = 1 \]
+
+By the Generalized Pythagorean identity,
+
+\[ ||v_1 + v_2|| = \sqrt{1^2 + 1^2} = \sqrt{2} \]
+
+From this, we get
+
+\[ ||Av_1 + Av_2|| = ||3v_1 + 4v_2|| = \sqrt{3^2 + 4^2} = 5 \]
+
+\end{proof}
+
+\section*{Problem 5}
+Suppose $V$ is a complex inner product space and $T$ is a normal operator on $V$ such that $T^7 = T^6$. Then $T$ is self-adjoint and $T^2 = T$.
+
+\begin{proof}
+By the Spectral Theorem, $V$ has a orthonormal basis of eigenvectors of $T$, $\mathcal{B} = e_1, ... , e_n$. Let $\lambda_1, ... , \lambda_n$ be the corresponding eigenvalues. Then
+
+\[ Te_i = \lambda_ie_i \forall i = 1, ... , n \]
+
+Then we have that
+
+\[ T^7e_i = \lambda^7_ie_i \text{ and } T^6e_i = \lambda^6_ie_i \] 
+
+Which gives $\lambda_i$ the possibility of either being 0 or 1. Because of this, $[T]_{\mathcal{B} \mathcal{B}}$ is a diagonal matrix with eigenvalues on the diagonal. Because the $[T]^*_{\mathcal{B} \mathcal{B}}$ is the conjugate of the transpose, and $[T]_{\mathcal{B} \mathcal{B}}$ is a diagonal matrix with only real values, $[T]^*_{\mathcal{B} \mathcal{B}} = [T]_{\mathcal{B} \mathcal{B}}$. Knowing this,
+
+\[ T^2e_i = \lambda^2_ie_i \rightarrow \text{ because $\lambda_i$ is either 0 or 1, $\lambda^2_i$ is either 0 or 1, so...} \]
+
+\[ T^2e_i = \lambda_ie_i = Te_i \]
+\end{proof}
+
+\end{document}

@@ -1,2 +1,4 @@
 ﻿  Assembling ..\Assignments\Final Project\finalproject.asm...
-  Project.vcxproj -> C:\School\cs\CS271\Project32_VS2019\Debug\Project.exe
+..\Assignments\Final Project\finalproject.asm(261): error A2006: undefined symbol : main
+..\Assignments\Final Project\finalproject.asm(261): error A2148: invalid symbol type in expression : main
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Microsoft\VC\v160\BuildCustomizations\masm.targets(70,5): error MSB3721: The command "ml.exe /c /nologo /Sg /Zi /Fo"Debug\finalproject.obj" /Fl"Project.lst" /I "c:\Irvine" /W3 /errorReport:prompt  /Ta"..\Assignments\Final Project\finalproject.asm"" exited with code 1.
