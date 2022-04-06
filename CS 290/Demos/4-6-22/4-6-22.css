@@ -1,0 +1,60 @@
+/*Element Selector*/
+p {
+    color: springgreen;
+}
+
+h1 {
+    font-size: 48px;
+    font-style: italic;
+}
+
+/*Class Selector*/
+.bold-text {
+    font-weight: bold;
+}
+
+.italic-text {
+    font-style: italic;
+}
+
+/*ID Selector*/
+/* -> Only one element can have an ID*/
+#the-title {
+    padding: 10px;
+    border: 2px dashed tomato;
+}
+
+/*Combinators: selects to things that have both selectors*/
+p.bold-text {
+    background-color: blueviolet;
+}
+
+.italic-text.bold-text {
+    text-decoration: underline;
+}
+
+/*A B - This kind only selects As that are decendents of Bs*/
+#special-div p {
+    color: dodgerblue;
+}
+
+/*A > B - Selects As that are direct decendents of Bs*/
+#special-div > p {
+    background-color: darkkhaki;
+}
+
+/*A + B - Selects B that is next sibling of A (also has -)*/
+#special-div + div {
+    text-transform: uppercase;
+}
+
+/*A ~ B - Selects all Bs that are siblings of As*/
+#special-div ~ div {
+    background-color: olivedrab;
+}
+
+/*A, B - Selects all As and Bs*/
+div, p {
+    font-family: monospace;
+}
+
