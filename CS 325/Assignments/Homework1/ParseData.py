@@ -31,5 +31,7 @@ def parsedata():
             List[i] = int(num_str)
 
         Data.append(List)
+    
+    file.close()
 
     return Data

@@ -9,7 +9,7 @@ def StoogeSort(Data, bottom, top):
         Data[bottom], Data[top] = Data[top], Data[bottom]
     
     if (top - bottom + 1) >= 3:
-        moe = floor((top - bottom + 1)/3) # Gets 1/3
+        moe = (top - bottom + 1) // 3 # Gets 1/3
 
         StoogeSort(Data, bottom, top - moe) # Bottom 2/3
         StoogeSort(Data, moe+bottom, top) # Top 2/3
