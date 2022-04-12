@@ -16,8 +16,7 @@ def main():
         past = time.time()
         mergesort3(list)
         current = time.time()
-	timeDiff = current - past
-        print("Time for list with " + str(len(list)) + " elements:\t" + str(timeDiff))
+        print("Time for list with " + str(len(list)) + " elements:\t" + str(current - past))
 
 
 

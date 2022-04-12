@@ -1,4 +1,4 @@
-from ParseData import parsedata
+import ParseData
 import sys
 
 sys.setrecursionlimit(1000)
@@ -86,18 +86,12 @@ def mergesort3(Data):
 
 def main():
 
-    Data = parsedata()
-
-    print("Unsorted Data:")
-    for d in Data:
-        print(d)
+    Data = ParseData.parsedata()
     
     for i, List in enumerate(Data): # Sort each list
         Data[i] = mergesort3(List)
     
-    print("\nSorted Data:")
-    for d in Data:
-        print(d)
+    ParseData.printdata(Data)
 
 
 if __name__ == "__main__":

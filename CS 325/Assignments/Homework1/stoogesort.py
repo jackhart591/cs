@@ -1,4 +1,4 @@
-from ParseData import parsedata
+import ParseData
 from math import floor
 import sys
 
@@ -19,18 +19,12 @@ def StoogeSort(Data, bottom, top):
 
 def main():
     
-    Data = parsedata()
-
-    print("Unsorted Data:")
-    for d in Data:
-        print(d)
+    Data = ParseData.parsedata()
 
     for List in Data: # Sort each list
         StoogeSort(List, 0, len(List)-1)
 
-    print("\nSorted Data:")
-    for d in Data:
-        print(d)
+    ParseData.printdata(Data)
 
 
 if __name__ == "__main__":

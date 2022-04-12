@@ -35,3 +35,9 @@ def parsedata():
     file.close()
 
     return Data
+
+def printdata(Data):
+    for list in Data:
+        for elem in list:
+            print(elem, end=" ")
+        print()
