@@ -12,11 +12,11 @@ def createlist(n):
 def main():
     
     for i in range(1, 11):
-        list = createlist(5000 * i)
+        list = createlist(50 * i)
         past = time.time()
         StoogeSort(list, 0, len(list)-1)
         current = time.time()
-        print(f"Time for list with {len(list)} elements:\t{current - past}")
+        print(str(len(list)) + "\t\t" + str(current - past))
 
 
 
