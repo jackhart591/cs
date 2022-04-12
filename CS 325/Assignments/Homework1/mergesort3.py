@@ -16,10 +16,10 @@ def merge(Data, Bot, Mid, Top):
         Top = []
     
     while i < len(Bot) and j < len(Mid) and k < len(Top):
-        if (Bot[i] < Mid[j] and Bot[i] < Top[k]):
+        if (Bot[i] <= Mid[j] and Bot[i] <= Top[k]):
             Data[idx] = Bot[i]
             i += 1
-        elif (Mid[j] < Top[k] and Mid[j] < Bot[i]):
+        elif (Mid[j] <= Top[k] and Mid[j] <= Bot[i]):
             Data[idx] = Mid[j]
             j += 1
         else:
@@ -29,7 +29,7 @@ def merge(Data, Bot, Mid, Top):
 
     # If there's any remaining elements
     while (i < len(Bot) and j < len(Mid)):
-        if (Bot[i] < Mid[j]):
+        if (Bot[i] <= Mid[j]):
             Data[idx] = Bot[i]
             i += 1
         else:
@@ -38,7 +38,7 @@ def merge(Data, Bot, Mid, Top):
         idx += 1
 
     while (k < len(Top) and j < len(Mid)):
-        if (Top[k] < Mid[j]):
+        if (Top[k] <= Mid[j]):
             Data[idx] = Top[k]
             k += 1
         else:
@@ -47,7 +47,7 @@ def merge(Data, Bot, Mid, Top):
         idx += 1
 
     while (i < len(Bot) and k < len(Top)):
-        if (Bot[i] < Top[k]):
+        if (Bot[i] <= Top[k]):
             Data[idx] = Bot[i]
             i += 1
         else:
@@ -75,7 +75,7 @@ def merge(Data, Bot, Mid, Top):
 
 def mergesort3(Data):
     if len(Data) > 1:
-        third = len(Data) // 3 # Gets 1/3
+        third = (len(Data) // 3) + 1 # Gets 1/3
 
         Bottom = mergesort3(Data[:third]) # 1/3
         Third = mergesort3(Data[third:(2*third)]) # 2/3
