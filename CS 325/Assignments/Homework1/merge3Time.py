@@ -12,11 +12,11 @@ def createlist(n):
 def main():
     
     for i in range(1, 11):
-        list = createlist(5000 * i)
+        list = createlist(50000 * i)
         past = time.time()
         mergesort3(list)
         current = time.time()
-        print("Time for list with " + str(len(list)) + " elements:\t" + str(current - past))
+        print(str(len(list)) + "\t\t" + str(current - past))
 
 
 
