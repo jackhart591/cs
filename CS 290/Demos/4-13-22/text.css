@@ -1,0 +1,21 @@
+html {
+    /* Will try each one in order until one works or use default */
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
+    font-weight: 400;
+    font-style: italic;
+    /* em -> num * current font size */
+    /* vh -> num% of the viewport */
+    font-size: 2em;
+    color: forestgreen
+
+    /*
+        The fonts that are always installed no matter what
+        - serif
+        - sans-serif
+        - monospace (looks like code/typewriter)
+        - cursive
+        - fantasy
+
+        Look at google fonts for wacky crazy fonts
+    */
+}
