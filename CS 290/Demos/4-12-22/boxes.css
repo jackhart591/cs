@@ -1,0 +1,31 @@
+p {
+    width: 200px;
+    height: 64px;
+
+    /* 1 -> All around, 2 -> horizontal vertical, 4 -> top right bottom left (clockwise)*/
+    /* padding: 24px 48px 0 8px; */
+    /* Padding creates negative space inside element (see border) */
+    padding: 24px;
+    border: 3px solid dimgray;
+
+    /* Margin creates negative space between elements */
+    margin: 16px;
+}
+
+#special-p {
+    padding-left: 48px;
+    border-right: 8px solid dimgray;
+    margin-bottom: 64px;
+}
+
+#container {
+    border: 2px solid black;
+    padding: 10px;
+}
+
+#container div {
+    background-color: lightgray;
+    display: inline-block;
+    padding: 24px;
+    margin: 8px;
+}

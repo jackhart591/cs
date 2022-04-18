@@ -2,6 +2,10 @@ import ParseData
 from math import floor
 import sys
 
+# Name: Jackson Hart
+# Date: 4/12/2022
+# Class: CS 325
+
 sys.setrecursionlimit(1000)
 
 def StoogeSort(Data, bottom, top):

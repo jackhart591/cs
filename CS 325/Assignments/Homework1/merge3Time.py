@@ -2,6 +2,10 @@ import random
 import time
 from mergesort3 import mergesort3
 
+# Name: Jackson Hart
+# Date: 4/12/2022
+# Class: CS 325
+
 def createlist(n):
     Data = [None] * n
     for i in range(n):

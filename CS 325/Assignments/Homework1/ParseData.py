@@ -1,3 +1,7 @@
+# Name: Jackson Hart
+# Date: 4/12/2022
+# Class: CS 325
+
 index = 0
 
 def GetNumber(line):

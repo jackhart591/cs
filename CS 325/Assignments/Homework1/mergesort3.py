@@ -1,6 +1,14 @@
 import ParseData
 import sys
 
+# Name: Jackson Hart
+# Date: 4/12/2022
+# Class: CS 325
+
+# I used the merge sort python example on Geeks4Geeks
+# As a reference while making my own algorithm.
+# Link: https://www.geeksforgeeks.org/merge-sort/
+
 sys.setrecursionlimit(1000)
 
 def merge(Data, Bot, Mid, Top):
