@@ -1,0 +1,60 @@
+body {
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
+}
+
+p {
+    margin: 5px;
+}
+
+.outer {
+    width: 400px;
+    height: 400px;
+    margin: 5px;
+    padding: 5px;
+    border: 5px solid #454545;
+    border-radius: 20px;
+    background-color: #8eda93;
+    /* Makes children absolute position relative to this and not relative
+    to document. */
+    position: relative;
+}
+
+.inner {
+    width: 100px;
+    height: 100px;
+    padding: 5px;
+    border: 3px solid #454545;
+    border-radius: 10px;
+}
+
+.inner.positioned {
+    background-color: #f9bb60;
+}
+
+.inner.unpositioned {
+    background-color: #ababab;
+}
+
+.relative {
+    position: relative;
+    bottom: 50px;
+    right: 25px;
+}
+
+/* finish these notes */
+
+/* Everything is positioned around it as if it didn't exist */
+.absolute {
+    position: absolute;
+    bottom: 50px;
+    right: 25px;
+    z-index: 5;
+}
+
+/* Relative to the viewport */
+.fixed {
+    position: fixed;
+    bottom: 50px;
+    right: 25px;
+    z-index: 10;
+}
