@@ -89,13 +89,13 @@ def main():
             items.append(get_items(member, len(val)))
 
         print(f"Test Case {i+1}")
-        print(f"Total price {total_value}")
+        print(f"Total Price {total_value}")
 
         for j in range(len(family)):
             print(f"{j+1}:", end=" ")
 
-            for item in items[j]:
-                print(item, end=" ")
+            for k in range(len(items[j])):
+                print(items[j][((len(items[j])-1)) - k], end=" ")
 
             print()
         print()
