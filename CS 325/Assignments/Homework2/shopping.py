@@ -4,6 +4,10 @@ wt = []
 family = []
 V = []
 
+# Name: Jackson Hart
+# Date: 4/18/2022
+# Class: CS 325
+
 def getnumber(line):
     num_str = ""
     global index
