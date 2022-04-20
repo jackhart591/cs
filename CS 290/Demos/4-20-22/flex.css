@@ -1,0 +1,45 @@
+body {
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
+    font-weight: 200;
+    font-size: 48px;
+}
+
+.container {
+    min-height: 400px;
+    margin: 5px;
+    padding: 10px;
+    border: 4px solid black;
+
+    display: flex;
+
+    /*Goes on rows, starts on the left (reverse right) */
+    flex-direction: row;
+
+    /*Justify the content to where the flex direction starts (left) */
+    /* justify-content: flex-start; */
+    justify-content: space-around;
+    align-items: center;
+
+    flex-wrap: wrap;
+}
+
+.item {
+    background-color: #81d07d;
+    /* max-width: 200px; */
+    min-width: 100px;
+    height: 200px;
+    margin: 10px 0;
+    padding: 10px;
+    border: 2px solid black;
+
+    /* flex-grow: 1;
+    flex-basis: 100px; */
+    /* Same thing as ^^ */
+    flex: 1 100px;
+
+    /* Check out caniuseit.com for seeing if properties are supported */
+    }
+
+    .bigger {
+        flex-grow: 6;
+}
