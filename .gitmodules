@@ -1,3 +1,6 @@
 [submodule "CS 290/Assignments/Assignment1"]
 	path = CS 290/Assignments/Assignment1
 	url = https://github.com/osu-cs290-sp22/assignment-1-Endersky78.git
+[submodule "CS 290/Assignments/assignment-2-Endersky78"]
+	path = CS 290/Assignments/Assignment2
+	url = https://github.com/osu-cs290-sp22/assignment-2-Endersky78.git
