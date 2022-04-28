@@ -1,0 +1,12 @@
+Set 1
+Maximum number of activities = 4
+ 2 4 8 11
+
+Set 2
+Maximum number of activities = 2
+ 2 1
+
+Set 3
+Maximum number of activities = 3
+ 2 4 6
+
