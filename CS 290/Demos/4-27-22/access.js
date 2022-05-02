@@ -34,3 +34,12 @@ console.log("== rightNavItem", rightNavItem)
 
 var allNavItems = document.querySelectorAll('li.navItem')
 console.log("== allNavItems", allNavItems)
+
+var firstPhotoCard = photoCards[0]
+console.log("== firstPhotoCard.innerHTML:", firstPhotoCard.innerHTML)
+console.log("== firstPhotoCard.textContent:", firstPhotoCard.textContent)
+console.log("== firstPhotoCard.classList:", firstPhotoCard.classList)
+
+var firstLink = links[0]
+console.log("== firstLink.href:", firstLink.href)
+firstLink.href = "https://web.engr.oregonstate.edu/~hessro/teaching/cs290-sp22"
