@@ -66,7 +66,7 @@ def main():
         print(f"N={n} W=100\tRec time = {rec_time}\tmax Rec = {max_rec}", flush=True)
 
     for i in range(10):
-        n = 100000 * (i+1)
+        n = 10000 * (i+1)
         GenerateData(n)
 
         past = time.time()
