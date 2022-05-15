@@ -1,86 +1,39 @@
 import math
 
-class graph:
-    def __init__(self, vertices, edges):
-        self.Vertices = vertices
-        self.Edges = edges
-        
-    def GetTotalWeight(self):
-        totalWeight = 0
-        for edge in self.Edges:
-            totalWeight += edge.Weight
-
-        return totalWeight
-
-    def addedge(self, edge):
-        self.Edges.append(edge)
-
-        if edge.Source not in self.Vertices:
-            self.Vertices.append(edge.Source)
-
-        if edge.Target not in self.Vertices:
-            self.Vertices.append(edge.Target)
-
-    def __eq__(self, other):
-        if set(self.Vertices) == set(other.Vertices) == None:
-            return True
-        return False
-
-class vertex:
-    def __init__(self, leastWeightedEdge):
-        self.LeastWeightedEdge = leastWeightedEdge
-
-    def setedge(self, edge):
-        if self.LeastWeightedEdge > edge:
-            self.LeastWeightedEdge = edge
-
-class edge:
-    def __init__(self, source, target):
-        self.Source = source
-        self.Target = target
-        self.Weight = w(source, target)
-
-    def isEqual(self, other):
-        if self.Source == other.Source or self.Source == other.Target:
-            if self.Target == other.Source or self.Target == other.Target:
-                return True
-        return False
-
 def w(one, two):
-    return round(math.sqrt(pow((one[0] - two[0]), 2) + pow((one[1] - two[1]), 2)))
+    return math.floor(math.sqrt(pow((one[0] - two[0]), 2) + pow((one[1] - two[1]), 2)) + 0.5)
 
-def func(e):
-    return e.Weight
+def UpdateKeys(vertices, keys, idx):
+    currentVal = keys[idx]
 
-def FindSet(sets, vert):
-    for set in sets:
-        if vert in set:
-            return set
-    return None
+    for i in range(len(keys)):
+        if (currentVal + w(vertices[idx], vertices[i])) < keys[i]:
+            keys[i] = currentVal + w(vertices[idx], vertices[i])
+
+    print(keys)
 
 def getmstweight(vertices):
-    total_weight = 0
-    edges = []
-    comp_graph = graph(vertices, None)
-    tree = graph([vertices[0]], [edge((0,0), (0,0))])
+    vert_keys = [math.inf] * len(vertices)
+    vert_keys[0] = 0
+    tree = set()
+    weight_total = 0
 
-    while tree != comp_graph:
-        minweight = math.inf
-        minedge = None
+    #While the tree does not contain every node
+    while tree != set(vertices):
+        minKeyVal = math.inf
+        idx = -1
 
-        for source in tree.Vertices:
-            for target in vertices:
-                if target not in tree.Vertices:
-                    if minweight > w(source, target):
-                        minedge = edge(source, target)
-                        minweight = w(source, target)
-                        print(f"{minweight}")
-        
-        if minedge != None:
-            tree.addedge(minedge)
-            total_weight += minweight
+        #Find min key
+        for i, vals in enumerate(vert_keys):
+            if vertices[i] not in tree and minKeyVal > vals:
+                minKeyVal = vals
+                idx = i
 
-    return total_weight
+        weight_total += minKeyVal
+        tree.add(vertices[idx])
+        UpdateKeys(vertices, vert_keys, idx)
+
+    return weight_total
             
 def main():
     file = open('graph.txt', 'r')
