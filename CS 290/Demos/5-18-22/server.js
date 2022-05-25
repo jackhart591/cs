@@ -7,7 +7,7 @@ var port = process.env.PORT || 8000;
 var app = express();
 
 // tells it that we're using .handlebars as our templating engine
-app.engine('handlebars', exphbs.engine({ defaultLayout: null }))
+app.engine('handlebars', exphbs.engine({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
 
 //npm install --save-dev nodemon
