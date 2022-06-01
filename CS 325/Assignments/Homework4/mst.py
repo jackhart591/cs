@@ -3,37 +3,31 @@ import math
 def w(one, two):
     return math.floor(math.sqrt(pow((one[0] - two[0]), 2) + pow((one[1] - two[1]), 2)) + 0.5)
 
-def UpdateKeys(vertices, keys, idx):
-    currentVal = keys[idx]
-
-    for i in range(len(keys)):
-        if (currentVal + w(vertices[idx], vertices[i])) < keys[i]:
-            keys[i] = currentVal + w(vertices[idx], vertices[i])
-
-    print(keys)
-
 def getmstweight(vertices):
-    vert_keys = [math.inf] * len(vertices)
-    vert_keys[0] = 0
+    weights = []
     tree = set()
-    weight_total = 0
+    tree.add(vertices[0])
 
     #While the tree does not contain every node
     while tree != set(vertices):
         minKeyVal = math.inf
         idx = -1
 
-        #Find min key
-        for i, vals in enumerate(vert_keys):
-            if vertices[i] not in tree and minKeyVal > vals:
-                minKeyVal = vals
-                idx = i
+        # Check every edge exiting the tree
+        for source in tree:
+            for i, target in enumerate(vertices):
+                if source == target:
+                    continue
+                
+                if target not in tree and minKeyVal > w(source, target):
+                    minKeyVal = w(source, target)
+                    idx = i
 
-        weight_total += minKeyVal
+        # Once have the optimal edge, append
+        weights.append(minKeyVal)
         tree.add(vertices[idx])
-        UpdateKeys(vertices, vert_keys, idx)
 
-    return weight_total
+    return sum(weights)
             
 def main():
     file = open('graph.txt', 'r')
