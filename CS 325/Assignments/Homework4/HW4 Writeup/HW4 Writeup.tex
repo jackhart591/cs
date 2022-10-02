@@ -1,0 +1,103 @@
+\documentclass[12pt, letterpaper]{article}
+\setlength{\parindent}{0cm}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
+\title{Homework 4 Writeup}
+\author{Jackson Hart}
+\date{May 15, 2022}
+
+\begin{document}
+
+\maketitle
+
+\section*{Problem 1}
+\subsection*{A)}
+I would recommend Dijkstra's algorithm. To find the best route from the distribution center, you would be able to just input the distribution center as the source, and run it with each of the other towns as the target. As an example, to find the best route to city B, the algorithm would look at E because it has the smallest edge from G, but all of E's edges + the edge it took to E are greater than G's other edge to H. From there, it would consider the smallest edge of H which would allow it to find B. Here are the resulting best paths:
+
+\begin{center}
+\begin{tabular}{||c c ||} 
+ \hline
+ City & Path \\ [0.5ex] 
+ \hline\hline
+ A & G $\rightarrow$ F $\rightarrow$ A \\ 
+ \hline
+ B & G $\rightarrow$ H $\rightarrow$ B \\
+ \hline
+ C & G $\rightarrow$ C \\
+ \hline
+ D & G $\rightarrow$ E $\rightarrow$ D \\
+ \hline
+ E & G $\rightarrow$ E \\
+ \hline 
+ F & G $\rightarrow$ F \\ 
+ \hline
+ H & G $\rightarrow$ H \\ [1ex] 
+ \hline
+\end{tabular}
+\end{center}
+\newpage
+
+
+\subsection*{B)}
+This algorithm assumes there is already a shortest distance function created called Dijkstra which takes the graph, the source, and target, defined as G, s, t respectively.
+\begin{algorithm}
+\caption{Optimal Distribution Location}
+\begin{algorithmic}
+\Require $G \leftarrow$ graph
+\State Paths $\leftarrow$ Dictionary which takes a pair of nodes as its key (which is commutative) and a path for the value
+\State MaxPath $\leftarrow$ List containing the maximum path of the corresponding vertex
+\For{Vertex source in $G$}
+	\State Max $\leftarrow -\infty$
+	\For{Vertex target in $G -$source}
+		\If{Paths contains (source, vertex)}
+			\State Max $\leftarrow$ max(Max, Paths[source, vertex])
+		\Else
+			\State Paths $\leftarrow$ Dijkstra(G, source, target)
+			\State Max $\leftarrow$ max(Max, Paths[source, vertex])
+		\EndIf
+	\EndFor
+	\State MaxPath[source] $\leftarrow$ Max
+\EndFor
+\Return min(MaxPath)
+\end{algorithmic}
+\end{algorithm}
+
+Dijkstra's algorithm can be as low as $\Theta(V + ElogV)$, and it runs once for every min path, which is equal to ${t \choose 2} = \frac{t!}{2(t-2)!}=\frac{t(t-1)}{2}$. So, this gives us a final run time complexity of $\Theta(t^3 + t^2rlogt)$.
+
+\subsection*{C)}
+Town E
+
+\subsection*{D)}
+I would give the town I got through the algorithm described above, and the town that is furthest away from it. To do this, my algorithm would work exactly the same except I would return the min(MaxPath) and that path's target.
+
+\subsection*{E)}
+A
+
+\section*{Problem 2}
+\subsection*{Verbal Description of my Algorithm}
+I use a set called tree, which contains the vertices that I have visited, a list of the weights of each corresponding vertices in the tree called weights, and the list of vertices with tuple values containing their location. The algorithm starts with the 0th vertex being in tree. While the tree does not contain all the vertices, it searches for the lowest edge in the tree that goes to a vertex outside the tree, and then adds it to the set and adds the weight to weights. Once the set contains all vertices, the algorithm returns the sum of all the weights.
+
+\subsection*{Pseudocode}
+\begin{algorithm}
+\caption{MST Algorithm}
+\begin{algorithmic}
+\State weights $\leftarrow$ empty list
+\State tree $\leftarrow$ set containing vertices[0]
+
+\While{tree does not contain all vertices}
+	\State find minimum edge that goes outside the tree
+	\State add to tree and add weight of edge to weights
+\EndWhile
+\Return sum(weights)
+\end{algorithmic}
+\end{algorithm}
+
+\subsection*{Theoretical Running Time}
+$\Theta(|V|^2)$
+
+\end{document}

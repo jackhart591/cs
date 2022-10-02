@@ -1,0 +1,77 @@
+\documentclass[12pt, letterpaper]{article}
+\setlength{\parindent}{0cm}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
+\title{Homework 5}
+\author{Jackson Hart}
+\date{May 30, 2022}
+
+\begin{document}
+
+\maketitle
+
+\section*{Problem 1}
+\subsection*{A)}
+False, X can be easier than Y.
+
+\subsection*{B)}
+False, all this proves is that Y is NP-Hard.
+
+\subsection*{C)}
+False, X can be easier than Y.
+
+\subsection*{D)}
+True, this satisfies the definition of NP-Complete.
+
+\subsection*{E)}
+False, Y can be a much more difficult problem, as long as X is no more difficult than it.
+
+\subsection*{F)}
+True, X is no harder than a P class problem.
+
+\subsection*{G)}
+False, see D.
+
+\section*{Problem 2}
+\subsection*{A)}
+True, all NP-Complete problems can reduce to all other NP-Complete problems.
+
+\subsection*{B)}
+False, if 3-SAT $\le_p$ 2-SAT, then all NP-Complete algorithms would be no more difficult than a polynomial-time algorithm, and therefore P = NP.
+
+\subsection*{C)}
+True, for reasons given above.
+
+\section*{Problem 3}
+The algorithm, HAM-PATH = \{(G, u, v): whether there is a Hamiltonian path from u to v in G\} is NP-Complete.
+\begin{proof}
+The algorithm HAM-PATH can be verified using an algorithm which traverses the path given from the certificate and returns true if it went through every vertex to get to v from u, and false otherwise. This algorithm is $O(|V|^2)$, and therefore HAM-PATH $\in$ NP.
+\vspace{2mm} \\
+To show that HAM-PATH is NP hard, consider the well known NP-Complete algorithm, HAM-CYCLE = \{(G, u): there is a Hamiltonian cycle on u in G\}. We will create a reduction algorithm by first constructing a graph G$^\prime$ such that u's edges are duplicated to a new vertex, u$^\prime$; this operation is $O(n)$. Thus, we have created a polynomial time reduction algorithm. We will then perform HAM-PATH(G, u, u$^\prime$). This will find a Hamiltonian path from u to u$^\prime$, since u and u$^\prime$ have the same edges, meaning that any path that can be taken to u$^\prime$ can also be taken to u, it is also a cycle on u. Because of this, we now know that HAM-PATH $\in$ NP and HAM-CYCLE $\le_p$ HAM-PATH, which shows that HAM-PATH is NP hard, so therefore, HAM-PATH is NP-Complete.
+\end{proof}
+
+\section*{Problem 4}
+
+Let G be graph, and G$^\prime$ be with an extra node, v, that has an edge to every other node in G. Then G satisfies the algorithm 3-COLOR iff G$^\prime$ satisfies 4-COLOR.
+
+\begin{proof}
+$(=>)$ Assume G$^\prime$ satisfies 4-COLOR. Then v must have a different color than every other vertex in the graph because it is adjacent to every other vertex in the graph. Therefore, in the remaining graph, there must be 3 or less colors, and this graph is equal to G, so therefore, G must also be colored with 3 or less colors.
+\vspace{2mm} \\
+$(<=)$ Assume G satisfies 3-COLOR. Then color G$^\prime$ the same way as G. Now, G$^\prime$ is colored with 3 colors and has only one remaining vertex. Because v has an edge to every other node, and there is at least one remaining color, coloring v that color will make v a different color than all of its neighbors, meaning all vertices have been colored a different color than its neighbors with 4 colors or less, then 4-COLOR is satisfied.
+\end{proof}
+
+
+The algorithm 4-COLOR = \{(G): whether there is a way to color the graph G such that every adjacent vertex has different colors using at most 4 colors\} is NP-Complete.
+
+\begin{proof}
+The algorithm 4-COLOR can be verified using an algorithm which goes through each node provided by the certificate and checks to see if every single neighbor is colored a different color, returning true if so, and false if not. This algorithm is $O(n^2)$, so therefore, 4-COLOR $\in$ NP. 
+\vspace{2mm} \\
+To show that 4-COLOR is NP hard, consider the NP-Complete algorithm, 3-COLOR = \{(G): whether there is a way to color the graph G such that every adjacent vertex has different colors using at most 3 colors\}. Creating a G$^\prime$ as described above allows 3-COLOR to be reduced to 4-COLOR. This operation only runs through each vertex once, so it is $O(|V|)$, and therefore, a polynomial time reduction. Because 4-COLOR $\in$ NP, and 3-COLOR $\le_p$ 4-COLOR, meaning 4-COLOR is NP hard, 4-COLOR is NP-Complete.
+\end{proof}
+
+\end{document}

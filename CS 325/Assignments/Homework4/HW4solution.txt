@@ -1,0 +1,8 @@
+Test case 1: MST weight 6
+
+Test case 2: MST weight 12
+
+Test case 3: MST weight 39
+
+Test case 4: MST weight 11
+

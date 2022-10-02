@@ -1,0 +1,65 @@
+body {
+    font-family: 'Lato', sans-serif;
+    margin: 0;
+    background-color: #dadada;
+}
+
+header {
+    background-color: #e78477;
+    color: #fff;
+}
+
+a {
+    text-decoration: none;
+}
+
+.site-title {
+    margin: 0;
+    padding: 20px;
+}
+
+.navbar {
+    font-size: 22px;
+    background-color: #fff;
+}
+
+.navlist {
+    margin: 0;
+}
+
+.navitem {
+    display: inline-block;
+}
+
+.navitem:hover {
+    background-color: rgba(231, 132, 119, 0.18);
+}
+
+.navitem a {
+    display: inline-block;
+    color: #454545;
+    padding: 10px 20px;
+}
+
+.navitem.right {
+    float: right;
+}
+
+#photo-card-container {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 5px;
+}
+
+.photo-card {
+    flex: 1 32%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+    margin: 5px;
+}
+
+.person-photo-img {
+    max-height: 300px;
+}

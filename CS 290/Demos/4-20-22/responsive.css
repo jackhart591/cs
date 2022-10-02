@@ -1,0 +1,61 @@
+body {
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
+    font-weight: 100;
+    font-size: 36px;
+    margin: 0;
+}
+
+a, a:hover {
+    text-decoration: none;
+}
+
+header h1 {
+    margin: 5px;
+    font-weight: 300;
+}
+
+.navbar {
+    width: 100%;
+    background-color: #232323;
+    color: #efefef;
+}
+
+.navbar a {
+    color: #efefef;
+}
+
+.navbar-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.navitem {
+    display: inline-block;
+    margin: 10px;
+}
+
+.right {
+    float: right;
+}
+
+
+@media (max-width: 640px) {
+    .navitem {
+        display: block;
+    }
+
+    .navitem.right {
+        float: none;
+    }
+
+    h1 {
+        font-size: 40px;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    h1 {
+        font-size: 56px;
+    }
+}

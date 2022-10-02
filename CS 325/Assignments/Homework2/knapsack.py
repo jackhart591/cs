@@ -2,6 +2,10 @@ import time
 import sys
 from random import randint
 
+# Name: Jackson Hart
+# Date: 4/18/2022
+# Class: CS 325
+
 sys.setrecursionlimit(10000)
 
 val = []
@@ -62,7 +66,7 @@ def main():
         print(f"N={n} W=100\tRec time = {rec_time}\tmax Rec = {max_rec}", flush=True)
 
     for i in range(10):
-        n = 100000 * (i+1)
+        n = 10000 * (i+1)
         GenerateData(n)
 
         past = time.time()
