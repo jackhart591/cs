@@ -15,6 +15,7 @@
 struct Command {
    char* command;
    char* args[MAX_ARGS];
+   int numArgs;
    int inputFile;
    int outputFile;
    int background;
@@ -23,7 +24,7 @@ struct Command {
 pid_t* fgPids;
 pid_t* bgPids;
 
-void HandleSigInt(int signo) {
+void HandleSigIntParent(int signo) {
    int i;
    for (i = 0; i < MAX_PROCESS; i++) {
       if (fgPids[i] != 0) {
@@ -37,20 +38,80 @@ void HandleSigInt(int signo) {
    fgPids = calloc(MAX_PROCESS, sizeof(pid_t));
 }
 
+void HandleSigStpParent(int signo) {
+   
+}
+
+void HandleSigIntChild(int signo) {
+
+}
+
+void HandleSigStpChild(int signo) {
+
+}
+
+void IgnoreSignal(int signo) {}
+
 struct Command* waitForInput() {
    printf(": ");
    fflush(stdout);
+   char* buffer = calloc(MAX_COMMAND_CHAR, sizeof(char));
+   char* bufferptr = buffer;
+   int offset = 0;
    struct Command* newCommand = malloc(sizeof(struct Command));
    char* commandText = calloc(MAX_COMMAND_CHAR, sizeof(char));
 
-   scanf("%2048s", commandText);
+
+   if (fgets(buffer, MAX_COMMAND_CHAR, stdin) == NULL) {
+      perror("Error in fgets");
+      exit(1);
+   }
+
+   if (sscanf(buffer, "%2048s%n", commandText, &offset) < 1) {
+      free(newCommand);
+      free(commandText);
+      return NULL;
+   }
+
+   bufferptr += offset;
+
    newCommand->command = malloc(MAX_COMMAND_CHAR * sizeof(char));
+   newCommand->numArgs = 0;
+
+   if (strstr(commandText, "$$") != NULL) {
+      char pid[25];
+      snprintf(pid, sizeof(pid), "%d", getpid());
+      char* newString = malloc(MAX_COMMAND_CHAR);
+
+      int i;
+      int j = 0;
+      int k = 0;
+      for (i = 0; i < MAX_COMMAND_CHAR; i++) {
+         if (commandText[i] == '$' && commandText[i+1] == '$') {
+            strncpy(newString + k, commandText + j, i-j);
+            k += (i-j);
+            printf("%s\n", newString);
+            newString[k] = '\0';
+            strcat(newString, pid);
+            k += strlen(pid);
+            printf("%s\n", newString);
+            i++;
+            j = i+1;
+         }
+
+      }
+
+      strcat(newString, commandText + j);
+      strcpy(commandText, newString);
+      free(newString);
+   }
    
    // Sets command variable
    strcpy(newCommand->command, commandText);
 
    newCommand->args[0] = malloc(MAX_COMMAND_CHAR * sizeof(char));
    strcpy(newCommand->args[0], commandText);
+   newCommand->numArgs++;
 
    newCommand->inputFile = 0;
    newCommand->outputFile = 0;
@@ -59,17 +120,23 @@ struct Command* waitForInput() {
    int nextOutput = 1;
    int checkFinal = 1;
    for (i = 1; i < MAX_ARGS + 4; i++) {
-      char newLine;
-      newLine = getchar();
-
-      if (newLine == '\n') {
+   
+      if (sscanf(bufferptr, "%2048s%n", commandText, &offset) != 1) {
          if (checkFinal == 0) newCommand->background = 0;
          else newCommand->background = 1;
 
          break;
+      } else {
+         if (checkFinal == 0) {
+            newCommand->args[i] = malloc(MAX_COMMAND_CHAR * sizeof(char));
+            newCommand->args[i] = "&";
+            i++;
+            checkFinal = 1;
+         }
       }
 
-      scanf("%2048s", commandText);
+      bufferptr += offset;
+      
       if (nextInput == 0) {
          newCommand->inputFile = open(commandText, O_WRONLY | O_CREAT | O_TRUNC, 0640);
 
@@ -79,7 +146,6 @@ struct Command* waitForInput() {
          }
 
          nextInput = 1;
-         checkFinal = 1;
       } else if (nextOutput == 0) {
          newCommand->outputFile = open(commandText, O_WRONLY | O_CREAT | O_TRUNC, 0640);
 
@@ -89,24 +155,23 @@ struct Command* waitForInput() {
          }
 
          nextOutput = 1;
-         checkFinal = 1;
       } else if (strcmp(commandText, "<") == 0) {
          nextInput = 0;
-         checkFinal = 1;
       } else if (strcmp(commandText, ">") == 0) {
          nextOutput = 0;
-         checkFinal = 1;
       } else if (strcmp(commandText, "&") == 0) {
          checkFinal = 0;
       } else {
-          newCommand->args[i] = malloc(MAX_COMMAND_CHAR * sizeof(char));
-          strcpy(newCommand->args[i], commandText);
-          checkFinal = 1;
+         newCommand->args[i] = malloc(MAX_COMMAND_CHAR * sizeof(char));
+         strcpy(newCommand->args[i], commandText);
+         newCommand->numArgs++;
       }
    }
 
    newCommand->args[i] = NULL;
+
    free(commandText);
+   free(buffer);
 
    return newCommand;
 }
@@ -136,9 +201,42 @@ void exitShell() {
 
 void openFgProcess(struct Command* command, pid_t childId) {
    int i;
+
+   struct sigaction SIGINT_act = {0};
+
+   SIGINT_act.sa_handler = HandleSigIntChild;
+   sigfillset(&SIGINT_act.sa_mask);
+   SIGINT_act.sa_flags = 0;
+   sigaction(SIGINT, &SIGINT_act, NULL);
+
+   struct sigaction SIGSTP_act = {0};
+
+   SIGSTP_act.sa_handler = HandleSigStpChild;
+   sigfillset(&SIGSTP_act.sa_mask);
+   SIGSTP_act.sa_flags = 0;
+   //sigaction(SIGSTP, &SIGSTP_act, NULL);
+
    for (i = 0; i < MAX_PROCESS; i++) {
       if (fgPids[i] == 0) {
          fgPids[i] = childId;
+
+         if (command->inputFile != 0) {
+            int result = dup2(command->inputFile, 0);
+            if (result == -1) {
+               perror("Error with dup2");
+               fflush(stdout);
+            }
+         }
+
+
+         if (command->outputFile != 0) {
+            int result = dup2(command->outputFile, 1);
+            if (result == -1) {
+               perror("Error with dup2");
+               fflush(stdout);
+            }
+         }
+
          execvp(command->command, command->args);
          perror("That was not a recognized command!\n");
          fflush(stdout);
@@ -149,6 +247,20 @@ void openFgProcess(struct Command* command, pid_t childId) {
 
 void openBgProcess(struct Command* command, pid_t childId) {
    int i, ifd, ofd;
+
+   struct sigaction SIGINT_act = {0};
+
+   SIGINT_act.sa_handler = HandleSigIntChild;
+   sigfillset(&SIGINT_act.sa_mask);
+   SIGINT_act.sa_flags = 0;
+   sigaction(SIGINT, &SIGINT_act, NULL);
+
+   struct sigaction SIGSTP_act = {0};
+
+   SIGSTP_act.sa_handler = HandleSigStpChild;
+   sigfillset(&SIGSTP_act.sa_mask);
+   SIGSTP_act.sa_flags = 0;
+   //sigaction(SIGSTP, &SIGSTP_act, NULL);
 
    if (command->inputFile == 0) {
       ifd = open("/dev/null", O_WRONLY);
@@ -168,16 +280,16 @@ void openBgProcess(struct Command* command, pid_t childId) {
       if (bgPids[i] == 0) {
          bgPids[i] = childId;
 
-         printf("Output: %d", command->outputFile);
-         fflush(stdout);
          int result = dup2(ifd, 0);
          if (result == -1) {
             perror("Error with dup2");
+            fflush(stdout);
          }
          
          result = dup2(ofd, 1);
          if (result == -1) {
             perror("Error with dup2");
+            fflush(stdout);
          }
 
          execvp(command->command, command->args);
@@ -207,7 +319,7 @@ void execCommand(struct Command* command) {
       default:
          if (command->background == 1) childpid = wait(&childStatus); 
       
-         printf("Child %d exited with a status of %d!\n", childpid, childStatus);
+         //printf("Child %d exited with a status of %d!\n", childpid, childStatus);
          break;
    }
 
@@ -224,7 +336,7 @@ void freeCommand(struct Command* command) {
    free(command->command);
 
    int i;
-   for (i = 0; i < MAX_ARGS; i++) {
+   for (i = 0; i < command->numArgs; i++) {
       if (command->args[i] != NULL) {
          free(command->args[i]);
       }
@@ -246,24 +358,39 @@ int main() {
    fgPids = calloc(MAX_PROCESS, sizeof(pid_t));
    bgPids = calloc(MAX_PROCESS, sizeof(pid_t));
 
-   signal(SIGINT, HandleSigInt); // Update this, signal is deprecated!
+   struct sigaction SIGINT_act = {0};
+
+   SIGINT_act.sa_handler = HandleSigIntParent;
+   sigfillset(&SIGINT_act.sa_mask);
+   SIGINT_act.sa_flags = SA_RESTART;
+   sigaction(SIGINT, &SIGINT_act, NULL);
+
+   struct sigaction SIGSTP_act = {0};
+
+   SIGSTP_act.sa_handler = HandleSigStpParent;
+   sigfillset(&SIGSTP_act.sa_mask);
+   SIGSTP_act.sa_flags = SA_RESTART;
+   //sigaction(SIGSTP, &SIGSTP_act, NULL);
 
    while (1) {
        struct Command* command = waitForInput();
-       printf("Command: %s, Args: %s\n", command->command, command->args[0]);
+       if (command == NULL) { continue; }
+       //printf("Command: %s, Args: %s\n", command->command, command->args[1]);
 
-       if (strcmp(command->command, "cd") == 0) {
+        if (strcmp(command->command, "cd") == 0) {
           changeDirectory(command);
-       } else if (strcmp(command->command, "status") == 0) {
+        } else if (strcmp(command->command, "status") == 0) {
           statusCommand(command);
-       } else if (strcmp(command->command, "exit") == 0) {
+        } else if (strcmp(command->command, "exit") == 0) {
           freeCommand(command);
           free(fgPids);
           free(bgPids);
           exitShell();
-       } else {
+        } else if (command->command[0] == '#') {
+          continue;
+        } else {
           execCommand(command);
-       }
+        }
 
        freeCommand(command);
    }
