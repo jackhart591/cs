@@ -1,0 +1,1 @@
+gcc assign3.c -o smallsh -g
