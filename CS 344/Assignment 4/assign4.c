@@ -8,29 +8,32 @@ pthread_cond_t myCond1, myCond2;
 void* consumer(void* args) {
    printf("CONSUMER THREAD CREATED\n");
 
-   int i = 0;
+   int i = 2;
    do {
 
-      if (prevCount != myCount) {
+      if (prevCount != myCount && myCount != 10) {
          printf("CONSUMER: signaling myCond2\n");
          pthread_cond_signal(&myCond2);
-         continue;
-      } else if (myCount == 10) { return NULL; }
+      } else if (myCount == 10) { 
+         printf("CONSUMER: signaling myCond2\n");
+         pthread_cond_signal(&myCond2);
+         return NULL; 
+      }
 
       pthread_mutex_lock(&myMutex);
-      printf("CONSUMER: waiting on myCond1\n");
-      pthread_cond_wait(&myCond1, &myMutex);
       printf("CONSUMER: myMutex locked\n");
+
+      if (myCount != 1 || prevCount != myCount) {
+         printf("CONSUMER: waiting on myCond1\n");
+         pthread_cond_wait(&myCond1, &myMutex);
+      }
 
       myCount = i;  
 
       pthread_mutex_unlock(&myMutex);
       printf("CONSUMER: myMutex unlocked\n");
-
-      printf("CONSUMER: signaling myCond2\n");
-      pthread_cond_signal(&myCond2);
-
       i++;
+
    } while (1);
 }
 
@@ -45,25 +48,24 @@ int main() {
 
    int i;
    do {
-      if (prevCount == myCount) { 
-         printf("PRODUCER: signaling myCond1\n");
-         pthread_cond_signal(&myCond1);
-         continue; 
-      }
-
       pthread_mutex_lock(&myMutex);
       printf("PRODUCER: myMutex locked\n");
-      printf("PRODUCER: waiting on myCond2\n");
-      pthread_cond_wait(&myCond2, &myMutex);
+
+      printf("PRODUCER: signaling myCond1\n");
+      pthread_cond_signal(&myCond1);
+
+
+      if (myCount == prevCount) {
+         printf("PRODUCER: waiting on myCond2\n");
+         pthread_cond_wait(&myCond2, &myMutex);
+      }
+
 
       printf("myCount: %d -> %d\n", prevCount, myCount);
       prevCount = myCount;
 
       pthread_mutex_unlock(&myMutex);
       printf("PRODUCER: myMutex unlocked\n");
-
-      printf("PRODUCER: signaling myCond1\n");
-      pthread_cond_signal(&myCond1);
 
       if (myCount == 10) { break; }
 

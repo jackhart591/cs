@@ -1,0 +1,21 @@
+#!/bin/bash
+
+touch testFile
+
+STR2="PROGRAM END"
+
+for i in {1..100}
+do
+   echo "uhoh"
+   ./a.out > testFile 
+   echo "Test $i"
+   STR=$(tail -1 ./testFile)
+   if [ "$STR" != "$STR2" ]
+   then 
+      echo "$STR Different!"
+   fi
+done
+
+echo "Done!"
+
+rm -f testFile
