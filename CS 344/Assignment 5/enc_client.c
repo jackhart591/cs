@@ -4,11 +4,41 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <netdb.h>
 
 void error(const char* msg) {
     perror(msg);
     exit(0);
+}
+
+// Opens the file at the given path. Returns
+// a string containing the file's contents.
+char* OpenFile(char* filePath) {
+   int file_descriptor, fsize;
+   ssize_t nread;
+   struct stat st;
+
+   file_descriptor = open(filePath, O_RDONLY, 0060);
+
+   stat(filePath, &st);
+   fsize = st.st_size; // fsize -> file size
+
+   // If the file failed to open, exit!
+   if (file_descriptor == -1) {
+      printf("open() failed on \"%s\"\n", filePath);
+      perror("in OpenFile()");
+      exit(1);
+   }
+
+   char* buffer = malloc(fsize + 1);
+   nread = read(file_descriptor, buffer, fsize);
+
+   buffer[fsize] = '\0';
+
+   close(file_descriptor);
+   return buffer;
 }
 
 void setupAddressStruct(struct sockaddr_in* address, int portNumber, char* hostName) {
@@ -38,13 +68,19 @@ void setupAddressStruct(struct sockaddr_in* address, int portNumber, char* hostN
 int main(int argc, char* argv[]) {
     int socketFD, portNumber, charsWritten, charsRead;
     struct sockaddr_in serverAddress;
-    char buffer[256];
+    char buffer[1024];
 
     // check args
-    if (argc < 3) {
-        fprintf(stderr, "USAGE: %s hostname port\n", argv[0]);
+    if (argc < 4) {
+        fprintf(stderr, "USAGE: %s plaintext key port\n", argv[0]);
         exit(0);
     }
+
+    // Opening plaintext file
+    char* plaintext = OpenFile(argv[1]);
+
+    // Opening keygen file
+    char* key = OpenFile(argv[2]);
 
     // Create a socket
     socketFD = socket(AF_INET, SOCK_STREAM, 0);
@@ -53,31 +89,36 @@ int main(int argc, char* argv[]) {
     }
 
     // Set up the server address struct
-    setupAddressStruct(&serverAddress, atoi(argv[2]), argv[1]);
+    setupAddressStruct(&serverAddress, atoi(argv[3]), "localhost");
 
     // Connect to server
     if (connect(socketFD, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0) {
         error("CLIENT: ERROR connecting");
     }
 
-    // Get input message from user
-    printf("CLIENT: Enter text to send to the server, and then hit enter: ");
-    // Clear out the buffer array
-    memset(buffer, '\0', sizeof(buffer));
-    // Get input from the user, trunc to buffer -1 chars, leaving \0
-    fgets(buffer, sizeof(buffer) - 1, stdin);
-    // Remove the trailing \n that fgets adds
-    buffer[strcspn(buffer, "\n")] = '\0';
+    int buffit = 0;
+    do {
+        // Clear out the buffer array
+        memset(buffer, '\0', sizeof(buffer));
 
-    // Send message to server
-    // Write to the server
-    charsWritten = send(socketFD, buffer, strlen(buffer), 0);
-    if (charsWritten < 0) {
-        error("CLIENT: ERROR writing to socket");
-    }
+        // Copy the next portion of the string into buffer
+        memcpy(buffer, &plaintext[buffit], (strlen(&plaintext[buffit]) >= 1023) ? 1023 : strlen(&plaintext[buffit]));
+        buffer[1023] = '\0';
 
-    if (charsWritten < strlen(buffer)) {
-        printf("CLIENT: WARNING: not all data written to socket!\n");
+        // Send message to server
+        // Write to the server
+        charsWritten = send(socketFD, buffer, strlen(buffer), 0);
+        if (charsWritten < 0) {
+            error("CLIENT: ERROR writing to socket");
+        }
+
+        buffit += charsWritten;
+
+    } while (buffit < strlen(plaintext));
+
+    char endMsg[] = "Message End.\0";
+    if (send(socketFD, endMsg, strlen(endMsg), 0) != strlen(endMsg)) {
+        error("CLIENT: ERROR sending end message to socket");
     }
 
     // Get return message from server
