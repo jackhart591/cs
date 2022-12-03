@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
@@ -25,12 +26,24 @@ void setupAddressStruct(struct sockaddr_in* address, int portNumber) {
 }
 
 char* recievePlainText(int connectionSocket) {
-    int charsRead;
+    int charsRead, totalRead = 0;
     char buffer[1000];
     char* sendStr = NULL;
 
-    int foundEnd = 1;
-    do {
+    // Get filesize so we know when to stop
+    char filesizestr[10];
+    charsRead = recv(connectionSocket, filesizestr, 10, 0);
+
+    if (charsRead < 0) {
+        error("ERROR reading file size from socket!");
+    }
+
+    int filesize = atoi(filesizestr);
+
+    printf("filesize: %d\n", filesize);
+
+    // Start reading the message
+    while (totalRead < filesize) {
         // Get the message from the client and display it
         memset(buffer, '\0', sizeof(buffer));
 
@@ -39,13 +52,8 @@ char* recievePlainText(int connectionSocket) {
 
         if (charsRead < 0) {
             error("ERROR reading from the socket");
-        }
-
-        char* endMsg = strstr(buffer, "Message End.");
-
-        if (endMsg != NULL) { 
-            endMsg[0] = '\0';
-            foundEnd = 0; 
+        } else if (charsRead == 0) { // If there wasn't anything sent
+            break;
         }
 
         // Make some space for the incoming string
@@ -57,15 +65,34 @@ char* recievePlainText(int connectionSocket) {
         }
 
         strcat(sendStr, buffer);
+        totalRead += charsRead;
 
-    } while (foundEnd != 0);
+    } 
 
     return sendStr;
 }
 
-int main(int argc, char* argv[]) {
-    int connectionSocket, charsSent;
+void childProcess(int connectionSocket) {
     char* sendStr = NULL;
+    int charsSent;
+
+    sendStr = recievePlainText(connectionSocket);
+    printf("SERVER: I recieved this from the client: \"%s\"\n", sendStr);
+    //Send a success message back to the client
+    charsSent = send(connectionSocket,
+                    "I am the server, and I got your message", 39, 0);
+
+    if (charsSent < 0) {
+        error("ERROR writing to socket");
+    }
+
+    //handle encryption stuff
+
+    free(sendStr);
+}
+
+int main(int argc, char* argv[]) {
+    int connectionSocket, numChildren;
     struct sockaddr_in serverAddress, clientAddress;
     socklen_t sizeOfClientInfo = sizeof(clientAddress);
 
@@ -94,6 +121,8 @@ int main(int argc, char* argv[]) {
     // Start listening for connections. Allow up to 5 connections to queue up
     listen(listenSocket, 5);
 
+    numChildren = 0;
+
     // Accept a connection, blocking if one is not available until one connects
     while (1) {
         // Accept the connection request which creates a connection socket
@@ -104,23 +133,30 @@ int main(int argc, char* argv[]) {
             error("ERROR on accept");
         }
 
-        printf("SERVER: Connected to client running at host %d port %d\n",
-                ntohs(clientAddress.sin_addr.s_addr),
-                ntohs(clientAddress.sin_port));
+        int childStatus;
+        pid_t spawnpid = fork();
 
-        sendStr = recievePlainText(connectionSocket);
-
-        printf("SERVER: I recieved this from the client: \"%s\"\n", sendStr);
-
-        //Send a success message back to the client
-        charsSent = send(connectionSocket,
-                        "I am the server, and I got your message", 39, 0);
-
-        if (charsSent < 0) {
-            error("ERROR writing to socket");
+        switch(spawnpid) {
+            case -1: // if err
+                perror("fork() failed!\n");
+                fflush(stderr);
+                exit(1);
+            case 0: // if child
+                childProcess(connectionSocket);
+                exit(0);
+            default: // if parent
+                numChildren++;
+                break;
         }
 
-        free(sendStr);
+        if (numChildren == 5) {
+            wait(&childStatus);
+            numChildren--;
+        } else if (numChildren > 0) {
+            if (waitpid(0, &childStatus, WNOHANG) != 0) {
+                numChildren--;
+            }
+        }
 
         // Close the connection to the socket for this client
         close(connectionSocket);

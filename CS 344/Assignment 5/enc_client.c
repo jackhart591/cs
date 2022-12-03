@@ -96,6 +96,15 @@ int main(int argc, char* argv[]) {
         error("CLIENT: ERROR connecting");
     }
 
+    // Send the size of the file
+    char filesize[10];
+    sprintf(filesize, "%d", strlen(plaintext));
+    charsWritten = send(socketFD, filesize, 10, 0);
+
+    if (charsWritten != 10) {
+        error("CLIENT: ERROR sending filesize to socket!");
+    }
+
     int buffit = 0;
     do {
         // Clear out the buffer array
@@ -115,11 +124,6 @@ int main(int argc, char* argv[]) {
         buffit += charsWritten;
 
     } while (buffit < strlen(plaintext));
-
-    char endMsg[] = "Message End.";
-    if (send(socketFD, endMsg, strlen(endMsg), 0) != strlen(endMsg)) {
-        error("CLIENT: ERROR sending end message to socket");
-    }
 
     // Get return message from server
     // Clear out the buffer again to reuse
