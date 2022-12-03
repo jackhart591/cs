@@ -24,9 +24,47 @@ void setupAddressStruct(struct sockaddr_in* address, int portNumber) {
     address->sin_addr.s_addr = INADDR_ANY;
 }
 
+char* recievePlainText(int connectionSocket) {
+    int charsRead;
+    char buffer[1000];
+    char* sendStr = NULL;
+
+    int foundEnd = 1;
+    do {
+        // Get the message from the client and display it
+        memset(buffer, '\0', sizeof(buffer));
+
+        // Read the client's message from the socket
+        charsRead = recv(connectionSocket, buffer, sizeof(buffer) - 1, 0);
+
+        if (charsRead < 0) {
+            error("ERROR reading from the socket");
+        }
+
+        char* endMsg = strstr(buffer, "Message End.");
+
+        if (endMsg != NULL) { 
+            endMsg[0] = '\0';
+            foundEnd = 0; 
+        }
+
+        // Make some space for the incoming string
+        if (sendStr == NULL) {
+            sendStr = malloc(strlen(buffer) + 1);
+            sendStr[0] = '\0';
+        } else { 
+            sendStr = realloc(sendStr, strlen(sendStr) + sizeof(buffer)); 
+        }
+
+        strcat(sendStr, buffer);
+
+    } while (foundEnd != 0);
+
+    return sendStr;
+}
+
 int main(int argc, char* argv[]) {
-    int connectionSocket, charsRead;
-    char buffer[1024];
+    int connectionSocket, charsSent;
     char* sendStr = NULL;
     struct sockaddr_in serverAddress, clientAddress;
     socklen_t sizeOfClientInfo = sizeof(clientAddress);
@@ -70,48 +108,15 @@ int main(int argc, char* argv[]) {
                 ntohs(clientAddress.sin_addr.s_addr),
                 ntohs(clientAddress.sin_port));
 
-        int foundEnd = 1;
-        do {
-            // Get the message from the client and display it
-            memset(buffer, '\0', sizeof(buffer));
-
-            // Read the client's message from the socket
-            charsRead = recv(connectionSocket, buffer, sizeof(buffer) - 1, 0);
-
-            if (charsRead < 0) {
-                error("ERROR reading from the socket");
-            }
-
-            printf("Buffer: %s\n", buffer);
-
-            char* endMsg = strstr(buffer, "Message End.");
-
-            if (endMsg != NULL) { 
-                printf("HERE!\n"); 
-                endMsg[0] = '\0';
-                foundEnd = 0; 
-            }
-
-            printf("Crash here?\n");
-            printf("Buffer str len: %d\n", strlen(buffer));
-
-            // Make some space for the incoming string
-            if (sendStr == NULL) {
-                sendStr = malloc(strlen(buffer) + 1);
-            } else { sendStr = realloc(sendStr, sizeof(sendStr) + sizeof(buffer)); }
-
-            
-            strcat(sendStr, buffer);
-
-        } while (foundEnd != 0);
+        sendStr = recievePlainText(connectionSocket);
 
         printf("SERVER: I recieved this from the client: \"%s\"\n", sendStr);
 
         //Send a success message back to the client
-        charsRead = send(connectionSocket,
+        charsSent = send(connectionSocket,
                         "I am the server, and I got your message", 39, 0);
 
-        if (charsRead < 0) {
+        if (charsSent < 0) {
             error("ERROR writing to socket");
         }
 

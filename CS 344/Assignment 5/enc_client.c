@@ -68,7 +68,7 @@ void setupAddressStruct(struct sockaddr_in* address, int portNumber, char* hostN
 int main(int argc, char* argv[]) {
     int socketFD, portNumber, charsWritten, charsRead;
     struct sockaddr_in serverAddress;
-    char buffer[1024];
+    char buffer[1000];
 
     // check args
     if (argc < 4) {
@@ -102,8 +102,8 @@ int main(int argc, char* argv[]) {
         memset(buffer, '\0', sizeof(buffer));
 
         // Copy the next portion of the string into buffer
-        memcpy(buffer, &plaintext[buffit], (strlen(&plaintext[buffit]) >= 1023) ? 1023 : strlen(&plaintext[buffit]));
-        buffer[1023] = '\0';
+        memcpy(buffer, &plaintext[buffit], (strlen(&plaintext[buffit]) >= 999) ? 999 : strlen(&plaintext[buffit]));
+        buffer[999] = '\0';
 
         // Send message to server
         // Write to the server
@@ -116,7 +116,7 @@ int main(int argc, char* argv[]) {
 
     } while (buffit < strlen(plaintext));
 
-    char endMsg[] = "Message End.\0";
+    char endMsg[] = "Message End.";
     if (send(socketFD, endMsg, strlen(endMsg), 0) != strlen(endMsg)) {
         error("CLIENT: ERROR sending end message to socket");
     }
