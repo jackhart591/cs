@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -25,7 +26,7 @@ void setupAddressStruct(struct sockaddr_in* address, int portNumber) {
     address->sin_addr.s_addr = INADDR_ANY;
 }
 
-char* recievePlainText(int connectionSocket) {
+char* recieveFile(int connectionSocket) {
     int charsRead, totalRead = 0;
     char buffer[1000];
     char* sendStr = NULL;
@@ -43,6 +44,7 @@ char* recievePlainText(int connectionSocket) {
     printf("filesize: %d\n", filesize);
 
     // Start reading the message
+    printf("Reading\n");
     while (totalRead < filesize) {
         // Get the message from the client and display it
         memset(buffer, '\0', sizeof(buffer));
@@ -69,15 +71,22 @@ char* recievePlainText(int connectionSocket) {
 
     } 
 
+    printf("Done'd\n");
     return sendStr;
 }
 
+char* encryptFile(char* text, char* key) {
+
+}
+
 void childProcess(int connectionSocket) {
-    char* sendStr = NULL;
+    char* text = NULL;
+    char* key = NULL;
     int charsSent;
 
-    sendStr = recievePlainText(connectionSocket);
-    printf("SERVER: I recieved this from the client: \"%s\"\n", sendStr);
+    text = recieveFile(connectionSocket);
+    key = recieveFile(connectionSocket);
+    printf("SERVER: I recieved this from the client: \"%s\"\n", text);
     //Send a success message back to the client
     charsSent = send(connectionSocket,
                     "I am the server, and I got your message", 39, 0);
@@ -88,7 +97,8 @@ void childProcess(int connectionSocket) {
 
     //handle encryption stuff
 
-    free(sendStr);
+    free(text);
+    close(connectionSocket);
 }
 
 int main(int argc, char* argv[]) {
@@ -108,6 +118,11 @@ int main(int argc, char* argv[]) {
         error("ERROR opening socket");
     }
 
+    // // Sets the socket as non-blocking
+    // // Code snippet is copied from https://stackoverflow.com/questions/14729007/i-want-to-make-accept-system-call-as-non-blocking-how-can-i-make-accept-system
+    // int flags = fcntl(listenSocket, F_GETFL, 0);
+    // fcntl(listenSocket, F_SETFL, flags | O_NONBLOCK);
+
     // Set up the address struct for the server socket
     setupAddressStruct(&serverAddress, atoi(argv[1]));
 
@@ -125,15 +140,42 @@ int main(int argc, char* argv[]) {
 
     // Accept a connection, blocking if one is not available until one connects
     while (1) {
+        int childStatus;
+
+        // hang if there's too many people
+        if (numChildren == 5) {
+            wait(&childStatus);
+            numChildren--;
+        }
+        
         // Accept the connection request which creates a connection socket
-        connectionSocket = accept(listenSocket,
-                        (struct sockaddr*) &clientAddress,
-                        &sizeOfClientInfo);
-        if (connectionSocket < 0) {
-            error("ERROR on accept");
+        if (numChildren == 0) { // If there isn't any connection, wait until there is one
+
+            // Unsets the non-blocking flag on the socket
+            // This code snippet was repurposed from https://stackoverflow.com/questions/388434/linux-fcntl-unsetting-flag
+            int flags = fcntl(listenSocket, F_GETFL);
+            fcntl(listenSocket, F_SETFL, flags & ~O_NONBLOCK);
+
+            connectionSocket = accept(listenSocket,
+                            (struct sockaddr*) &clientAddress,
+                            &sizeOfClientInfo);
+
+            // Sets the socket as non-blocking
+            // This code snippet was copied from https://stackoverflow.com/questions/14729007/i-want-to-make-accept-system-call-as-non-blocking-how-can-i-make-accept-system
+            flags = fcntl(listenSocket, F_GETFL, 0);
+            fcntl(listenSocket, F_SETFL, flags | O_NONBLOCK);
+            
+        } else { // if there is a connection, then this shouldn't block
+            connectionSocket = accept4(listenSocket,
+                            (struct sockaddr*) &clientAddress,
+                            &sizeOfClientInfo,
+                            SOCK_NONBLOCK);
         }
 
-        int childStatus;
+        // if (connectionSocket < 0) {
+        //     error("ERROR on accept");
+        // }
+
         pid_t spawnpid = fork();
 
         switch(spawnpid) {
@@ -149,17 +191,11 @@ int main(int argc, char* argv[]) {
                 break;
         }
 
-        if (numChildren == 5) {
-            wait(&childStatus);
-            numChildren--;
-        } else if (numChildren > 0) {
+        if (numChildren > 0) {
             if (waitpid(0, &childStatus, WNOHANG) != 0) {
                 numChildren--;
             }
         }
-
-        // Close the connection to the socket for this client
-        close(connectionSocket);
     }
 
     // Close the listening socket

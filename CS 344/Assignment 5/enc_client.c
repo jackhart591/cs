@@ -64,6 +64,40 @@ void setupAddressStruct(struct sockaddr_in* address, int portNumber, char* hostN
             hostInfo->h_length);
 }
 
+void SendFile(int socketFD, char* file) {
+    char buffer[1000];
+    int charsWritten = 0;
+
+    // Send the size of the file
+    char filesize[10];
+    sprintf(filesize, "%d", strlen(file));
+    charsWritten = send(socketFD, filesize, 10, 0);
+
+    if (charsWritten != 10) {
+        error("CLIENT: ERROR sending filesize to socket!");
+    }
+
+    int buffit = 0;
+    do {
+        // Clear out the buffer array
+        memset(buffer, '\0', sizeof(buffer));
+
+        // Copy the next portion of the string into buffer
+        memcpy(buffer, &file[buffit], (strlen(&file[buffit]) >= 999) ? 999 : strlen(&file[buffit]));
+        buffer[999] = '\0';
+
+        // Send message to server
+        // Write to the server
+        charsWritten = send(socketFD, buffer, strlen(buffer), 0);
+        if (charsWritten < 0) {
+            error("CLIENT: ERROR writing to socket");
+        }
+
+        buffit += charsWritten;
+
+    } while (buffit < strlen(file));
+}
+
 
 int main(int argc, char* argv[]) {
     int socketFD, portNumber, charsWritten, charsRead;
@@ -96,34 +130,8 @@ int main(int argc, char* argv[]) {
         error("CLIENT: ERROR connecting");
     }
 
-    // Send the size of the file
-    char filesize[10];
-    sprintf(filesize, "%d", strlen(plaintext));
-    charsWritten = send(socketFD, filesize, 10, 0);
-
-    if (charsWritten != 10) {
-        error("CLIENT: ERROR sending filesize to socket!");
-    }
-
-    int buffit = 0;
-    do {
-        // Clear out the buffer array
-        memset(buffer, '\0', sizeof(buffer));
-
-        // Copy the next portion of the string into buffer
-        memcpy(buffer, &plaintext[buffit], (strlen(&plaintext[buffit]) >= 999) ? 999 : strlen(&plaintext[buffit]));
-        buffer[999] = '\0';
-
-        // Send message to server
-        // Write to the server
-        charsWritten = send(socketFD, buffer, strlen(buffer), 0);
-        if (charsWritten < 0) {
-            error("CLIENT: ERROR writing to socket");
-        }
-
-        buffit += charsWritten;
-
-    } while (buffit < strlen(plaintext));
+    SendFile(socketFD, plaintext);
+    SendFile(socketFD, key);
 
     // Get return message from server
     // Clear out the buffer again to reuse
