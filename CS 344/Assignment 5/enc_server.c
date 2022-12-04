@@ -35,6 +35,38 @@ void setupAddressStruct(struct sockaddr_in* address, int portNumber) {
     address->sin_addr.s_addr = INADDR_ANY;
 }
 
+void sendFile(int connectionSocket, const char* file) {
+    char buffer[1000];
+    int charsWritten = 0;
+
+    // Send the size of the file
+    char filesize[10];
+    sprintf(filesize, "%d", strlen(file));
+
+    // Tell the socket the size of the file
+    SendMsg(connectionSocket, filesize);
+
+    int buffit = 0; // buffer iterator
+    do {
+        // Clear out the buffer array
+        memset(buffer, '\0', sizeof(buffer));
+
+        // Copy the next portion of the string into buffer
+        memcpy(buffer, &file[buffit], (strlen(&file[buffit]) >= 999) ? 999 : strlen(&file[buffit]));
+        buffer[999] = '\0';
+
+        // Send message to server
+        // Write to the server
+        charsWritten = send(connectionSocket, buffer, strlen(buffer), 0);
+        if (charsWritten < 0) {
+            error("CLIENT: ERROR writing to socket");
+        }
+
+        buffit += charsWritten;
+
+    } while (buffit < strlen(file));
+}
+
 char* recieveFile(int connectionSocket) {
     int charsRead, totalRead = 0;
     char buffer[1000];
@@ -84,7 +116,44 @@ char* recieveFile(int connectionSocket) {
 }
 
 char* encryptFile(char* text, char* key) {
+    char* encryptedText = malloc(strlen(text) + 1);
 
+    int i;
+    for (i = 0; i < strlen(text); i++) {
+
+        // Get the number of characters in alphabet
+        int textCharInt;
+        if (text[i] == ' ') {
+            textCharInt = 26;
+        } else { textCharInt = text[i] - 'A'; }
+
+        printf("Char num: %d\n", textCharInt);
+
+        // Repeat for key
+        int keyCharInt;
+        if (key[i] == ' ') {
+            keyCharInt = 26;
+        } else { keyCharInt = key[i] - 'A'; }
+
+        // Encrypt the text
+        int newCharInt = textCharInt + keyCharInt;
+        if (newCharInt > 26) { newCharInt -= 27; }
+
+        printf("Key num: %d\n", keyCharInt);
+
+        // Parse it into the char
+        char newCharChar;
+        if (newCharInt == 26) { newCharChar = ' '; }
+        else { newCharChar = newCharInt + 'A'; }
+
+        printf("New Num: %d\n", newCharInt);
+
+        encryptedText[i] = newCharChar;
+    }
+
+    encryptedText[strlen(text)] = '\0';
+
+    return encryptedText;
 }
 
 void childProcess(int connectionSocket) {
@@ -100,7 +169,9 @@ void childProcess(int connectionSocket) {
     SendMsg(connectionSocket, "I am the server, and I got your message");
 
     if (strlen(text) <= strlen(key)) {
-        encryptFile(text, key);
+        char* encryptedFile = encryptFile(text, key);
+        sendFile(connectionSocket, encryptedFile);
+        free(encryptedFile);
     } else {
         SendMsg(connectionSocket, "SERVER ERROR: Key's length must be at least as large as the file's length!");
     }

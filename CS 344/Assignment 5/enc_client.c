@@ -64,6 +64,54 @@ void setupAddressStruct(struct sockaddr_in* address, int portNumber, char* hostN
             hostInfo->h_length);
 }
 
+char* recieveFile(int connectionSocket) {
+    int charsRead, totalRead = 0;
+    char buffer[1000];
+    char* sendStr = NULL;
+
+    // Get filesize so we know when to stop
+    char filesizestr[10];
+    charsRead = recv(connectionSocket, filesizestr, 10, 0);
+
+    if (charsRead < 0) {
+        error("ERROR reading file size from socket!");
+    }
+
+    int filesize = atoi(filesizestr);
+
+    // Start reading the message
+    while (totalRead < filesize) {
+        // Get the message from the client and display it
+        memset(buffer, '\0', sizeof(buffer));
+
+        // If the remaining bytes is less than size of buffer, don't overread
+        int recvSize = (filesize - totalRead < sizeof(buffer)) ? filesize - totalRead : sizeof(buffer);
+
+        // Read the client's message from the socket
+        charsRead = recv(connectionSocket, buffer, recvSize, 0);
+
+        if (charsRead < 0) {
+            error("ERROR reading from the socket");
+        } else if (charsRead == 0) { // If there wasn't anything sent
+            break;
+        }
+
+        // Make some space for the incoming string
+        if (sendStr == NULL) {
+            sendStr = malloc(strlen(buffer) + 1);
+            sendStr[0] = '\0';
+        } else { 
+            sendStr = realloc(sendStr, strlen(sendStr) + recvSize + 1); 
+        }
+
+        strcat(sendStr, buffer);
+        totalRead += charsRead;
+
+    } 
+
+    return sendStr;
+}
+
 void SendFile(int socketFD, char* file) {
     char buffer[1000];
     int charsWritten = 0;
@@ -144,6 +192,12 @@ int main(int argc, char* argv[]) {
     }
 
     printf("CLIENT: I recieved this from the server: \"%s\"\n", buffer);
+
+    char* encryption = recieveFile(socketFD);
+
+    printf("CLIENT: Here is the encryption: %s\n", encryption);
+
+    free(encryption);
 
     // Close the socket
     close(socketFD);
