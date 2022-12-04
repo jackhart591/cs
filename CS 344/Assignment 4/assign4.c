@@ -6,8 +6,6 @@ pthread_mutex_t myMutex;
 pthread_cond_t myCond1, myCond2;
 
 void* consumer(void* args) {
-   printf("CONSUMER THREAD CREATED\n");
-
    int i = 2;
    do {
 
@@ -45,6 +43,7 @@ int main() {
    printf("PROGRAM START\n");
 
    pthread_create(&tid, NULL, consumer, NULL);
+   printf("CONSUMER THREAD CREATED\n");
 
    int i;
    do {
