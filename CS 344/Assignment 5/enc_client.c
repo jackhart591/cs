@@ -13,6 +13,27 @@ void error(const char* msg) {
     exit(0);
 }
 
+void SendMsg(int socket, const char* msg) {
+    int charsSent;
+    charsSent = send(socket,
+                    msg, strlen(msg), 0);
+
+    if (charsSent < 0) {
+        error("ERROR writing to socket");
+    }
+}
+
+int isValidText(char* file) {
+    int i;
+    for (i = 0; i < strlen(file); i++) {
+        if ((file[i] < 'A' || file[i] > 'Z') && file[i] != ' ') {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
 // Opens the file at the given path. Returns
 // a string containing the file's contents.
 char* OpenFile(char* filePath) {
@@ -38,7 +59,14 @@ char* OpenFile(char* filePath) {
    buffer[fsize] = '\0';
 
    close(file_descriptor);
-   return buffer;
+
+    if (isValidText(buffer)) {
+        return buffer;
+    } else {
+        perror("Your file had bad characters!");
+        exit(1);
+    }
+
 }
 
 void setupAddressStruct(struct sockaddr_in* address, int portNumber, char* hostName) {
@@ -69,6 +97,8 @@ char* recieveFile(int connectionSocket) {
     char buffer[1000];
     char* sendStr = NULL;
 
+    printf("getting filesize\n");
+
     // Get filesize so we know when to stop
     char filesizestr[10];
     charsRead = recv(connectionSocket, filesizestr, 10, 0);
@@ -86,6 +116,7 @@ char* recieveFile(int connectionSocket) {
 
         // If the remaining bytes is less than size of buffer, don't overread
         int recvSize = (filesize - totalRead < sizeof(buffer)) ? filesize - totalRead : sizeof(buffer);
+
 
         // Read the client's message from the socket
         charsRead = recv(connectionSocket, buffer, recvSize, 0);
@@ -106,7 +137,6 @@ char* recieveFile(int connectionSocket) {
 
         strcat(sendStr, buffer);
         totalRead += charsRead;
-
     } 
 
     return sendStr;
@@ -178,6 +208,21 @@ int main(int argc, char* argv[]) {
         error("CLIENT: ERROR connecting");
     }
 
+    char server[11];
+    fflush(stdout);
+    charsRead = recv(socketFD, server, 10, 0);
+
+    fflush(stdout);
+    // Check to see if this server is the encryption server
+    if (charsRead != 10 || strcmp(server, "enc_server") != 0) {
+        fflush(stdout);
+        close(socketFD);
+        perror("Cannot connect to this server!");
+        exit(2);
+    }
+
+    SendMsg(socketFD, "Ready");
+
     SendFile(socketFD, plaintext);
     SendFile(socketFD, key);
 
@@ -185,13 +230,7 @@ int main(int argc, char* argv[]) {
     // Clear out the buffer again to reuse
     memset(buffer, '\0', sizeof(buffer));
 
-    // Read data from the socket, leaving \0 at end
-    charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0);
-    if (charsRead < 0) {
-        error("CLIENT: ERROR reading from socket");
-    }
-
-    printf("CLIENT: I recieved this from the server: \"%s\"\n", buffer);
+    printf("Going dark\n");
 
     char* encryption = recieveFile(socketFD);
 

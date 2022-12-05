@@ -127,8 +127,6 @@ char* encryptFile(char* text, char* key) {
             textCharInt = 26;
         } else { textCharInt = text[i] - 'A'; }
 
-        printf("Char num: %d\n", textCharInt);
-
         // Repeat for key
         int keyCharInt;
         if (key[i] == ' ') {
@@ -139,14 +137,11 @@ char* encryptFile(char* text, char* key) {
         int newCharInt = textCharInt + keyCharInt;
         if (newCharInt > 26) { newCharInt -= 27; }
 
-        printf("Key num: %d\n", keyCharInt);
 
         // Parse it into the char
         char newCharChar;
         if (newCharInt == 26) { newCharChar = ' '; }
         else { newCharChar = newCharInt + 'A'; }
-
-        printf("New Num: %d\n", newCharInt);
 
         encryptedText[i] = newCharChar;
     }
@@ -164,9 +159,7 @@ void childProcess(int connectionSocket) {
     text = recieveFile(connectionSocket);
     key = recieveFile(connectionSocket);
     printf("SERVER: I recieved this from the client: \"%s\"\n", text);
-    printf("\n\nSERVER: I recieved this from the client: \"%s\"\n", key);
-    //Send a success message back to the client
-    SendMsg(connectionSocket, "I am the server, and I got your message");
+    printf("\nSERVER: I recieved this from the client: \"%s\"\n", key);
 
     if (strlen(text) <= strlen(key)) {
         char* encryptedFile = encryptFile(text, key);
@@ -223,8 +216,12 @@ int main(int argc, char* argv[]) {
         if (numChildren == 5) {
             wait(&childStatus);
             numChildren--;
+        } else if (numChildren > 0) {
+            if (waitpid(0, &childStatus, WNOHANG) != 0) {
+                numChildren--;
+            }
         }
-        
+
         // Accept the connection request which creates a connection socket
         if (numChildren == 0) { // If there isn't any connection, wait until there is one
 
@@ -257,24 +254,25 @@ int main(int argc, char* argv[]) {
             error("ERROR on accept");
         }
 
-        pid_t spawnpid = fork();
+        int charsRead;
+        char readyStr[6];
+        SendMsg(connectionSocket, "enc_server\0");
+        charsRead = recv(connectionSocket, readyStr, 6, 0);
 
-        switch(spawnpid) {
-            case -1: // if err
-                perror("fork() failed!\n");
-                fflush(stderr);
-                exit(1);
-            case 0: // if child
-                childProcess(connectionSocket);
-                exit(0);
-            default: // if parent
-                numChildren++;
-                break;
-        }
+        if (strcmp(readyStr, "Ready") == 0) {
+            pid_t spawnpid = fork();
 
-        if (numChildren > 0) {
-            if (waitpid(0, &childStatus, WNOHANG) != 0) {
-                numChildren--;
+            switch(spawnpid) {
+                case -1: // if err
+                    perror("fork() failed!\n");
+                    fflush(stderr);
+                    exit(1);
+                case 0: // if child
+                    childProcess(connectionSocket);
+                    exit(0);
+                default: // if parent
+                    numChildren++;
+                    break;
             }
         }
     }
