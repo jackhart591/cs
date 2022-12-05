@@ -26,4 +26,6 @@ int main(int argc, char* argv[]) {
 
       printf("%c", newChar);
    }
+
+   printf("\n");
 }

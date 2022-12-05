@@ -16,7 +16,7 @@ void error(const char* msg) {
 void SendMsg(int socket, const char* msg) {
     int charsSent;
     charsSent = send(socket,
-                    msg, strlen(msg), 0);
+                    msg, strlen(msg) + 1, 0);
 
     if (charsSent < 0) {
         error("ERROR writing to socket");
@@ -26,7 +26,7 @@ void SendMsg(int socket, const char* msg) {
 int isValidText(char* file) {
     int i;
     for (i = 0; i < strlen(file); i++) {
-        if ((file[i] < 'A' || file[i] > 'Z') && file[i] != ' ') {
+        if ((file[i] < 'A' || file[i] > 'Z') && file[i] != ' ' && file[i] != '\n') {
             return 0;
         }
     }
@@ -64,6 +64,7 @@ char* OpenFile(char* filePath) {
         return buffer;
     } else {
         perror("Your file had bad characters!");
+        free(buffer);
         exit(1);
     }
 
@@ -96,8 +97,6 @@ char* recieveFile(int connectionSocket) {
     int charsRead, totalRead = 0;
     char buffer[1000];
     char* sendStr = NULL;
-
-    printf("getting filesize\n");
 
     // Get filesize so we know when to stop
     char filesizestr[10];
@@ -148,7 +147,7 @@ void SendFile(int socketFD, char* file) {
 
     // Send the size of the file
     char filesize[10];
-    sprintf(filesize, "%d", strlen(file));
+    sprintf(filesize, "%d", strlen(file)+1);
     charsWritten = send(socketFD, filesize, 10, 0);
 
     if (charsWritten != 10) {
@@ -194,6 +193,10 @@ int main(int argc, char* argv[]) {
     // Opening keygen file
     char* key = OpenFile(argv[2]);
 
+    if (strlen(plaintext) > strlen(key)) {
+        error("Key cannot be shorter than text!!\n");
+    }
+
     // Create a socket
     socketFD = socket(AF_INET, SOCK_STREAM, 0);
     if (socketFD < 0) {
@@ -209,12 +212,10 @@ int main(int argc, char* argv[]) {
     }
 
     char server[11];
-    fflush(stdout);
-    charsRead = recv(socketFD, server, 10, 0);
+    charsRead = recv(socketFD, server, 11, 0);
 
-    fflush(stdout);
     // Check to see if this server is the encryption server
-    if (charsRead != 10 || strcmp(server, "enc_server") != 0) {
+    if (charsRead != 11 || strcmp(server, "enc_server") != 0) {
         fflush(stdout);
         close(socketFD);
         perror("Cannot connect to this server!");
@@ -226,11 +227,12 @@ int main(int argc, char* argv[]) {
     SendFile(socketFD, plaintext);
     SendFile(socketFD, key);
 
+    free(plaintext);
+    free(key);
+
     // Get return message from server
     // Clear out the buffer again to reuse
     memset(buffer, '\0', sizeof(buffer));
-
-    printf("Going dark\n");
 
     char* encryption = recieveFile(socketFD);
 

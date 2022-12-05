@@ -15,7 +15,7 @@ void error(const char* msg) {
 void SendMsg(int socket, const char* msg) {
     int charsSent;
     charsSent = send(socket,
-                    msg, strlen(msg), 0);
+                    msg, strlen(msg) + 1, 0);
 
     if (charsSent < 0) {
         error("ERROR writing to socket");
@@ -76,19 +76,19 @@ char* recieveFile(int connectionSocket) {
     char filesizestr[10];
     charsRead = recv(connectionSocket, filesizestr, 10, 0);
 
-    if (charsRead < 0) {
+    if (charsRead <= 0) {
         error("ERROR reading file size from socket!");
     }
 
     int filesize = atoi(filesizestr);
 
     // Start reading the message
-    while (totalRead < filesize) {
+    while (totalRead < filesize-1) {
         // Get the message from the client and display it
         memset(buffer, '\0', sizeof(buffer));
 
         // If the remaining bytes is less than size of buffer, don't overread
-        int recvSize = (filesize - totalRead < sizeof(buffer)) ? filesize - totalRead : sizeof(buffer);
+        int recvSize = ((filesize - totalRead < sizeof(buffer)) ? filesize - totalRead : sizeof(buffer)) - 1;
 
         // Read the client's message from the socket
         charsRead = recv(connectionSocket, buffer, recvSize, 0);
@@ -104,13 +104,13 @@ char* recieveFile(int connectionSocket) {
             sendStr = malloc(strlen(buffer) + 1);
             sendStr[0] = '\0';
         } else { 
-            sendStr = realloc(sendStr, strlen(sendStr) + recvSize + 1); 
+            sendStr = realloc(sendStr, strlen(sendStr) + charsRead + 1);
         }
 
         strcat(sendStr, buffer);
         totalRead += charsRead;
 
-    } 
+    }
 
     return sendStr;
 }
@@ -131,19 +131,23 @@ char* encryptFile(char* text, char* key) {
         int keyCharInt;
         if (key[i] == ' ') {
             keyCharInt = 26;
+        } else if (key[i] == '\n') {
+            keyCharInt = -20000;  
         } else { keyCharInt = key[i] - 'A'; }
 
-        // Encrypt the text
-        int newCharInt = textCharInt + keyCharInt;
-        if (newCharInt > 26) { newCharInt -= 27; }
+        if (keyCharInt != -20000) {
+            // Encrypt the text
+            int newCharInt = textCharInt + keyCharInt;
+            if (newCharInt > 26) { newCharInt -= 27; }
 
 
-        // Parse it into the char
-        char newCharChar;
-        if (newCharInt == 26) { newCharChar = ' '; }
-        else { newCharChar = newCharInt + 'A'; }
+            // Parse it into the char
+            char newCharChar;
+            if (newCharInt == 26) { newCharChar = ' '; }
+            else { newCharChar = newCharInt + 'A'; }
 
-        encryptedText[i] = newCharChar;
+            encryptedText[i] = newCharChar;
+        } else { encryptedText[i] = '\n'; }
     }
 
     encryptedText[strlen(text)] = '\0';
@@ -156,18 +160,16 @@ void childProcess(int connectionSocket) {
     char* key = NULL;
     int charsSent;
 
+
     text = recieveFile(connectionSocket);
     key = recieveFile(connectionSocket);
-    printf("SERVER: I recieved this from the client: \"%s\"\n", text);
-    printf("\nSERVER: I recieved this from the client: \"%s\"\n", key);
 
-    if (strlen(text) <= strlen(key)) {
-        char* encryptedFile = encryptFile(text, key);
-        sendFile(connectionSocket, encryptedFile);
-        free(encryptedFile);
-    } else {
-        SendMsg(connectionSocket, "SERVER ERROR: Key's length must be at least as large as the file's length!");
-    }
+    // printf("SERVER: I recieved this from the client: \"%s\"\n", text);
+    // printf("SERVER: I recieved this from the client: \"%s\"\n", key);
+
+    char* encryptedFile = encryptFile(text, key);
+    sendFile(connectionSocket, encryptedFile);
+    free(encryptedFile);
 
     free(text);
     free(key);
@@ -256,7 +258,7 @@ int main(int argc, char* argv[]) {
 
         int charsRead;
         char readyStr[6];
-        SendMsg(connectionSocket, "enc_server\0");
+        SendMsg(connectionSocket, "enc_server");
         charsRead = recv(connectionSocket, readyStr, 6, 0);
 
         if (strcmp(readyStr, "Ready") == 0) {
