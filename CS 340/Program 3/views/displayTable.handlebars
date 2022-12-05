@@ -1,0 +1,22 @@
+<h1>Display Table</h1>
+<h2> By Juli </h2>
+<table>
+	<thead>
+    <tr>
+		<th>First Name</th>
+		<th>Last Name</th>
+		<th>Salary</th>
+		<th>Dno</th>
+    </tr>
+	</thead>
+    <tbody>
+        {{#each data}}
+            <tr>
+                <td>{{this.Fname}}</td>
+                <td>{{this.Lname}}</td>
+				<td>{{this.Salary}}</td>
+				<td>{{this.Dno}}</td>
+            </tr>
+        {{/each}}
+    </tbody>
+</table>
