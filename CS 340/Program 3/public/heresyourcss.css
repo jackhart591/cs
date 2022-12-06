@@ -1,0 +1,19 @@
+button {
+    background-color: cornflowerblue;
+    color: white;
+}
+
+div {
+    margin-top: 1%;
+}
+
+tr {
+    border: 1px solid black;
+}
+
+th {
+    background-color: black;
+    color: white;
+}
+
+tr:nth-child(even) {background-color: #7a7a7a;}

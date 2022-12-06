@@ -22,12 +22,42 @@ app.get('/',function(req,res,next){
         projResults[i] = rows[i];
       }
 
-      res.render('displayTable',{data: empResults, projects: projResults});
+      res.render('displayTable',{
+        data: empResults, 
+        projects: projResults,
+        text: ""
+      });
     });
   });
+
 });
 
-app.get('/filter/:project', function (req, res) {
+app.get('/name=:name', function (req, res) {
+  let empResults = [];
+  let projResults = [];
+  
+  mysql.pool.query(`SELECT * FROM EMPLOYEE WHERE Fname LIKE '${req.params.name}%'`, function(err, rows, fields) {
+    if (rows != null) {
+      for(let i = 0; i < rows.length; i++) {
+        empResults[i] = rows[i];
+      }
+    }
+  
+    mysql.pool.query('SELECT * FROM PROJECT', function(err, prows, fields) {
+      for (let i = 0; i < prows.length; i++) {
+        projResults[i] = prows[i];
+      }
+
+      res.render('displayTable',{
+        data: empResults, 
+        projects: projResults,
+        text: `Search by first name starting with '${req.params.name}'`
+      });
+    });
+  });
+})
+
+app.get('/filter=:project', function (req, res) {
   let empResults = [];
   let projResults = [];
   
@@ -36,15 +66,20 @@ app.get('/filter/:project', function (req, res) {
       empResults[i] = rows[i];
     }
   
-    mysql.pool.query('SELECT * FROM PROJECT', function(err, rows, fields) {
-      for (let i = 0; i < rows.length; i++) {
-        projResults[i] = rows[i];
+    mysql.pool.query('SELECT * FROM PROJECT', function(err, prows, fields) {
+      for (let i = 0; i < prows.length; i++) {
+        projResults[i] = prows[i];
       }
 
-      res.status(200).render('displayTable',{data: empResults, projects: projResults});
+      res.render('displayTable',{
+        data: empResults, 
+        projects: projResults,
+        text: `Project ${req.params.project}: ${prows[0].Pname} located in ${prows[0].Plocation}`
+      });
     });
   });
 })
+
 
 app.use(express.static('public'))
 

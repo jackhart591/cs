@@ -1,5 +1,6 @@
 <h1>Company Database</h1>
 <h2>Current Employees:</h2>
+<p>{{this.text}}</p>
 <table id="emp-table">
 	<thead>
     <tr>
@@ -21,6 +22,15 @@
     </tbody>
 </table>
 
-Filter Employees by Project: {{> ProjectDropdown project=projects}} 
-<button type="button" id="filter-button">Filter</button>
-<button type="button" id="clear-filter-button">Clear Filters</button> 
+<div>
+    Filter Employees by Project: {{> ProjectDropdown project=projects}} 
+    <button type="button" id="filter-button">Filter</button>
+    <button type="button" id="clear-filter-button">Clear Filters</button> 
+</div>
+<div>
+    <p>Search all employees for first names starting with: </p>
+    <form id="search-bar">
+        <input type="search" id="query" name="fname" placeholder="Search">
+        <button type="button" id="search-button">Search</button>
+    </form>
+</div>
