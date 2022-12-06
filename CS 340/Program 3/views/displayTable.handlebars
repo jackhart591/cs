@@ -1,6 +1,6 @@
-<h1>Display Table</h1>
-<h2> By Juli </h2>
-<table>
+<h1>Company Database</h1>
+<h2>Current Employees:</h2>
+<table id="emp-table">
 	<thead>
     <tr>
 		<th>First Name</th>
@@ -20,3 +20,7 @@
         {{/each}}
     </tbody>
 </table>
+
+Filter Employees by Project: {{> ProjectDropdown project=projects}} 
+<button type="button" id="filter-button">Filter</button>
+<button type="button" id="clear-filter-button">Clear Filters</button> 

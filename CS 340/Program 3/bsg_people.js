@@ -9,22 +9,44 @@ app.set('view engine', 'handlebars');
 app.set('port', 8000);
 
 app.get('/',function(req,res,next){
-  var context = {};
   let empResults = [];
-
+  let projResults = [];
+  
   mysql.pool.query('SELECT * FROM EMPLOYEE', function(err, rows, fields) {
-//	context.results = JSON.stringify(rows);
-
-    console.log(typeof(rows));
-
     for(let i = 0; i < rows.length; i++) {
       empResults[i] = rows[i];
     }
+  
+    mysql.pool.query('SELECT * FROM PROJECT', function(err, rows, fields) {
+      for (let i = 0; i < rows.length; i++) {
+        projResults[i] = rows[i];
+      }
 
-	res.render('displayTable',{data: empResults});
-	});
-
+      res.render('displayTable',{data: empResults, projects: projResults});
+    });
+  });
 });
+
+app.get('/filter/:project', function (req, res) {
+  let empResults = [];
+  let projResults = [];
+  
+  mysql.pool.query(`SELECT * FROM EMPLOYEE INNER JOIN WORKS_ON ON Ssn=Essn WHERE ${req.params.project}=Pno`, function(err, rows, fields) {
+    for(let i = 0; i < rows.length; i++) {
+      empResults[i] = rows[i];
+    }
+  
+    mysql.pool.query('SELECT * FROM PROJECT', function(err, rows, fields) {
+      for (let i = 0; i < rows.length; i++) {
+        projResults[i] = rows[i];
+      }
+
+      res.status(200).render('displayTable',{data: empResults, projects: projResults});
+    });
+  });
+})
+
+app.use(express.static('public'))
 
 app.use(function(req,res){
   res.status(404);
@@ -40,3 +62,11 @@ app.use(function(err, req, res, next){
 app.listen(app.get('port'), function(){
   console.log('Express started on http://localhost:' + app.get('port') + '; press Ctrl-C to terminate.');
 });
+
+// mysql.pool.query(`SELECT * FROM EMPLOYEE INNER JOIN WORKS_ON ON Ssn=Essn WHERE ${filterDD.value}=Pno`, function (err, rows, fields) {
+//   for(let i = 0; i < rows.length; i++) {
+//     empResults[i] = rows[i];
+//   }
+  
+//   location.reload()
+// })
