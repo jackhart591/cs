@@ -9,16 +9,16 @@
 #include <netinet/in.h>
 
 void error(const char* msg) {
-    perror(msg);
+    fprintf(stderr, msg);
 }
 
 void SendMsg(int socket, const char* msg) {
     int charsSent;
     charsSent = send(socket,
-                    msg, strlen(msg), 0);
+                    msg, strlen(msg)+1, 0);
 
     if (charsSent < 0) {
-        error("ERROR writing to socket");
+        error("ERROR writing to socket\n");
     }
 }
 
@@ -59,7 +59,7 @@ void sendFile(int connectionSocket, const char* file) {
         // Write to the server
         charsWritten = send(connectionSocket, buffer, strlen(buffer), 0);
         if (charsWritten < 0) {
-            error("CLIENT: ERROR writing to socket");
+            error("CLIENT: ERROR writing to socket\n");
         }
 
         buffit += charsWritten;
@@ -77,24 +77,24 @@ char* recieveFile(int connectionSocket) {
     charsRead = recv(connectionSocket, filesizestr, 10, 0);
 
     if (charsRead < 0) {
-        error("ERROR reading file size from socket!");
+        error("ERROR reading file size from socket!\n");
     }
 
     int filesize = atoi(filesizestr);
 
     // Start reading the message
-    while (totalRead < filesize) {
+    while (totalRead < filesize-1) {
         // Get the message from the client and display it
         memset(buffer, '\0', sizeof(buffer));
 
         // If the remaining bytes is less than size of buffer, don't overread
-        int recvSize = (filesize - totalRead < sizeof(buffer)) ? filesize - totalRead : sizeof(buffer);
+        int recvSize = ((filesize - totalRead < sizeof(buffer)) ? filesize - totalRead : sizeof(buffer)) - 1;
 
         // Read the client's message from the socket
         charsRead = recv(connectionSocket, buffer, recvSize, 0);
 
         if (charsRead < 0) {
-            error("ERROR reading from the socket");
+            error("ERROR reading from the socket\n");
         } else if (charsRead == 0) { // If there wasn't anything sent
             break;
         }
@@ -104,7 +104,7 @@ char* recieveFile(int connectionSocket) {
             sendStr = malloc(strlen(buffer) + 1);
             sendStr[0] = '\0';
         } else { 
-            sendStr = realloc(sendStr, strlen(sendStr) + recvSize + 1); 
+            sendStr = realloc(sendStr, strlen(sendStr) + charsRead + 1); 
         }
 
         strcat(sendStr, buffer);
@@ -133,12 +133,14 @@ char* decryptFile(char* text, char* key) {
         int keyCharInt;
         if (key[i] == ' ') {
             keyCharInt = 26;
+        } else if (text[i] == '\n') {
+            textCharInt = -20000;
         } else { keyCharInt = key[i] - 'A'; }
         
-        if (textCharInt != -20000) {
+        if (textCharInt != -20000 && keyCharInt != -20000) {
             // Decrypt the text
             int newCharInt = textCharInt - keyCharInt;
-            if (newCharInt <= 26) { newCharInt += 27; }
+            if (newCharInt < 0) { newCharInt += 27; }
 
 
             // Parse it into the char
@@ -188,7 +190,7 @@ int main(int argc, char* argv[]) {
     // Create the socket that will listen for connections
     int listenSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (listenSocket < 0) {
-        error("ERROR opening socket");
+        error("ERROR opening socket\n");
         exit(1);
     }
 
@@ -199,7 +201,7 @@ int main(int argc, char* argv[]) {
     if (bind(listenSocket,
         (struct sockaddr*) &serverAddress,
         sizeof(serverAddress)) < 0) {
-            error("ERROR on binding");
+            error("ERROR on binding\n");
             exit(1);
         }
 
@@ -251,12 +253,12 @@ int main(int argc, char* argv[]) {
         }
 
         if (connectionSocket < 0) {
-            error("ERROR on accept");
+            error("ERROR on accept\n");
         }
 
         int charsRead;
         char readyStr[6];
-        SendMsg(connectionSocket, "dec_server\0");
+        SendMsg(connectionSocket, "dec_server");
         charsRead = recv(connectionSocket, readyStr, 6, 0);
 
         if (strcmp(readyStr, "Ready") == 0) {
@@ -264,7 +266,7 @@ int main(int argc, char* argv[]) {
 
             switch(spawnpid) {
                 case -1: // if err
-                    perror("fork() failed!\n");
+                    fprintf(stderr, "fork() failed!\n");
                     fflush(stderr);
                     exit(1);
                 case 0: // if child
@@ -274,6 +276,8 @@ int main(int argc, char* argv[]) {
                     numChildren++;
                     break;
             }
+        } else {
+            close(connectionSocket);
         }
     }
 

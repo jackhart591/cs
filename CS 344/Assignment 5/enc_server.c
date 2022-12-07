@@ -9,7 +9,7 @@
 #include <netinet/in.h>
 
 void error(const char* msg) {
-    perror(msg);
+    fprintf(stderr, msg);
 }
 
 void SendMsg(int socket, const char* msg) {
@@ -18,7 +18,7 @@ void SendMsg(int socket, const char* msg) {
                     msg, strlen(msg) + 1, 0);
 
     if (charsSent < 0) {
-        error("ERROR writing to socket");
+        error("ERROR writing to socket\n");
     }
 }
 
@@ -59,7 +59,7 @@ void sendFile(int connectionSocket, const char* file) {
         // Write to the server
         charsWritten = send(connectionSocket, buffer, strlen(buffer), 0);
         if (charsWritten < 0) {
-            error("CLIENT: ERROR writing to socket");
+            error("CLIENT: ERROR writing to socket\n");
         }
 
         buffit += charsWritten;
@@ -77,7 +77,7 @@ char* recieveFile(int connectionSocket) {
     charsRead = recv(connectionSocket, filesizestr, 10, 0);
 
     if (charsRead <= 0) {
-        error("ERROR reading file size from socket!");
+        error("ERROR reading file size from socket!\n");
     }
 
     int filesize = atoi(filesizestr);
@@ -94,7 +94,7 @@ char* recieveFile(int connectionSocket) {
         charsRead = recv(connectionSocket, buffer, recvSize, 0);
 
         if (charsRead < 0) {
-            error("ERROR reading from the socket");
+            error("ERROR reading from the socket\n");
         } else if (charsRead == 0) { // If there wasn't anything sent
             break;
         }
@@ -190,7 +190,7 @@ int main(int argc, char* argv[]) {
     // Create the socket that will listen for connections
     int listenSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (listenSocket < 0) {
-        error("ERROR opening socket");
+        error("ERROR opening socket\n");
         exit(1);
     }
 
@@ -201,7 +201,7 @@ int main(int argc, char* argv[]) {
     if (bind(listenSocket,
         (struct sockaddr*) &serverAddress,
         sizeof(serverAddress)) < 0) {
-            error("ERROR on binding");
+            error("ERROR on binding\n");
             exit(1);
         }
 
@@ -253,7 +253,7 @@ int main(int argc, char* argv[]) {
         }
 
         if (connectionSocket < 0) {
-            error("ERROR on accept");
+            error("ERROR on accept\n");
         }
 
         int charsRead;
@@ -266,7 +266,7 @@ int main(int argc, char* argv[]) {
 
             switch(spawnpid) {
                 case -1: // if err
-                    perror("fork() failed!\n");
+                    fprintf(stderr, "fork() failed!\n");
                     fflush(stderr);
                     exit(1);
                 case 0: // if child
@@ -276,6 +276,8 @@ int main(int argc, char* argv[]) {
                     numChildren++;
                     break;
             }
+        } else {
+            close(connectionSocket);
         }
     }
 

@@ -9,7 +9,7 @@
 #include <netdb.h>
 
 void error(const char* msg) {
-    perror(msg);
+    fprintf(stderr, msg);
     exit(0);
 }
 
@@ -19,7 +19,7 @@ void SendMsg(int socket, const char* msg) {
                     msg, strlen(msg) + 1, 0);
 
     if (charsSent < 0) {
-        error("ERROR writing to socket");
+        error("ERROR writing to socket\n");
     }
 }
 
@@ -49,7 +49,7 @@ char* OpenFile(char* filePath) {
    // If the file failed to open, exit!
    if (file_descriptor == -1) {
       printf("open() failed on \"%s\"\n", filePath);
-      perror("in OpenFile()");
+      fprintf(stderr, "error in OpenFile()\n");
       exit(1);
    }
 
@@ -63,7 +63,7 @@ char* OpenFile(char* filePath) {
     if (isValidText(buffer)) {
         return buffer;
     } else {
-        perror("Your file had bad characters!");
+        fprintf(stderr, "Your file had bad characters!\n");
         free(buffer);
         exit(1);
     }
@@ -103,25 +103,25 @@ char* recieveFile(int connectionSocket) {
     charsRead = recv(connectionSocket, filesizestr, 10, 0);
 
     if (charsRead < 0) {
-        error("ERROR reading file size from socket!");
+        error("ERROR reading file size from socket!\n");
     }
 
     int filesize = atoi(filesizestr);
 
     // Start reading the message
-    while (totalRead < filesize) {
+    while (totalRead < filesize-1) {
         // Get the message from the client and display it
         memset(buffer, '\0', sizeof(buffer));
 
         // If the remaining bytes is less than size of buffer, don't overread
-        int recvSize = (filesize - totalRead < sizeof(buffer)) ? filesize - totalRead : sizeof(buffer);
+        int recvSize = ((filesize - totalRead < sizeof(buffer)) ? filesize - totalRead : sizeof(buffer)) - 1;
 
 
         // Read the client's message from the socket
         charsRead = recv(connectionSocket, buffer, recvSize, 0);
 
         if (charsRead < 0) {
-            error("ERROR reading from the socket");
+            error("ERROR reading from the socket\n");
         } else if (charsRead == 0) { // If there wasn't anything sent
             break;
         }
@@ -131,7 +131,7 @@ char* recieveFile(int connectionSocket) {
             sendStr = malloc(strlen(buffer) + 1);
             sendStr[0] = '\0';
         } else { 
-            sendStr = realloc(sendStr, strlen(sendStr) + recvSize + 1); 
+            sendStr = realloc(sendStr, strlen(sendStr) + charsRead + 1);
         }
 
         strcat(sendStr, buffer);
@@ -151,7 +151,7 @@ void SendFile(int socketFD, char* file) {
     charsWritten = send(socketFD, filesize, 10, 0);
 
     if (charsWritten != 10) {
-        error("CLIENT: ERROR sending filesize to socket!");
+        error("CLIENT: ERROR sending filesize to socket!\n");
     }
 
     int buffit = 0;
@@ -160,14 +160,15 @@ void SendFile(int socketFD, char* file) {
         memset(buffer, '\0', sizeof(buffer));
 
         // Copy the next portion of the string into buffer
-        memcpy(buffer, &file[buffit], (strlen(&file[buffit]) >= 999) ? 999 : strlen(&file[buffit]));
-        buffer[999] = '\0';
+        int toWrite = (strlen(&file[buffit]) >= 999) ? 999 : strlen(&file[buffit]);
+        memcpy(buffer, &file[buffit], toWrite);
+        buffer[toWrite] = '\0';
 
         // Send message to server
         // Write to the server
         charsWritten = send(socketFD, buffer, strlen(buffer), 0);
         if (charsWritten < 0) {
-            error("CLIENT: ERROR writing to socket");
+            error("CLIENT: ERROR writing to socket\n");
         }
 
         buffit += charsWritten;
@@ -200,7 +201,7 @@ int main(int argc, char* argv[]) {
     // Create a socket
     socketFD = socket(AF_INET, SOCK_STREAM, 0);
     if (socketFD < 0) {
-        error("CLIENT: ERROR opening socket");
+        error("CLIENT: ERROR opening socket\n");
     }
 
     // Set up the server address struct
@@ -216,9 +217,9 @@ int main(int argc, char* argv[]) {
 
     // Check to see if this server is the encryption server
     if (charsRead != 11 || strcmp(server, "enc_server") != 0) {
-        fflush(stdout);
+        SendMsg(socketFD, "Neady");
         close(socketFD);
-        perror("Cannot connect to this server!");
+        fprintf(stderr, "Cannot connect to this server!\n");
         exit(2);
     }
 
@@ -236,7 +237,7 @@ int main(int argc, char* argv[]) {
 
     char* encryption = recieveFile(socketFD);
 
-    printf("CLIENT: Here is the encryption: %s\n", encryption);
+    printf("%s\n", encryption);
 
     free(encryption);
 
