@@ -13,6 +13,8 @@ do this, I parsed input into a command struct I created, and then either execute
 execute it for me using the family of exec functions in C. In this assignment, I also implemented background processes and signal handling for SIGINT and
 SIGTSTP. 
 
+[**Assignment 5:**](https://github.com/jackhart591/cs/tree/main/CS%20344/Assignment%205) For this assignment, we were tasked with creating two clients and two servers. One client and one server would be responsible for encrypting a file and the other two were responsible for decrypting. This was done using the C Berkley sockets API and OTP encryption. 
+
 ## CS 290 - Web Development
 How to design and implement a multi-tier application using web technologies: Creation of extensive custom client- and server-side code, consistent with
 achieving a high-quality software architecture.
