@@ -242,10 +242,9 @@ int main(int argc, char* argv[]) {
             fcntl(listenSocket, F_SETFL, flags | O_NONBLOCK);
             
         } else { // if there is a connection, then this shouldn't block
-            connectionSocket = accept4(listenSocket,
+            connectionSocket = accept(listenSocket,
                             (struct sockaddr*) &clientAddress,
-                            &sizeOfClientInfo,
-                            SOCK_NONBLOCK);
+                            &sizeOfClientInfo);
 
             if (connectionSocket < 0) {
                 continue;
@@ -266,7 +265,7 @@ int main(int argc, char* argv[]) {
 
             switch(spawnpid) {
                 case -1: // if err
-                    fprintf(stderr, "fork() failed!\n");
+                    fprintf(stderr, "ERROR: fork() failed!\n");
                     fflush(stderr);
                     exit(1);
                 case 0: // if child
