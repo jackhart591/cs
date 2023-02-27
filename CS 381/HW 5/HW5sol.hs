@@ -19,6 +19,7 @@ module HW5sol where
 
     semCmd DUP (x:xs) = Just (x:x:xs) -- if there is a value to dup, dup it
 
+    semCmd (IFELSE _ _ ) [] = Nothing
     semCmd (IFELSE p p1) ((B x):xs)
         | x == True = case run p xs of -- If true run the program
                   A stack -> Just stack -- If returns a stack, return stack
