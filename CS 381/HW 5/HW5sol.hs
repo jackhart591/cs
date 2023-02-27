@@ -62,7 +62,9 @@ module HW5sol where
 
     rankP :: Prog -> Rank -> Maybe Rank
     rankP [] a = Just a -- base case
-    rankP ((IFELSE a b):xs) curRank = (rank a b curRank) -- if cmd is IFELSE, run helper func
+    rankP ((IFELSE a b):xs) curRank = case (rank a b curRank) of -- if cmd is IFELSE, run helper func
+                        Nothing -> Nothing
+                        Just r -> rankP xs r
     rankP (x:xs) curRank = case compare (curRank - fst(rankC x)) 0 of
                         LT -> Nothing -- if rank is invalid, return nothing to indicate Rank Error
                         otherwise -> (rankP xs (curRank + (snd(rankC x) - fst(rankC x)))) -- if rank is valid, recurse to next cmd
