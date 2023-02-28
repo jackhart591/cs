@@ -9,17 +9,17 @@ module HW5sol where
 
     semCmd :: Cmd -> Stack -> Maybe Stack
 
-    semCmd ADD ((I x):[]) = Nothing
+    semCmd ADD ((I x):[]) = Nothing -- If not enough varibles, return nothing
     semCmd ADD ((I x):(I y):xs) = Just ((I(x+y)):xs) -- if two ints add
     semCmd ADD _ = Nothing -- else return nothing
 
-    semCmd MULT ((I x):[]) = Nothing
+    semCmd MULT ((I x):[]) = Nothing -- If not enough variables, return nothing
     semCmd MULT ((I x):(I y):xs) = Just ((I(x*y)):xs) -- if two ints, mult
     semCmd MULT _ = Nothing -- else return nothing
 
     semCmd DUP (x:xs) = Just (x:x:xs) -- if there is a value to dup, dup it
 
-    semCmd (IFELSE _ _ ) [] = Nothing
+    semCmd (IFELSE _ _ ) [] = Nothing -- If no stack, return nothing (needs bool)
     semCmd (IFELSE p p1) ((B x):xs)
         | x == True = case run p xs of -- If true run the program
                   A stack -> Just stack -- If returns a stack, return stack
@@ -49,6 +49,7 @@ module HW5sol where
     semCmd (POP _) [] = Nothing -- Can't pop an empty stack
     semCmd (POP k) (x:xs) = semCmd (POP (k-1)) xs -- Pop top val, and then do remaining pops
 
+    -- Computes rank of cmd (i.e. (m, n) -> pops m values, pushes n
     rankC :: Cmd -> CmdRank
     rankC (ADD) = (2,1)
     rankC (DEC) = (1,1)
@@ -60,6 +61,7 @@ module HW5sol where
     rankC (LEQ) = (2,1)
     rankC (DUP) = (1,2)
 
+    -- Determines of program and current rank of stack will result in a rank error
     rankP :: Prog -> Rank -> Maybe Rank
     rankP [] a = Just a -- base case
     rankP ((IFELSE a b):xs) curRank = case (rank a b curRank) of -- if cmd is IFELSE, run helper func
