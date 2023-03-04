@@ -46,6 +46,7 @@ class RDTLayer(object):
         self.dataToSend = ''
         self.currentIteration = 0
         self.charsSent = 0 # For sequence num purposes
+        self.receivedString = ""
 
     # ################################################################################################################ #
     # setSendChannel()                                                                                                 #
@@ -89,13 +90,7 @@ class RDTLayer(object):
     #                                                                                                                  #
     # ################################################################################################################ #
     def getDataReceived(self):
-        # ############################################################################################################ #
-        # Identify the data that has been received...
-
-        print('getDataReceived(): Complete this...')
-
-        # ############################################################################################################ #
-        return ""
+        return self.receivedString
 
     # ################################################################################################################ #
     # processData()                                                                                                    #
@@ -107,8 +102,8 @@ class RDTLayer(object):
     # ################################################################################################################ #
     def processData(self):
         self.currentIteration += 1
-        self.processSend()
         self.processReceiveAndSendRespond()
+        self.processSend()
 
     # ################################################################################################################ #
     # processSend()                                                                                                    #
@@ -141,7 +136,7 @@ class RDTLayer(object):
         seqnumInt = self.charsSent + sendSize
 
 
-        seqnum = f'{seqnumInt}'
+        seqnum = f"{seqnumInt}"
         data = self.dataToSend[self.charsSent:seqnumInt]
 
 
@@ -153,14 +148,35 @@ class RDTLayer(object):
         # Use the unreliable sendChannel to send the segment
         self.sendChannel.send(segmentSend)
 
-    def findSeqErrors(segList, startPos):
+    # Looks for any missing segments
+    def findSeqErrors(self, segList, startPos):
         pos = startPos
         for seg in segList:
             pos += len(seg.payload)
-            if pos != seg.seqnum:
+            if pos != int(seg.seqnum):
                 return pos
 
-        return 0
+        return 0 # No missing segments
+
+    # Takes a segment and finds its place in the current list of 
+    # Segments (reorders segments)
+    def assembleSegments(self, segment, segList):
+        foundSpot = False
+        for i, elem in enumerate(segList):
+            if int(segment.seqnum) < int(elem.seqnum):
+                segList.insert(i, segment)
+                foundSpot = True
+                break
+        # if a no larger sequence num was found, put on end because it must be the latest one so far
+        if not foundSpot:
+            segList.append(segment)
+
+        return segList
+
+    def receiveAcks(self, segment):
+        self.charsSent = int(segment.acknum)
+
+        # this is not selective retransmission!!
 
     # ################################################################################################################ #
     # processReceive()                                                                                                 #
@@ -176,47 +192,29 @@ class RDTLayer(object):
         # This call returns a list of incoming segments (see Segment class)...
         listIncomingSegments = self.receiveChannel.receive()
 
-        # ############################################################################################################ #
-        # What segments have been received?
-        # How will you get them back in order?
-        # This is where a majority of your logic will be implemented
-
         incomingString = ""
         orderedList = []
+        lastSeqnum = -1
 
         # Sort segments received by seqnum
         for seg in listIncomingSegments:
-            foundSpot = False
-            for i, elem in enumerate(orderedList):
-                if int(seg.seqnum) < int(elem.seqnum):
-                    orderedList.insert(i, seg)
-                    foundSpot = True
-                    break
-            # if a no larger sequence num was found, put on end because it must be the latest one so far
-            if not foundSpot:
-                orderedList.append(seg)
+            if seg.seqnum != -1:
+                orderedList = self.assembleSegments(seg, orderedList)
+            else:
+                self.receiveAcks(seg)
 
-        lastSeqnum = findSeqErrors(orderedList, 0)
+        # Check for sequence errors
+        if (len(orderedList) > 0):
+            lastSeqnum = self.findSeqErrors(orderedList, len(self.receivedString))
 
-        if lastSeqnum == 0: # If no sequence errors were found
-            for elem in orderedList:
-                incomingString += elem.payload
-            lastSeqnum = orderedList[len(orderedList)-1].seqnum # Set seqnum to latest one for acking purposes
+            if lastSeqnum == 0: # If no sequence errors were found
+                for elem in orderedList:
+                    incomingString += elem.payload
+                lastSeqnum = orderedList[len(orderedList)-1].seqnum # Set seqnum to latest one for acking purposes
 
-        print(incomingString)
-        
-        #ACK now
+            self.receivedString += incomingString
 
-
-        # ############################################################################################################ #
-        # How do you respond to what you have received?
-        # How can you tell data segments apart from ack segemnts?
-        print('processReceive(): Complete this...')
-
-        # Somewhere in here you will be setting the contents of the ack segments to send.
-        # The goal is to employ cumulative ack, just like TCP does...
-        acknum = "0"
-
+        acknum = f"{lastSeqnum}"
 
         # ############################################################################################################ #
         # Display response segment
