@@ -45,8 +45,9 @@ class RDTLayer(object):
         self.receiveChannel = None
         self.dataToSend = ''
         self.currentIteration = 0
+        self.remainingFCW = RDTLayer.FLOW_CONTROL_WIN_SIZE
         self.charsSent = 0 # For sequence num purposes
-        self.receivedString = ""
+        self.receivedString = "" # Final string
 
     # ################################################################################################################ #
     # setSendChannel()                                                                                                 #
@@ -114,39 +115,43 @@ class RDTLayer(object):
     #                                                                                                                  #
     # ################################################################################################################ #
     def processSend(self):
-        segmentSend = Segment()
+        if self.dataToSend == '':
+           return
 
-        # ############################################################################################################ #
-        # You should pipeline segments to fit the flow-control window
-        # The flow-control window is the constant RDTLayer.FLOW_CONTROL_WIN_SIZE
-        # The maximum data that you can send in a segment is RDTLayer.DATA_LENGTH
-        # These constants are given in # characters
+        currChar = self.charsSent
 
-        if RDTLayer.FLOW_CONTROL_WIN_SIZE > RDTLayer.DATA_LENGTH:
-            sendSize = RDTLayer.DATA_LENGTH
-        else:
-            sendSize = RDTLayer.FLOW_CONTROL_WIN_SIZE
+        # While there is still remaining space in the FCW
+        while self.remainingFCW > 0:
 
-        
+            # If there is no more data, stop
+            if currChar == len(self.dataToSend):
+               break
 
-        # Somewhere in here you will be creating data segments to send.
-        # The data is just part of the entire string that you are trying to send.
-        # The seqnum is the sequence number for the segment (in character number, not bytes)
+            segmentSend = Segment()
 
-        seqnumInt = self.charsSent + sendSize
+            # If there's enough for a full packet, send a full packet, else send only how much remains in FCW
+            if self.remainingFCW > RDTLayer.DATA_LENGTH:
+                sendSize = RDTLayer.DATA_LENGTH
+            else:
+                sendSize = self.remainingFCW
+
+            data = self.dataToSend[currChar:(currChar + sendSize)]
+            sendSize = len(data) # Accounts for the case in which the string is smaller than the intended send size
+            seqnumInt = currChar + sendSize
+
+            seqnum = f"{seqnumInt}"
+
+            self.remainingFCW -= sendSize # Update flow control window
+            currChar += sendSize
 
 
-        seqnum = f"{seqnumInt}"
-        data = self.dataToSend[self.charsSent:seqnumInt]
+            # ############################################################################################################ #
+            # Display sending segment
+            segmentSend.setData(seqnum,data)
+            print("Sending segment: ", segmentSend.to_string())
 
-
-        # ############################################################################################################ #
-        # Display sending segment
-        segmentSend.setData(seqnum,data)
-        print("Sending segment: ", segmentSend.to_string())
-
-        # Use the unreliable sendChannel to send the segment
-        self.sendChannel.send(segmentSend)
+            # Use the unreliable sendChannel to send the segment
+            self.sendChannel.send(segmentSend)
 
     # Looks for any missing segments
     def findSeqErrors(self, segList, startPos):
@@ -154,6 +159,7 @@ class RDTLayer(object):
         for seg in segList:
             pos += len(seg.payload)
             if pos != int(seg.seqnum):
+                print(f"found error: {seg.seqnum}")
                 return pos
 
         return 0 # No missing segments
@@ -174,6 +180,7 @@ class RDTLayer(object):
         return segList
 
     def receiveAcks(self, segment):
+        self.remainingFCW += (int(segment.acknum) - self.charsSent)
         self.charsSent = int(segment.acknum)
 
         # this is not selective retransmission!!
@@ -200,12 +207,14 @@ class RDTLayer(object):
         for seg in listIncomingSegments:
             if seg.seqnum != -1:
                 orderedList = self.assembleSegments(seg, orderedList)
-            else:
+            elif seg.acknum != -1:
                 self.receiveAcks(seg)
+            else:
+                return;
 
-        # Check for sequence errors
-        if (len(orderedList) > 0):
-            lastSeqnum = self.findSeqErrors(orderedList, len(self.receivedString))
+        if (len(orderedList) > 0): # If there is data to process
+            lastSeqnum = self.findSeqErrors(orderedList, len(self.receivedString)) # Check for sequence errors
+            print(f"Last sequence num: {lastSeqnum}")
 
             if lastSeqnum == 0: # If no sequence errors were found
                 for elem in orderedList:
