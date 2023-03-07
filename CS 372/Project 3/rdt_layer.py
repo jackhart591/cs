@@ -47,6 +47,7 @@ class RDTLayer(object):
         self.currentIteration = 0
         self.remainingFCW = RDTLayer.FLOW_CONTROL_WIN_SIZE
         self.charsSent = 0 # For sequence num purposes
+        self.segList = [] # Contains segments in order
         self.receivedString = "" # Final string
 
     # ################################################################################################################ #
@@ -154,30 +155,31 @@ class RDTLayer(object):
             self.sendChannel.send(segmentSend)
 
     # Looks for any missing segments
-    def findSeqErrors(self, segList, startPos):
-        pos = startPos
-        for seg in segList:
+    def findSeqErrors(self):
+        pos = 0
+        for seg in self.segList:
             pos += len(seg.payload)
             if pos != int(seg.seqnum):
                 print(f"found error: {seg.seqnum}")
                 return pos
 
-        return 0 # No missing segments
+        return self.segList[len(self.segList)-1].seqnum # No missing segments
 
     # Takes a segment and finds its place in the current list of 
     # Segments (reorders segments)
-    def assembleSegments(self, segment, segList):
+    def insertSegment(self, segment):
         foundSpot = False
-        for i, elem in enumerate(segList):
-            if int(segment.seqnum) < int(elem.seqnum):
-                segList.insert(i, segment)
+        for i, elem in enumerate(self.segList):
+            if int(segment.seqnum) == int(elem.seqnum): # Don't reinsert a copy
+                foundSpot = True
+                break
+            if int(segment.seqnum) < int(elem.seqnum): # Find first seqnum that is larger
+                self.segList.insert(i, segment)
                 foundSpot = True
                 break
         # if a no larger sequence num was found, put on end because it must be the latest one so far
         if not foundSpot:
-            segList.append(segment)
-
-        return segList
+            self.segList.append(segment)
 
     def receiveAcks(self, segment):
         self.remainingFCW += (int(segment.acknum) - self.charsSent)
@@ -200,26 +202,29 @@ class RDTLayer(object):
         listIncomingSegments = self.receiveChannel.receive()
 
         incomingString = ""
-        orderedList = []
         lastSeqnum = -1
 
         # Sort segments received by seqnum
         for seg in listIncomingSegments:
             if seg.seqnum != -1:
-                orderedList = self.assembleSegments(seg, orderedList)
+                self.insertSegment(seg)
             elif seg.acknum != -1:
                 self.receiveAcks(seg)
             else:
                 return;
 
-        if (len(orderedList) > 0): # If there is data to process
-            lastSeqnum = self.findSeqErrors(orderedList, len(self.receivedString)) # Check for sequence errors
-            print(f"Last sequence num: {lastSeqnum}")
+        if (len(self.segList) > 0): # If there is data to process
+            lastSeqnum = self.findSeqErrors() # Check for sequence errors
 
-            if lastSeqnum == 0: # If no sequence errors were found
-                for elem in orderedList:
-                    incomingString += elem.payload
-                lastSeqnum = orderedList[len(orderedList)-1].seqnum # Set seqnum to latest one for acking purposes
+            for elem in self.segList:
+                print("here")
+                print(f"Curr elem: {elem.seqnum} last valid byte: {lastSeqnum}")
+                if int(elem.seqnum) > int(lastSeqnum):
+                    print("breaking")
+                    break
+
+                print(elem.payload)
+                incomingString += elem.payload
 
             self.receivedString += incomingString
 
