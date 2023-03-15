@@ -62,7 +62,6 @@ student(410, john, cs).
 student(113, zoe, ece).
 
 schedule(Sid,C,B,T) :- 
-  student(Sid, _, _), % Checks to see if student exists
   enroll(Sid, Crn), % Gets CRN of course
   place(Crn, B, T), % Gets the building and time from CRN
   section(Crn, Num), % Gets course number from CRN
@@ -75,6 +74,35 @@ schedule(Sid, Name, Course_name) :-
   course(Num, Course_name, _). % Gets course name from CRN
 
 offer(Cnum, Name, Crn, Time) :-
-  course(Cnum, Name, _),
-  section(Crn, Cnum),
-  place(Crn, _, Time).
+  course(Cnum, Name, _), % Gets Name or Cnum from the other
+  section(Crn, Cnum), % Gets Crn or Cnum from the other
+  place(Crn, _, Time). % Gets Time or Crn from the other
+
+conflict(Sid, Crn1, Crn2) :-
+  enroll(Sid, Crn1), % Is this person enrolled in this Crn?
+  enroll(Sid, Crn2), % Is this person enrolled in this Crn?
+  Crn1\=Crn2, % Make sure the CRNs are different.
+  place(Crn1, _, Time), 
+  place(Crn2, _, Time). % If so, do the start times have equality?
+conflict(_,_,_) :- false. % WHY DOESNT IT RETURN FALSE OMFL
+
+meet(Sid1, Sid2) :-
+  enroll(Sid1, Crn1),
+  enroll(Sid2, Crn2),
+  place(Crn1, Bd, Time1), place(Crn2, Bd, Time2),
+  ((Time1 + 1) =:= Time2; (Time2 + 1) =:= Time1; Time1 =:= Time2),
+  Sid1 \= Sid2.
+
+roster(Crn, Sname) :-
+  enroll(Sid, Crn),
+  student(Sid, Sname, _).
+
+highCredits(Cname) :-
+  course(_, Cname, Cred),
+  Cred >= 4.
+  
+rdup([], M) :- M = [].
+rdup([H|T], [MH|MT]) :-
+  H \= MH,
+  append([H], [MH|MT], [MH|MT]),
+  rdup(T, MT).
