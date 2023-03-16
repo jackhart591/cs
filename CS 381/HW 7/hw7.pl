@@ -61,23 +61,27 @@ student(175, amy, math).
 student(410, john, cs).
 student(113, zoe, ece).
 
+/* schedule(Student ID, CRN, Building, Time) */
 schedule(Sid,C,B,T) :- 
   enroll(Sid, Crn), % Gets CRN of course
   place(Crn, B, T), % Gets the building and time from CRN
   section(Crn, Num), % Gets course number from CRN
   course(Num, C, _). % Gets course name from CRN
 
+/* schedule(Student ID, Student Name, Course Name) */
 schedule(Sid, Name, Course_name) :-
   student(Sid, Name, _), % Gets name from sid
   enroll(Sid, Crn), % Gets CRN from sid
   section(Crn, Num), % Gets course number from CRN
   course(Num, Course_name, _). % Gets course name from CRN
 
+/* offer(Course Number, Course Name, CRN, Time) */
 offer(Cnum, Name, Crn, Time) :-
   course(Cnum, Name, _), % Gets Name or Cnum from the other
   section(Crn, Cnum), % Gets Crn or Cnum from the other
   place(Crn, _, Time). % Gets Time or Crn from the other
 
+/* conflict(Student ID, CRN, CRN) */
 conflict(Sid, Crn1, Crn2) :-
   enroll(Sid, Crn1), % Is this person enrolled in this Crn?
   enroll(Sid, Crn2), % Is this person enrolled in this Crn?
@@ -85,35 +89,43 @@ conflict(Sid, Crn1, Crn2) :-
   place(Crn1, _, Time), 
   place(Crn2, _, Time). % If so, do the start times have equality?
 
+/* meet(Student ID, Student ID) */
 meet(Sid1, Sid2) :-
-  enroll(Sid1, Crn1),
-  enroll(Sid2, Crn2),
-  place(Crn1, Bd, Time1), place(Crn2, Bd, Time2),
-  ((Time1 + 1) =:= Time2; (Time2 + 1) =:= Time1; Time1 =:= Time2),
-  Sid1 \= Sid2.
+  enroll(Sid1, Crn1), % Checks to see if student 1 is enrolled
+  enroll(Sid2, Crn2), % Checks to see if student 2 is enrolled
+  place(Crn1, Bd, Time1), place(Crn2, Bd, Time2), % Checks to see if they'll be in the same building
+  ((Time1 + 1) =:= Time2; (Time2 + 1) =:= Time1; Time1 =:= Time2), % Checks to see if they're back to back or at the same time
+  Sid1 \= Sid2. % Ensures student 1 and 2 aren't the same student
 
+/* roster(CRN, Student Name) */
 roster(Crn, Sname) :-
-  enroll(Sid, Crn),
-  student(Sid, Sname, _).
+  enroll(Sid, Crn), % Gets the Student ID from CRN
+  student(Sid, Sname, _). % Gets the Sid from Sname
 
+/* highCredits(Course Name) */
 highCredits(Cname) :-
-  course(_, Cname, Cred),
-  Cred >= 4.
+  course(_, Cname, Cred), % Gets the number of credits from course name
+  Cred >= 4. % Checks to see if the credits are greater than or equal to 4
   
-rdup([X], [_,X]).
-rdup([H|T], [H|MT]) :- rdup(T, [H|MT]).
-rdup([H|T], [MH|MT]) :- H \= MH, rdup(T, MT).
+/* rdup(List, List) */
+rdup([X], [_,X]). % Base case
+rdup([H|T], [H|MT]) :- rdup(T, [H|MT]). % In the case that there is an element that needs to be removed
+rdup([H|T], [MH|MT]) :- H \= MH, rdup(T, MT). % In the case there is a new element
 
-flat([], []) :- !.
+/* flat(List, List) */
+flat([], []) :- !. % Base case
 flat([H|T], L) :-
-  flat(H, NH),
-  flat(T, NT),
-  append(NH, NT, L).
-flat(X, [X]) :- !.
+  flat(H, NH), % Flattens the first element
+  flat(T, NT), % Flattens the remainder of the list
+  append(NH, NT, L). % Appends the new lists together
+flat(X, [X]) :- !. % If there is one element left, return
 
+/* project(List of Indices, List, List) */
 project(IL, OL, L) :- project(0, IL, OL, L).
 
-project(_, [], _, []) :- !.
-project(_, _, [], []) :- !.
-project(I, [K|IT], [OH|OT], [OH|L]) :- K is I + 1, project(K, IT, OT, L), !.
-project(I, [IH|IT], [_|OT], L) :- K is I + 1, project(K, [IH|IT], OT, L), !.
+/* project(List of Indices, List, List) */
+/* Helper function */
+project(_, [], _, []) :- !. % Base case
+project(_, _, [], []) :- !. % Base case
+project(I, [K|IT], [OH|OT], [OH|L]) :- K is I + 1, project(K, IT, OT, L), !. % In the case that we're not taking this element
+project(I, [IH|IT], [_|OT], L) :- K is I + 1, project(K, [IH|IT], OT, L), !. % In the case that we're taking this element
