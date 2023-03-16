@@ -84,7 +84,6 @@ conflict(Sid, Crn1, Crn2) :-
   Crn1\=Crn2, % Make sure the CRNs are different.
   place(Crn1, _, Time), 
   place(Crn2, _, Time). % If so, do the start times have equality?
-conflict(_,_,_) :- false. % WHY DOESNT IT RETURN FALSE OMFL
 
 meet(Sid1, Sid2) :-
   enroll(Sid1, Crn1),
@@ -101,8 +100,20 @@ highCredits(Cname) :-
   course(_, Cname, Cred),
   Cred >= 4.
   
-rdup([], M) :- M = [].
-rdup([H|T], [MH|MT]) :-
-  H \= MH,
-  append([H], [MH|MT], [MH|MT]),
-  rdup(T, MT).
+rdup([X], [_,X]).
+rdup([H|T], [H|MT]) :- rdup(T, [H|MT]).
+rdup([H|T], [MH|MT]) :- H \= MH, rdup(T, MT).
+
+flat([], []) :- !.
+flat([H|T], L) :-
+  flat(H, NH),
+  flat(T, NT),
+  append(NH, NT, L).
+flat(X, [X]) :- !.
+
+project(IL, OL, L) :- project(0, IL, OL, L).
+
+project(_, [], _, []) :- !.
+project(_, _, [], []) :- !.
+project(I, [K|IT], [OH|OT], [OH|L]) :- K is I + 1, project(K, IT, OT, L), !.
+project(I, [IH|IT], [_|OT], L) :- K is I + 1, project(K, [IH|IT], OT, L), !.
