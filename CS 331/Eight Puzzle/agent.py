@@ -7,10 +7,18 @@ class BoardState:
     def __init__(self, board: Board, move: str, pastMoves):
         self.board = board
 
-        if str != "":
+        if move != '':
             pastMoves.append(move)
 
         self.pastMoves = pastMoves
+
+    def Seen(self, seenList):
+        for string_outer_seen in seenList:
+            for (string_inner_seen, new_str) in zip(string_outer_seen, self.pastMoves):
+                if string_inner_seen != new_str:
+                    print("has been!")
+                    return True
+        return False
 
 '''
 Heuristics
@@ -35,17 +43,16 @@ def a_star_search(board: Board, heuristic: Callable[[Board], int]):
     newState = BoardState(board, "", []) # Initial state
 
     # While the board is not in a goal state
-    while not newState.board.goal_test() or len(frontier) != 0:
+    while not newState.board.goal_test():
         for possibleMove in newState.board.next_action_states(): # Iterate over all possible moves
             newState = BoardState(possibleMove[0], possibleMove[1], newState.pastMoves) # Create a new board state for this move
-            print("uh oh")
-            if newState.pastMoves not in seen:
-                print("here")
+
+            if not newState.Seen(seen): # Check if this string has been seen before
                 frontier.append(newState)
                 seen.append(newState.pastMoves)
 
         # Sort by the amount of moves + the heuristic func
         frontier.sort(key=(lambda a : len(a.pastMoves) + heuristic(a)))
-        newState = frontier.pop()
+        newState = frontier.pop(0)
         
     return newState.pastMoves

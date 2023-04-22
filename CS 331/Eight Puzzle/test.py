@@ -22,11 +22,11 @@ def test(heuristic):
 
         if correct:
             if len(solution) == len(optimal_solutions[f"{m}:{s}"]):
-                print(f"Optimal soultion for problem {i} where m={m} and s={s}")
+                print(f"Optimal solution for problem {i} where m={m} and s={s}")
             else:
-                print(f"Suboptimal soultion for problem {i} where m={m} and s={s}")
+                print(f"Suboptimal solution for problem {i} where m={m} and s={s}")
         else:
-            print(f"Incorrect soultion for problem {i} where m={m} and s={s}")
+            print(f"Incorrect solution for problem {i} where m={m} and s={s}")
 
 
 print("Tests for MT Heuristic")
