@@ -7,7 +7,7 @@ unsigned int seed = 0;
 
 /* Constants for this simulation */
 const float RYEGRASS_GROWS_PER_MONTH =      20.0;
-const float ONE_RABBITS_EATS_PER_MONTH =    1.0;
+const float ONE_RABBITS_EATS_PER_MONTH =    4.0;
 const float ONE_FOX_MAX_EATS_PER_MONTH =    2.0;
 
 const float AVG_PRECIP_PER_MONTH =	        12.0;	// average
@@ -149,6 +149,8 @@ void Predator() {
             _nextNumFoxes += 1;
         }
 
+        if (_nextNumFoxes < 0) _nextNumFoxes = 0;
+
         WaitBarrier(); // Done computing
 
         NowNumFoxes = _nextNumFoxes;
@@ -199,6 +201,8 @@ int main() {
 
     NowNumRabbits = 1;
     NowHeight = 5;
+
+    std::cout << "Month;Temperature;Precipitation;Rye Grass Height;Rabbit Population;Fox Population" << std::endl;
 
     #pragma omp parallel sections 
     {
